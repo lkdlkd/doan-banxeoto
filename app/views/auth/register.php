@@ -3,254 +3,574 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng ký - Bán Xe Ô Tô</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Đăng Ký - AutoCar Luxury</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Montserrat', sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px 0;
+            position: relative;
+            overflow-x: hidden;
+            padding: 40px 0;
         }
-        .register-container {
-            max-width: 500px;
+
+        .bg-image {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center center / cover no-repeat;
         }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.75) 100%);
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+            z-index: 10;
+        }
+
         .register-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px 50px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 40px;
+            align-items: start;
         }
-        .register-header {
-            text-align: center;
-            margin-bottom: 30px;
+
+        .register-info {
+            padding-right: 20px;
+            border-right: 2px solid #f0f0f0;
         }
-        .register-header h2 {
-            color: #333;
+
+        .register-logo {
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        .register-logo a {
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .register-logo i {
+            font-size: 2.2rem;
+            color: #D4AF37;
+        }
+
+        .register-logo span {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
             font-weight: 700;
-            margin-bottom: 10px;
+            color: #1a1a1a;
         }
-        .register-header p {
+
+        .register-title {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .register-title h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .register-title p {
             color: #666;
+            font-size: 0.9rem;
+            line-height: 1.6;
         }
-        .form-control {
+
+        .register-form-wrapper {
+            padding-left: 20px;
+        }
+
+        .register-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .form-group .input-wrapper {
+            position: relative;
+        }
+
+        .form-group i.input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 11px 12px 11px 38px;
+            border: 2px solid #e5e5e5;
             border-radius: 10px;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
+            font-size: 0.9rem;
+            font-family: 'Montserrat', sans-serif;
+            color: #333;
+            background: #fff;
+            transition: all 0.3s ease;
         }
-        .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #D4AF37;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
         }
+
+        .form-group input::placeholder {
+            color: #aaa;
+        }
+
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .terms-checkbox input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #D4AF37;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .terms-checkbox a {
+            color: #D4AF37;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .terms-checkbox a:hover {
+            text-decoration: underline;
+        }
+
         .btn-register {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
             border: none;
             border-radius: 10px;
-            padding: 12px;
-            font-weight: 600;
             color: white;
-            width: 100%;
-            transition: transform 0.2s;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 5px;
         }
+
         .btn-register:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
         }
-        .alert {
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 16px 0;
+            gap: 12px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5e5e5;
+        }
+
+        .divider span {
+            color: #999;
+            font-size: 0.75rem;
+        }
+
+        .social-register {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-social {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e5e5e5;
             border-radius: 10px;
-        }
-        .input-group-text {
-            border: 2px solid #e0e0e0;
-            border-right: none;
             background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #333;
         }
-        .input-group .form-control {
-            border-left: none;
+
+        .btn-social:hover {
+            border-color: #D4AF37;
+            background: #fffbf0;
         }
-        .password-strength {
-            height: 5px;
-            border-radius: 3px;
-            margin-top: 5px;
-            transition: all 0.3s;
+
+        .btn-social.google i { color: #ea4335; }
+        .btn-social.facebook i { color: #1877f2; }
+
+        .login-link {
+            text-align: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .login-link a {
+            color: #D4AF37;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            color: #B8860B;
+            text-decoration: underline;
+        }
+
+        .benefits {
+            background: linear-gradient(135deg, #fffbf0 0%, #fff9e6 100%);
+            border-radius: 12px;
+            padding: 15px 18px;
+            margin-top: 20px;
+        }
+
+        .benefits-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #B8860B;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .benefits-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .benefit-item {
+            font-size: 0.85rem;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .benefit-item i {
+            color: #D4AF37;
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .why-choose {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .why-choose h3 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #B8860B;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .why-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .why-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .why-item i {
+            color: #D4AF37;
+            font-size: 1.2rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .why-content h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .why-content p {
+            font-size: 0.8rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .error-message {
+            background: #fff5f5;
+            border: 1px solid #fed7d7;
+            color: #c53030;
+            padding: 12px 15px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 900px) {
+            .register-card {
+                grid-template-columns: 1fr;
+                gap: 25px;
+                padding: 35px 30px;
+            }
+            .register-info {
+                padding-right: 0;
+                border-right: none;
+                border-bottom: 2px solid #f0f0f0;
+                padding-bottom: 25px;
+            }
+            .register-form-wrapper { padding-left: 0; }
+            .why-choose { display: none; }
+            .register-logo, .register-title { text-align: center; }
+        }
+
+        @media (max-width: 520px) {
+            .register-card { padding: 30px 20px; }
+            .form-row { grid-template-columns: 1fr; }
+            .social-register { flex-direction: column; }
         }
     </style>
 </head>
 <body>
+    <div class="bg-image"></div>
+    <div class="bg-overlay"></div>
+
     <div class="register-container">
         <div class="register-card">
-            <div class="register-header">
-                <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
-                <h2>Đăng Ký</h2>
-                <p>Tạo tài khoản mới</p>
+            <div class="register-info">
+                <div class="register-logo">
+                    <a href="/">
+                        <i class="fas fa-car"></i>
+                        <span>AutoCar</span>
+                    </a>
+                </div>
+                <div class="register-title">
+                    <h1>Tạo Tài Khoản Mới</h1>
+                    <p>Tham gia cộng đồng yêu xe hạng sang và trải nghiệm dịch vụ tốt nhất</p>
+                </div>
+
+                <div class="benefits">
+                    <div class="benefits-title">
+                        <i class="fas fa-gift"></i>
+                        Quyền lợi thành viên
+                    </div>
+                    <div class="benefits-list">
+                        <div class="benefit-item">
+                            <i class="fas fa-star"></i>
+                            <span>Ưu đãi độc quyền cho thành viên</span>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="fas fa-heart"></i>
+                            <span>Lưu xe yêu thích & so sánh</span>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="fas fa-bell"></i>
+                            <span>Thông báo xe mới & khuyến mãi</span>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="fas fa-headset"></i>
+                            <span>Hỗ trợ tư vấn VIP 24/7</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="why-choose">
+                    <h3>Tại sao chọn chúng tôi?</h3>
+                    <div class="why-list">
+                        <div class="why-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <div class="why-content">
+                                <h4>Bảo mật tuyệt đối</h4>
+                                <p>Thông tin được mã hóa và bảo vệ an toàn</p>
+                            </div>
+                        </div>
+                        <div class="why-item">
+                            <i class="fas fa-check-circle"></i>
+                            <div class="why-content">
+                                <h4>Xe chính hãng 100%</h4>
+                                <p>Cam kết nguồn gốc rõ ràng, giấy tờ đầy đủ</p>
+                            </div>
+                        </div>
+                        <div class="why-item">
+                            <i class="fas fa-award"></i>
+                            <div class="why-content">
+                                <h4>Đánh giá 5 sao</h4>
+                                <p>Hơn 8000+ khách hàng tin tưởng</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <?php if (!empty($errors)): ?>
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        <?php foreach ($errors as $error): ?>
-                            <li><?= htmlspecialchars($error) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
+            <div class="register-form-wrapper">
+                <?php if (isset($error)): ?>
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <?php echo htmlspecialchars($error); ?>
                 </div>
-            <?php endif; ?>
+                <?php endif; ?>
 
-            <form method="POST" action="/register" id="registerForm">
-                <div class="mb-3">
-                    <label class="form-label">Họ và tên</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-user"></i></span>
-                        <input type="text" class="form-control" name="full_name" 
-                               value="<?= htmlspecialchars($_POST['full_name'] ?? '') ?>" 
-                               placeholder="Nhập họ và tên">
+                <form class="register-form" method="POST" action="/register">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullname">Họ và tên</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="fullname" name="fullname" placeholder="Nguyễn Văn A" required>
+                                <i class="fas fa-user input-icon"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Số điện thoại</label>
+                            <div class="input-wrapper">
+                                <input type="tel" id="phone" name="phone" placeholder="0901 234 567" required>
+                                <i class="fas fa-phone input-icon"></i>
+                            </div>
+                        </div>
                     </div>
-                    <small class="text-muted">Không bắt buộc</small>
-                </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-user-circle"></i></span>
-                        <input type="text" class="form-control" name="username" 
-                               value="<?= htmlspecialchars($_POST['username'] ?? '') ?>" 
-                               placeholder="Nhập tên đăng nhập" required minlength="3">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <div class="input-wrapper">
+                            <input type="email" id="email" name="email" placeholder="email@example.com" required>
+                            <i class="fas fa-envelope input-icon"></i>
+                        </div>
                     </div>
-                    <small class="text-muted">Ít nhất 3 ký tự</small>
-                </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Email <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                        <input type="email" class="form-control" name="email" 
-                               value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" 
-                               placeholder="Nhập email" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password">Mật khẩu</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="password" name="password" placeholder="Tối thiểu 8 ký tự" required minlength="8">
+                                <i class="fas fa-lock input-icon"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm_password">Xác nhận mật khẩu</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="confirm_password" name="confirm_password" placeholder="Nhập lại mật khẩu" required>
+                                <i class="fas fa-lock input-icon"></i>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Số điện thoại</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                        <input type="tel" class="form-control" name="phone" 
-                               value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>" 
-                               placeholder="Nhập số điện thoại">
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">
+                            Tôi đồng ý với <a href="/terms">Điều khoản dịch vụ</a> và <a href="/privacy">Chính sách bảo mật</a>
+                        </label>
                     </div>
+
+                    <button type="submit" class="btn-register">
+                        <i class="fas fa-user-plus"></i> Đăng Ký
+                    </button>
+                </form>
+
+                <div class="divider">
+                    <span>hoặc đăng ký với</span>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Mật khẩu <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        <input type="password" class="form-control" name="password" 
-                               id="password" placeholder="Nhập mật khẩu" required minlength="6">
-                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    <div class="password-strength" id="passwordStrength"></div>
-                    <small class="text-muted">Ít nhất 6 ký tự</small>
+                <div class="social-register">
+                    <button class="btn-social google">
+                        <i class="fab fa-google"></i>
+                        Google
+                    </button>
+                    <button class="btn-social facebook">
+                        <i class="fab fa-facebook-f"></i>
+                        Facebook
+                    </button>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Xác nhận mật khẩu <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        <input type="password" class="form-control" name="confirm_password" 
-                               id="confirm_password" placeholder="Nhập lại mật khẩu" required>
-                    </div>
-                    <small id="passwordMatch" class="text-danger d-none">Mật khẩu không khớp</small>
+                <div class="login-link">
+                    Đã có tài khoản? <a href="/login">Đăng nhập ngay</a>
                 </div>
-
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="terms" required>
-                    <label class="form-check-label" for="terms">
-                        Tôi đồng ý với <a href="/terms" target="_blank">điều khoản sử dụng</a>
-                    </label>
-                </div>
-
-                <button type="submit" class="btn btn-register mb-3">
-                    <i class="fas fa-user-plus me-2"></i>Đăng ký
-                </button>
-
-                <div class="text-center">
-                    <p class="mb-0">Đã có tài khoản? 
-                        <a href="/login" class="text-decoration-none fw-bold">Đăng nhập ngay</a>
-                    </p>
-                </div>
-            </form>
-        </div>
-
-        <div class="text-center mt-3">
-            <a href="/" class="text-white text-decoration-none">
-                <i class="fas fa-home me-2"></i>Về trang chủ
-            </a>
+            </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const password = document.getElementById('password');
-            const icon = this.querySelector('i');
-            
-            if (password.type === 'password') {
-                password.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                password.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        });
-
-        // Password strength indicator
-        document.getElementById('password').addEventListener('input', function() {
-            const password = this.value;
-            const strengthBar = document.getElementById('passwordStrength');
-            
-            let strength = 0;
-            if (password.length >= 6) strength++;
-            if (password.length >= 10) strength++;
-            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
-            if (/\d/.test(password)) strength++;
-            if (/[^a-zA-Z\d]/.test(password)) strength++;
-            
-            const colors = ['#e74c3c', '#e67e22', '#f39c12', '#2ecc71', '#27ae60'];
-            const widths = ['20%', '40%', '60%', '80%', '100%'];
-            
-            strengthBar.style.width = widths[strength - 1] || '0';
-            strengthBar.style.backgroundColor = colors[strength - 1] || 'transparent';
-        });
-
-        // Check password match
-        document.getElementById('confirm_password').addEventListener('input', function() {
-            const password = document.getElementById('password').value;
-            const confirmPassword = this.value;
-            const matchText = document.getElementById('passwordMatch');
-            
-            if (confirmPassword && password !== confirmPassword) {
-                matchText.classList.remove('d-none');
-            } else {
-                matchText.classList.add('d-none');
-            }
-        });
-
-        // Form validation
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm_password').value;
-            
-            if (password !== confirmPassword) {
-                e.preventDefault();
-                alert('Mật khẩu xác nhận không khớp!');
-            }
-        });
-    </script>
 </body>
 </html>

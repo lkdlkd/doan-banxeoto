@@ -3,137 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $pageTitle ?? 'Bán Xe Ô Tô' ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title><?= $pageTitle ?? 'AutoCar - Siêu Xe Cao Cấp' ?></title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .navbar {
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-        }
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-    </style>
+    <link rel="stylesheet" href="/autocar/assets/css/style.css">
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white">
-        <div class="container">
-            <a class="navbar-brand text-primary" href="/">
-                <i class="fas fa-car me-2"></i>Bán Xe Ô Tô
+    <!-- Top Bar -->
+    <div class="top-bar">
+            <div class="top-bar-left">
+                <div class="top-bar-item">
+                    <span class="icon">&#128205;</span>
+                    <span>126 Nguyen Thien Thanh, Phuong 5, Tra Vinh</span>
+                </div>
+                <div class="top-bar-divider"></div>
+                <div class="top-bar-item">
+                    <span class="icon">&#128337;</span>
+                    <span>Mon - Sun: 9:00 AM - 7:00 PM</span>
+                </div>
+            </div>
+            <div class="top-bar-right">
+                <a href="tel:0368920249" class="phone-link">
+                    <span class="icon">&#128222;</span>
+                    <span>Hotline: <strong>0368 920 249</strong></span>
+                </a>
+                <div class="top-bar-divider"></div>
+                <a href="/autocar/cart" class="cart-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="cart-count">0</span>
+                </a>
+                <?php if (isset($_SESSION['user'])): ?>
+                    <a href="/autocar/profile" class="login-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </a>
+                <?php else: ?>
+                    <a href="/autocar/login" class="login-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                            <polyline points="10 17 15 12 10 7"></polyline>
+                            <line x1="15" y1="12" x2="3" y2="12"></line>
+                        </svg>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Main Header -->
+        <header>
+            <a href="/autocar/" class="logo">
+                <img src="/autocar/assets/images/logo.png" alt="AutoCar Logo" class="logo-img" style="height: 65px;">
+                <div class="logo-text-header">
+                    <span class="store-name">AUTOCAR</span>
+                    <span class="store-slogan">Luxury & Performance</span>
+                </div>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Trang chủ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/cars">Xe bán</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about">Giới thiệu</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contact">Liên hệ</a>
-                    </li>
-                </ul>
-                
-                <ul class="navbar-nav">
-                    <?php
-                    if (isset($_SESSION['user_id'])): ?>
-                        <!-- Đã đăng nhập -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i>
-                                <?= htmlspecialchars($_SESSION['username']) ?>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <span class="dropdown-item-text">
-                                        <strong><?= htmlspecialchars($_SESSION['full_name'] ?? $_SESSION['username']) ?></strong><br>
-                                        <small class="text-muted"><?= htmlspecialchars($_SESSION['email']) ?></small>
-                                    </span>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="/profile">
-                                    <i class="fas fa-user me-2"></i>Thông tin cá nhân
-                                </a></li>
-                                <li><a class="dropdown-item" href="/orders">
-                                    <i class="fas fa-shopping-cart me-2"></i>Đơn hàng của tôi
-                                </a></li>
-                                <li><a class="dropdown-item" href="/favorites">
-                                    <i class="fas fa-heart me-2"></i>Xe yêu thích
-                                </a></li>
-                                
-                                <?php if ($_SESSION['role'] === 'admin'): ?>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-primary" href="/admin/dashboard">
-                                        <i class="fas fa-tachometer-alt me-2"></i>Quản trị
-                                    </a></li>
-                                <?php endif; ?>
-                                
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="/logout">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                                </a></li>
-                            </ul>
-                        </li>
-                    <?php else: ?>
-                        <!-- Chưa đăng nhập -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="/login">
-                                <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-primary btn-sm" href="/register">
-                                <i class="fas fa-user-plus me-1"></i>Đăng ký
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Flash Messages -->
-    <?php if (isset($_SESSION['success'])): ?>
-        <div class="container mt-3">
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_SESSION['success']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        </div>
-        <?php unset($_SESSION['success']); ?>
-    <?php endif; ?>
-
-    <?php if (isset($_SESSION['error'])): ?>
-        <div class="container mt-3">
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_SESSION['error']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        </div>
-        <?php unset($_SESSION['error']); ?>
-    <?php endif; ?>
-
-    <?php if (isset($_SESSION['info'])): ?>
-        <div class="container mt-3">
-            <div class="alert alert-info alert-dismissible fade show" role="alert">
-                <i class="fas fa-info-circle me-2"></i><?= htmlspecialchars($_SESSION['info']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        </div>
-        <?php unset($_SESSION['info']); ?>
-    <?php endif; ?>
+        <nav>
+            <ul>
+                <li><a href="/autocar/" class="<?= ($currentPage ?? '') === 'home' ? 'active' : '' ?>">Home</a></li>
+                <li><a href="/autocar/about" class="<?= ($currentPage ?? '') === 'about' ? 'active' : '' ?>">About</a></li>
+                <li><a href="/autocar/cars" class="<?= ($currentPage ?? '') === 'cars' ? 'active' : '' ?>">Cars</a></li>
+                <li><a href="/autocar/contact" class="<?= ($currentPage ?? '') === 'contact' ? 'active' : '' ?>">Contact</a></li>
+            </ul>
+        </nav>
+    </header>

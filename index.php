@@ -1,104 +1,135 @@
 <?php
-// public/index.php
+/**
+ * AutoCar - Main Router
+ * Luxury Supercar Website
+ */
 
-// Khởi động session
 session_start();
 
-// Load controllers
-require_once __DIR__ . '/app/controllers/AuthController.php';
-require_once __DIR__ . '/app/controllers/UserController.php';
-require_once __DIR__ . '/app/controllers/CarController.php';
-require_once __DIR__ . '/app/controllers/OrderController.php';
+// Define base path
+define('BASE_PATH', __DIR__);
+define('APP_PATH', BASE_PATH . '/app');
+define('VIEW_PATH', APP_PATH . '/views');
 
-// Lấy URI và loại bỏ query string
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$uri = rtrim($uri, '/');
+// Include config
+require_once BASE_PATH . '/config/config.php';
+require_once BASE_PATH . '/config/database.php';
 
-// Nếu URI rỗng, set mặc định là trang chủ
-if (empty($uri)) {
-    $uri = '/';
-}
+// Get the request URI
+$request = $_SERVER['REQUEST_URI'];
+$basePath = '/autocar';
 
-// Routing
-switch ($uri) {
-    // Auth routes
+// Remove base path from request
+$request = str_replace($basePath, '', $request);
+$request = strtok($request, '?'); // Remove query string
+
+// Simple Router
+switch ($request) {
+    case '':
+    case '/':
+    case '/home':
+        require VIEW_PATH . '/user/home.php';
+        break;
+        
+    case '/cars':
+        require VIEW_PATH . '/user/car_list.php';
+        break;
+        
     case '/login':
-        $controller = new AuthController();
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            $controller->showLogin();
-        } else {
-            $controller->login();
-        }
+        require VIEW_PATH . '/auth/login.php';
         break;
         
     case '/register':
-        $controller = new AuthController();
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            $controller->showRegister();
-        } else {
-            $controller->register();
-        }
-        break;
-        
-    case '/logout':
-        $controller = new AuthController();
-        $controller->logout();
+        require VIEW_PATH . '/auth/register.php';
         break;
     
-    // Home route
-    case '/':
-        require_once __DIR__ . '/app/views/user/home.php';
+    case '/about':
+        require VIEW_PATH . '/user/about.php';
         break;
-    
-    // Car routes
-    // case '/cars':
-    //     $controller = new CarController();
-    //     $controller->index();
-    //     break;
         
-    // case (preg_match('/^\/cars\/(\d+)$/', $uri, $matches) ? true : false):
-    //     $controller = new CarController();
-    //     $controller->detail($matches[1]);
-    //     break;
-    
-    // Admin routes
-    // case '/admin':
-    // case '/admin/dashboard':
-    //     $controller = new AuthController();
-    //     $controller->checkAdmin();
-    //     require_once __DIR__ . '/../app/views/admin/dashboard.php';
-    //     break;
+    case '/contact':
+        require VIEW_PATH . '/user/contact.php';
+        break;
         
-    // case '/admin/cars':
-    //     $controller = new AuthController();
-    //     $controller->checkAdmin();
-    //     $carController = new CarController();
-    //     $carController->adminList();
-    //     break;
-        
-    // case '/admin/cars/add':
-    //     $controller = new AuthController();
-    //     $controller->checkAdmin();
-    //     $carController = new CarController();
-    //     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    //         require_once __DIR__ . '/../app/views/admin/cars/add.php';
-    //     } else {
-    //         $carController->create();
-    //     }
-    //     break;
-    
-    // User profile
     case '/profile':
-        $controller = new AuthController();
-        $controller->checkAuth();
-        require_once __DIR__ . '/app/views/user/profile.php';
+        require VIEW_PATH . '/user/profile.php';
         break;
     
-    // 404 Not Found
+    case '/logout':
+        session_destroy();
+        header('Location: /autocar/');
+        exit;
+        break;
+    
+    // Admin Routes
+    case '/admin':
+    case '/admin/dashboard':
+        require VIEW_PATH . '/admin/dashboard.php';
+        break;
+    
+    case '/admin/cars':
+        require VIEW_PATH . '/admin/cars/list.php';
+        break;
+    
+    case '/admin/cars/add':
+        require VIEW_PATH . '/admin/cars/add.php';
+        break;
+    
+    case '/admin/cars/edit':
+        require VIEW_PATH . '/admin/cars/edit.php';
+        break;
+    
+    case '/admin/brands':
+        require VIEW_PATH . '/admin/brands/list.php';
+        break;
+    
+    case '/admin/categories':
+        require VIEW_PATH . '/admin/categories/list.php';
+        break;
+    
+    case '/admin/orders':
+        require VIEW_PATH . '/admin/orders/list.php';
+        break;
+    
+    case '/admin/users':
+        require VIEW_PATH . '/admin/users/list.php';
+        break;
+    
+    case '/admin/reviews':
+        require VIEW_PATH . '/admin/reviews/list.php';
+        break;
+    
+    case '/admin/contacts':
+        require VIEW_PATH . '/admin/contacts/list.php';
+        break;
+        
     default:
-        http_response_code(404);
-        echo '<h1>404 - Không tìm thấy trang</h1>';
-        echo '<p>Trang bạn đang tìm kiếm không tồn tại.</p>';
-        echo '<a href="/">Về trang chủ</a>';
+        // Check if it's a car detail page
+        if (preg_match('/^\/car\/(\d+)$/', $request, $matches)) {
+            $_GET['id'] = $matches[1];
+            require VIEW_PATH . '/user/car_detail.php';
+        } elseif (preg_match('/^\/cars\/(\d+)$/', $request, $matches)) {
+            $_GET['id'] = $matches[1];
+            require VIEW_PATH . '/user/car_detail.php';
+        } else {
+            // 404 Page
+            http_response_code(404);
+            echo '<!DOCTYPE html>
+            <html lang="vi">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>404 - Không Tìm Thấy | AutoCar</title>
+                <link rel="stylesheet" href="' . $basePath . '/assets/css/style.css">
+            </head>
+            <body style="background: #0a0a0a; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+                <div style="text-align: center; color: #fff;">
+                    <h1 style="font-size: 120px; color: #D4AF37; margin-bottom: 20px;">404</h1>
+                    <p style="font-size: 24px; margin-bottom: 30px;">Trang bạn tìm kiếm không tồn tại</p>
+                    <a href="' . $basePath . '/" style="background: #D4AF37; color: #000; padding: 15px 40px; text-decoration: none; border-radius: 30px; font-weight: 600;">Về Trang Chủ</a>
+                </div>
+            </body>
+            </html>';
+        }
         break;
 }
