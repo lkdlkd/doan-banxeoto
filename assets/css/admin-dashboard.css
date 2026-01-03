@@ -1,0 +1,550 @@
+/* ===================================
+   Admin - Dashboard Styles
+   =================================== */
+
+/* Dashboard chủ yếu dùng classes từ admin-common.css:
+   - .stats-grid, .stat-card, .stat-icon, .stat-info
+   Các styles bổ sung cho dashboard nằm ở đây */
+
+/* Recent Section Headers */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0;
+}
+
+.section-header .view-all {
+    font-size: 14px;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+}
+
+.section-header .view-all:hover {
+    color: var(--primary-dark);
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    margin-top: 30px;
+}
+
+/* Recent Orders */
+.recent-orders {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--gray-100);
+}
+
+.recent-orders-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.recent-orders-table th {
+    padding: 14px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-600);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.recent-orders-table td {
+    padding: 14px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--gray-50);
+}
+
+.recent-orders-table tbody tr:hover {
+    background: var(--gray-50);
+}
+
+/* Recent Activities */
+.recent-activities {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--gray-100);
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.activity-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px;
+    border-radius: var(--radius);
+    background: var(--gray-50);
+    transition: all 0.3s ease;
+}
+
+.activity-item:hover {
+    background: var(--gray-100);
+}
+
+.activity-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.activity-icon.order {
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--primary);
+}
+
+.activity-icon.user {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--info);
+}
+
+.activity-icon.review {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success);
+}
+
+.activity-icon.contact {
+    background: rgba(139, 92, 246, 0.15);
+    color: #8b5cf6;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-content p {
+    font-size: 14px;
+    color: var(--gray-700);
+    margin: 0 0 4px 0;
+}
+
+.activity-content p strong {
+    color: var(--gray-800);
+}
+
+.activity-content span {
+    font-size: 12px;
+    color: var(--gray-500);
+}
+
+/* Charts Section */
+.charts-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 30px;
+}
+
+.chart-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--gray-100);
+}
+
+.chart-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0 0 20px 0;
+}
+
+.chart-placeholder {
+    height: 250px;
+    background: var(--gray-50);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-400);
+}
+
+/* Top Cars */
+.top-cars {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--gray-100);
+}
+
+.top-car-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.top-car-item:last-child {
+    border-bottom: none;
+}
+
+.top-car-rank {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--gray-600);
+}
+
+.top-car-item:nth-child(1) .top-car-rank {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #fff;
+}
+
+.top-car-item:nth-child(2) .top-car-rank {
+    background: linear-gradient(135deg, #C0C0C0 0%, #A0A0A0 100%);
+    color: #fff;
+}
+
+.top-car-item:nth-child(3) .top-car-rank {
+    background: linear-gradient(135deg, #CD7F32 0%, #B87333 100%);
+    color: #fff;
+}
+
+.top-car-thumb {
+    width: 60px;
+    height: 45px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.top-car-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.top-car-info {
+    flex: 1;
+}
+
+.top-car-info h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0 0 2px 0;
+}
+
+.top-car-info p {
+    font-size: 12px;
+    color: var(--gray-500);
+    margin: 0;
+}
+
+.top-car-views {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .charts-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .recent-orders {
+        overflow-x: auto;
+    }
+    
+    .recent-orders-table {
+        min-width: 500px;
+    }
+}
+
+/* ===================================
+   New Dashboard Styles
+   =================================== */
+
+/* Quick Stats */
+.quick-stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.quick-stat {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: #fff;
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-100);
+    font-size: 14px;
+    color: var(--gray-600);
+}
+
+.quick-stat i {
+    color: var(--primary);
+}
+
+/* Content Grid */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+@media (max-width: 1200px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Dashboard Table */
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dashboard-table th {
+    padding: 14px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-600);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--gray-100);
+}
+
+.dashboard-table td {
+    padding: 14px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--gray-50);
+}
+
+.dashboard-table tbody tr:hover {
+    background: var(--gray-50);
+}
+
+.dashboard-table .customer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dashboard-table .customer img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+
+.dashboard-table .price {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* Card Empty State */
+.card-empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--gray-400);
+}
+
+.card-empty i {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.card-empty p {
+    font-size: 14px;
+    margin: 0;
+}
+
+/* Reviews List in Dashboard */
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.review-item {
+    padding: 16px;
+    background: var(--gray-50);
+    border-radius: var(--radius);
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.review-header img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.review-info {
+    flex: 1;
+}
+
+.review-info h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0 0 2px 0;
+}
+
+.review-info p {
+    font-size: 12px;
+    color: var(--gray-500);
+    margin: 0;
+}
+
+.review-rating i {
+    font-size: 12px;
+    color: #ffc107;
+}
+
+.review-rating i.empty {
+    color: var(--gray-300);
+}
+
+.review-text {
+    font-size: 13px;
+    color: var(--gray-600);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Status Summary */
+.status-summary {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--gray-100);
+}
+
+.status-summary h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0 0 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-summary h3 i {
+    color: var(--primary);
+}
+
+.status-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.status-card {
+    text-align: center;
+    padding: 24px 16px;
+    border-radius: var(--radius);
+    background: var(--gray-50);
+}
+
+.status-card.pending {
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.status-card.confirmed {
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.status-card.cancelled {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.status-number {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--gray-800);
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.status-card.pending .status-number {
+    color: var(--warning);
+}
+
+.status-card.confirmed .status-number {
+    color: var(--success);
+}
+
+.status-card.cancelled .status-number {
+    color: var(--danger);
+}
+
+.status-label {
+    font-size: 13px;
+    color: var(--gray-600);
+}
+
+/* Stat Detail */
+.stat-detail {
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: 4px;
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .status-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-stats {
+        flex-direction: column;
+    }
+}

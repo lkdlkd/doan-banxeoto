@@ -17,7 +17,7 @@ require_once BASE_PATH . '/config/database.php';
 
 // Get the request URI
 $request = $_SERVER['REQUEST_URI'];
-$basePath = '/autocar';
+$basePath = '';
 
 // Remove base path from request
 $request = str_replace($basePath, '', $request);
@@ -36,11 +36,27 @@ switch ($request) {
         break;
         
     case '/login':
-        require VIEW_PATH . '/auth/login.php';
+        require_once APP_PATH . '/controllers/AuthController.php';
+        $authController = new AuthController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $authController->login();
+        } else {
+            $authController->showLogin();
+        }
         break;
         
     case '/register':
-        require VIEW_PATH . '/auth/register.php';
+        require_once APP_PATH . '/controllers/AuthController.php';
+        $authController = new AuthController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $authController->register();
+        } else {
+            $authController->showRegister();
+        }
+        break;
+    
+    case '/forgot-password':
+        require VIEW_PATH . '/auth/forgot_password.php';
         break;
     
     case '/about':
@@ -50,15 +66,114 @@ switch ($request) {
     case '/contact':
         require VIEW_PATH . '/user/contact.php';
         break;
+    
+    case '/cart':
+        require VIEW_PATH . '/user/cart.php';
+        break;
+    
+    case '/cart/add':
+        require_once APP_PATH . '/controllers/CartController.php';
+        $controller = new CartController();
+        $controller->add();
+        break;
+    
+    case '/cart/remove':
+        require_once APP_PATH . '/controllers/CartController.php';
+        $controller = new CartController();
+        $controller->remove();
+        break;
+    
+    case '/cart/info':
+        require_once APP_PATH . '/controllers/CartController.php';
+        $controller = new CartController();
+        $controller->getInfo();
+        break;
+    
+    case '/compare':
+        require VIEW_PATH . '/user/compare.php';
+        break;
+    
+    case '/compare/add':
+        require_once APP_PATH . '/controllers/CompareController.php';
+        $controller = new CompareController();
+        $controller->add();
+        break;
+    
+    case '/compare/remove':
+        require_once APP_PATH . '/controllers/CompareController.php';
+        $controller = new CompareController();
+        $controller->remove();
+        break;
+    
+    case '/compare/info':
+        require_once APP_PATH . '/controllers/CompareController.php';
+        $controller = new CompareController();
+        $controller->getInfo();
+        break;
+    
+    case '/orders':
+        // Kiểm tra đăng nhập
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        require VIEW_PATH . '/user/orders.php';
+        break;
+    
+    case '/favorites':
+        // Kiểm tra đăng nhập
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        require VIEW_PATH . '/user/favorites.php';
+        break;
+    
+    case '/favorites/remove':
+        // Kiểm tra đăng nhập
+        if (!isset($_SESSION['user_id'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Vui lòng đăng nhập']);
+            exit;
+        }
+        require_once APP_PATH . '/models/FavoriteModel.php';
+        $favoriteModel = new FavoriteModel();
+        $data = json_decode(file_get_contents('php://input'), true);
+        $carId = $data['car_id'] ?? 0;
+        $result = $favoriteModel->removeFavorite($_SESSION['user_id'], $carId);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => $result]);
+        break;
+    
+    case '/favorites/add':
+        // Kiểm tra đăng nhập
+        if (!isset($_SESSION['user_id'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Vui lòng đăng nhập']);
+            exit;
+        }
+        require_once APP_PATH . '/models/FavoriteModel.php';
+        $favoriteModel = new FavoriteModel();
+        $data = json_decode(file_get_contents('php://input'), true);
+        $carId = $data['car_id'] ?? 0;
+        $result = $favoriteModel->addFavorite($_SESSION['user_id'], $carId);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => $result !== false, 'message' => $result ? 'Đã thêm vào yêu thích' : 'Xe đã có trong danh sách yêu thích']);
+        break;
         
     case '/profile':
+        // Kiểm tra đăng nhập
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
         require VIEW_PATH . '/user/profile.php';
         break;
     
     case '/logout':
-        session_destroy();
-        header('Location: /autocar/');
-        exit;
+        require_once APP_PATH . '/controllers/AuthController.php';
+        $authController = new AuthController();
+        $authController->logout();
         break;
     
     // Admin Routes

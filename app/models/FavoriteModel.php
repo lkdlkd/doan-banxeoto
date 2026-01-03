@@ -10,18 +10,27 @@ class FavoriteModel extends BaseModel
     // Lấy danh sách xe yêu thích của user
     public function getFavoritesByUser($userId)
     {
-        $sql = "SELECT f.*, c.name as car_name, c.price, c.main_image, 
+        $sql = "SELECT f.*, c.name as car_name, c.price, c.year, c.fuel, c.transmission, c.mileage, c.status,
+                ci.image_url as image, 
                 b.name as brand_name, cat.name as category_name 
                 FROM {$this->table} f 
                 INNER JOIN cars c ON f.car_id = c.id 
+                LEFT JOIN car_images ci ON c.id = ci.car_id 
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 LEFT JOIN categories cat ON c.category_id = cat.id 
                 WHERE f.user_id = ? 
+                GROUP BY f.id 
                 ORDER BY f.created_at DESC";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$userId]);
         return $stmt->fetchAll();
+    }
+
+    // Alias cho getFavoritesByUser
+    public function getByUserId($userId)
+    {
+        return $this->getFavoritesByUser($userId);
     }
 
     // Kiểm tra xe đã được yêu thích chưa

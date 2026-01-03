@@ -88,6 +88,41 @@ body {
     color: #D4AF37;
 }
 
+/* Compare Button */
+.top-bar .compare-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #e0e0e0;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.top-bar .compare-btn:hover {
+    color: #D4AF37;
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.top-bar .compare-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.top-bar .compare-count {
+    font-size: 11px;
+    color: #888;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.top-bar .compare-count.has-items {
+    color: #D4AF37;
+}
+
+/* Cart Button */
 .top-bar .cart-btn {
     position: relative;
     display: flex;
@@ -150,6 +185,120 @@ body {
 .top-bar .login-btn svg {
     width: 14px;
     height: 14px;
+}
+
+/* User Dropdown */
+.user-dropdown {
+    position: relative;
+}
+
+.user-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+    color: #000;
+    border: none;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+}
+
+.user-btn:hover {
+    background: linear-gradient(135deg, #F4CF57 0%, #D4AF37 100%);
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.5);
+}
+
+.user-btn .user-greeting {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.user-btn .dropdown-arrow {
+    font-size: 10px;
+    transition: transform 0.3s ease;
+}
+
+.user-dropdown:hover .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    min-width: 220px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.user-dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: #333;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: rgba(212, 175, 55, 0.1);
+    color: #B8860B;
+}
+
+.dropdown-item i {
+    width: 18px;
+    text-align: center;
+    color: #D4AF37;
+    font-size: 14px;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #eee;
+    margin: 4px 0;
+}
+
+.dropdown-item.logout {
+    color: #dc3545;
+}
+
+.dropdown-item.logout:hover {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.dropdown-item.logout i {
+    color: #dc3545;
 }
 
 /* Main Header Styles */
@@ -872,6 +1021,16 @@ nav ul li a:hover::after {
     transition: color 0.3s ease;
     position: relative;
     z-index: 1;
+}
+
+.brand-inner small.car-count {
+    display: block;
+    margin-top: 5px;
+    font-size: 11px;
+    color: #999;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-transform: none;
 }
 
 .brand-item:hover .brand-inner span {
@@ -2388,6 +2547,53 @@ nav ul li a:hover::after {
     color: #fff;
 }
 
+/* Quick Actions Container */
+.car-quick-actions {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 2;
+}
+
+.quick-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 50%;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.quick-btn:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: #D4AF37;
+    color: #D4AF37;
+    transform: scale(1.1);
+}
+
+.quick-btn.active,
+.quick-btn.added {
+    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+    border-color: #D4AF37;
+    color: #fff;
+}
+
+.quick-btn.active svg,
+.quick-btn.added svg {
+    fill: #fff;
+}
+
+/* Legacy Favorite Button (for backwards compatibility) */
 .favorite-btn {
     position: absolute;
     top: 15px;
@@ -2554,6 +2760,71 @@ nav ul li a:hover::after {
     letter-spacing: 0.5px;
 }
 
+/* Car Card Actions */
+.car-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.car-actions .btn-view {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.car-actions .btn-view:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+}
+
+.car-actions .btn-add-cart {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 12px 16px;
+    background: transparent;
+    color: #D4AF37;
+    font-size: 13px;
+    font-weight: 600;
+    border: 2px solid #D4AF37;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.car-actions .btn-add-cart:hover {
+    background: #D4AF37;
+    color: #fff;
+}
+
+.car-actions .btn-add-cart svg {
+    transition: transform 0.3s ease;
+}
+
+.car-actions .btn-add-cart:hover svg {
+    transform: scale(1.1);
+}
+
+.car-actions .btn-add-cart.added {
+    background: #27ae60;
+    border-color: #27ae60;
+    color: #fff;
+}
+
 /* No Cars Found */
 .no-cars {
     grid-column: 1 / -1;
@@ -2689,4 +2960,105 @@ nav ul li a:hover::after {
     .banner-content p {
         font-size: 16px;
     }
+}
+
+/* ============================================
+   NOTIFICATION STYLES
+============================================ */
+.notification {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    padding: 16px 50px 16px 20px;
+    background: #333;
+    color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    transform: translateX(120%);
+    transition: transform 0.3s ease;
+    max-width: 400px;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification-success {
+    background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+    border-left: 4px solid #2ecc71;
+}
+
+.notification-error {
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+    border-left: 4px solid #e74c3c;
+}
+
+.notification-warning {
+    background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);
+    border-left: 4px solid #f1c40f;
+}
+
+.notification-info {
+    background: linear-gradient(135deg, #2980b9 0%, #1f618d 100%);
+    border-left: 4px solid #3498db;
+}
+
+.notification-message {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.notification-close {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.3s ease;
+}
+
+.notification-close:hover {
+    color: #fff;
+}
+
+/* Cart Count Badge */
+.cart-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: #666;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 9px;
+    transition: all 0.3s ease;
+}
+
+.cart-count.has-items {
+    background: #D4AF37;
+    color: #000;
+}
+
+/* Add to Cart Button States */
+.btn-add-cart {
+    transition: all 0.3s ease;
+}
+
+.btn-add-cart.added {
+    background: #27ae60 !important;
+    cursor: default;
+}
+
+.btn-add-cart:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }

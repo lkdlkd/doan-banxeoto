@@ -72,7 +72,7 @@ include __DIR__ . '/../layouts/header.php';
             <h1>Khám Phá <span class="highlight">Bộ Sưu Tập Xe</span></h1>
             <p>Tìm kiếm chiếc xe hoàn hảo dành cho bạn</p>
             <div class="breadcrumb">
-                <a href="/autocar/">Trang Chủ</a>
+                <a href="/">Trang Chủ</a>
                 <span class="divider">›</span>
                 <span class="current">Danh Sách Xe</span>
             </div>
@@ -276,13 +276,23 @@ include __DIR__ . '/../layouts/header.php';
                                         <span class="badge <?= $badgeClass ?>"><?= $badge ?></span>
                                     </div>
                                     <?php endif; ?>
-                                    <button class="favorite-btn" data-car-id="<?= $car['id'] ?>">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                        </svg>
-                                    </button>
+                                    <div class="car-quick-actions">
+                                        <button class="quick-btn favorite-btn" data-car-id="<?= $car['id'] ?>" title="Yêu thích">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="quick-btn compare-btn" onclick="addToCompare(<?= $car['id'] ?>, this)" title="So sánh">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polyline points="17 1 21 5 17 9"></polyline>
+                                                <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                                                <polyline points="7 23 3 19 7 15"></polyline>
+                                                <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
                                     <div class="car-overlay">
-                                        <a href="/autocar/car/<?= $car['id'] ?>" class="view-details">Xem Chi Tiết</a>
+                                        <a href="/car/<?= $car['id'] ?>" class="view-details">Xem Chi Tiết</a>
                                     </div>
                                 </div>
                                 <div class="car-info">
@@ -323,6 +333,17 @@ include __DIR__ . '/../layouts/header.php';
                                         <div class="price-usd">
                                             <span class="price-secondary"><?= $priceUSD ?></span>
                                         </div>
+                                    </div>
+                                    <div class="car-actions">
+                                        <a href="/car/<?= $car['id'] ?>" class="btn-view">Xem Chi Tiết</a>
+                                        <button class="btn-add-cart" onclick="addToCart(<?= $car['id'] ?>, this)">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="9" cy="21" r="1"></circle>
+                                                <circle cx="20" cy="21" r="1"></circle>
+                                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                            </svg>
+                                            Thêm
+                                        </button>
                                     </div>
                                 </div>
                             </div>

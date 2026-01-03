@@ -10,10 +10,13 @@ class CarModel extends BaseModel
     // Lấy tất cả xe với thông tin brand và category
     public function getAllWithDetails()
     {
-        $sql = "SELECT c.*, b.name as brand_name, cat.name as category_name 
+        $sql = "SELECT c.*, b.name as brand_name, cat.name as category_name,
+                ci.image_url 
                 FROM {$this->table} c 
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 LEFT JOIN categories cat ON c.category_id = cat.id 
+                LEFT JOIN car_images ci ON c.id = ci.car_id
+                GROUP BY c.id
                 ORDER BY c.created_at DESC";
         
         $stmt = $this->db->prepare($sql);
@@ -186,5 +189,23 @@ class CarModel extends BaseModel
     {
         $stmt = $this->db->prepare("DELETE FROM car_images WHERE id = ?");
         return $stmt->execute([$imageId]);
+    }
+
+    // Đếm số xe theo brand
+    public function countByBrand($brandId)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM {$this->table} WHERE brand_id = ?");
+        $stmt->execute([$brandId]);
+        $result = $stmt->fetch();
+        return $result['total'];
+    }
+
+    // Đếm số xe theo category
+    public function countByCategory($categoryId)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM {$this->table} WHERE category_id = ?");
+        $stmt->execute([$categoryId]);
+        $result = $stmt->fetch();
+        return $result['total'];
     }
 }

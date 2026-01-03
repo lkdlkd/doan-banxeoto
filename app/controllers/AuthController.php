@@ -32,14 +32,16 @@ class AuthController
     public function login()
     {
         $errors = [];
+        $email = '';
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = trim($_POST['username'] ?? '');
+            $email = trim($_POST['email'] ?? '');
             $password = $_POST['password'] ?? '';
+            $remember = isset($_POST['remember']);
             
             // Validate
-            if (empty($username)) {
-                $errors[] = 'Vui lòng nhập tên đăng nhập';
+            if (empty($email)) {
+                $errors[] = 'Vui lòng nhập email';
             }
             
             if (empty($password)) {
@@ -48,7 +50,8 @@ class AuthController
             
             // Nếu không có lỗi, thực hiện xác thực
             if (empty($errors)) {
-                $user = $this->userModel->authenticate($username, $password);
+                // Cho phép đăng nhập bằng email hoặc username
+                $user = $this->userModel->authenticateByEmail($email, $password);
                 
                 if ($user) {
                     // Lưu thông tin vào session
@@ -57,6 +60,16 @@ class AuthController
                     $_SESSION['full_name'] = $user['full_name'] ?? $user['username'];
                     $_SESSION['role'] = $user['role'];
                     $_SESSION['email'] = $user['email'];
+                    $_SESSION['avatar'] = $user['avatar'] ?? '';
+                    
+                    // Xử lý Remember Me
+                    if ($remember) {
+                        $token = bin2hex(random_bytes(32));
+                        setcookie('remember_token', $token, time() + (30 * 24 * 60 * 60), '/');
+                        $this->userModel->updateUser($user['id'], ['remember_token' => $token]);
+                    }
+                    
+                    $_SESSION['success'] = 'Chào mừng ' . ($user['full_name'] ?? $user['username']) . '!';
                     
                     // Chuyển hướng theo role
                     if ($user['role'] === 'admin') {
@@ -65,7 +78,7 @@ class AuthController
                         $this->redirect('/');
                     }
                 } else {
-                    $errors[] = 'Tên đăng nhập hoặc mật khẩu không đúng';
+                    $errors[] = 'Email hoặc mật khẩu không đúng';
                 }
             }
         }
@@ -89,60 +102,80 @@ class AuthController
     public function register()
     {
         $errors = [];
+        $formData = [];
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = trim($_POST['username'] ?? '');
-            $email = trim($_POST['email'] ?? '');
+            // Lấy dữ liệu từ form
+            $formData['fullname'] = trim($_POST['fullname'] ?? '');
+            $formData['email'] = trim($_POST['email'] ?? '');
+            $formData['phone'] = trim($_POST['phone'] ?? '');
             $password = $_POST['password'] ?? '';
             $confirm_password = $_POST['confirm_password'] ?? '';
-            $full_name = trim($_POST['full_name'] ?? '');
-            $phone = trim($_POST['phone'] ?? '');
+            $terms = isset($_POST['terms']);
             
-            // Validate
-            if (empty($username)) {
-                $errors[] = 'Vui lòng nhập tên đăng nhập';
-            } elseif (strlen($username) < 3) {
-                $errors[] = 'Tên đăng nhập phải có ít nhất 3 ký tự';
-            } elseif ($this->userModel->usernameExists($username)) {
-                $errors[] = 'Tên đăng nhập đã tồn tại';
+            // Validate họ tên
+            if (empty($formData['fullname'])) {
+                $errors[] = 'Vui lòng nhập họ và tên';
+            } elseif (strlen($formData['fullname']) < 2) {
+                $errors[] = 'Họ và tên phải có ít nhất 2 ký tự';
             }
             
-            if (empty($email)) {
+            // Validate email
+            if (empty($formData['email'])) {
                 $errors[] = 'Vui lòng nhập email';
-            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            } elseif (!filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
                 $errors[] = 'Email không hợp lệ';
-            } elseif ($this->userModel->emailExists($email)) {
-                $errors[] = 'Email đã được sử dụng';
+            } elseif ($this->userModel->emailExists($formData['email'])) {
+                $errors[] = 'Email này đã được sử dụng';
             }
             
+            // Validate số điện thoại
+            if (empty($formData['phone'])) {
+                $errors[] = 'Vui lòng nhập số điện thoại';
+            } elseif (!preg_match('/^[0-9]{10,11}$/', preg_replace('/\s+/', '', $formData['phone']))) {
+                $errors[] = 'Số điện thoại không hợp lệ';
+            }
+            
+            // Validate mật khẩu
             if (empty($password)) {
                 $errors[] = 'Vui lòng nhập mật khẩu';
-            } elseif (strlen($password) < 6) {
-                $errors[] = 'Mật khẩu phải có ít nhất 6 ký tự';
+            } elseif (strlen($password) < 8) {
+                $errors[] = 'Mật khẩu phải có ít nhất 8 ký tự';
             }
             
+            // Validate xác nhận mật khẩu
             if (empty($confirm_password)) {
                 $errors[] = 'Vui lòng xác nhận mật khẩu';
             } elseif ($password !== $confirm_password) {
                 $errors[] = 'Mật khẩu xác nhận không khớp';
             }
             
-            // full_name là optional nếu chưa có cột trong database
+            // Validate điều khoản
+            if (!$terms) {
+                $errors[] = 'Vui lòng đồng ý với điều khoản dịch vụ';
+            }
             
             // Nếu không có lỗi, tạo tài khoản
             if (empty($errors)) {
+                // Tạo username từ email
+                $username = explode('@', $formData['email'])[0];
+                // Đảm bảo username duy nhất
+                $baseUsername = $username;
+                $counter = 1;
+                while ($this->userModel->usernameExists($username)) {
+                    $username = $baseUsername . $counter;
+                    $counter++;
+                }
+                
                 $data = [
                     'username' => $username,
-                    'email' => $email,
+                    'email' => $formData['email'],
                     'password' => $password,
-                    'phone' => $phone,
-                    'role' => 'user' // Mặc định là user
+                    'full_name' => $formData['fullname'],
+                    'phone' => preg_replace('/\s+/', '', $formData['phone']),
+                    'role' => 'user',
+                    'created_at' => date('Y-m-d H:i:s')
                 ];
-                
-                // Chỉ thêm full_name nếu có giá trị
-                if (!empty($full_name)) {
-                    $data['full_name'] = $full_name;
-                }
                 
                 $userId = $this->userModel->createUser($data);
                 
@@ -154,11 +187,12 @@ class AuthController
                     $_SESSION['full_name'] = $user['full_name'] ?? $user['username'];
                     $_SESSION['role'] = $user['role'];
                     $_SESSION['email'] = $user['email'];
+                    $_SESSION['avatar'] = $user['avatar'] ?? '';
                     
-                    $_SESSION['success'] = 'Đăng ký thành công!';
+                    $_SESSION['success'] = 'Đăng ký thành công! Chào mừng bạn đến với AutoCar!';
                     $this->redirect('/');
                 } else {
-                    $errors[] = 'Có lỗi xảy ra khi tạo tài khoản';
+                    $errors[] = 'Có lỗi xảy ra khi tạo tài khoản. Vui lòng thử lại.';
                 }
             }
         }

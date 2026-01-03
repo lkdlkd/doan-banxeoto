@@ -1,0 +1,176 @@
+/* ===================================
+   Admin - Brands Module Styles
+   =================================== */
+
+/* Brands Grid */
+.brands-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+/* Brand Card */
+.brand-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 30px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--gray-100);
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.brand-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+}
+
+.brand-logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gray-50);
+    border-radius: 50%;
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+
+.brand-card:hover .brand-logo {
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.brand-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0 0 8px 0;
+}
+
+.brand-desc {
+    font-size: 13px;
+    color: var(--gray-500);
+    margin: 0 0 20px 0;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.brand-country {
+    font-size: 14px;
+    color: var(--gray-500);
+    margin: 0 0 20px 0;
+}
+
+.brand-stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 16px;
+    background: var(--gray-50);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+}
+
+.brand-stat {
+    text-align: center;
+}
+
+.brand-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary);
+    display: block;
+}
+
+.brand-stat-label {
+    font-size: 12px;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.brand-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.brand-action {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--primary);
+}
+
+.brand-action:hover {
+    background: var(--primary);
+    color: #fff;
+}
+
+.brand-action.delete {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+}
+
+.brand-action.delete:hover {
+    background: var(--danger);
+    color: #fff;
+}
+
+/* Add Brand Form */
+.brand-form-grid {
+    display: grid;
+    gap: 20px;
+}
+
+.brand-logo-upload {
+    text-align: center;
+    padding: 30px;
+    border: 2px dashed var(--gray-200);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.brand-logo-upload:hover {
+    border-color: var(--primary);
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.brand-logo-upload i {
+    font-size: 48px;
+    color: var(--gray-300);
+    margin-bottom: 16px;
+}
+
+.brand-logo-upload p {
+    font-size: 14px;
+    color: var(--gray-500);
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .brands-grid {
+        grid-template-columns: 1fr;
+    }
+}

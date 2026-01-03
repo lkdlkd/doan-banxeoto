@@ -15,7 +15,7 @@ $reviewModel = new ReviewModel();
 $car = $carModel->getById($carId);
 
 if (!$car) {
-    header('Location: /autocar/cars');
+    header('Location: /cars');
     exit;
 }
 
@@ -150,9 +150,9 @@ include __DIR__ . '/../layouts/header.php';
 <section class="page-banner">
     <div class="banner-content">
         <div class="breadcrumb">
-            <a href="/autocar/">Trang Chủ</a>
+            <a href="/">Trang Chủ</a>
             <span class="divider">›</span>
-            <a href="/autocar/cars">Danh Sách Xe</a>
+            <a href="/cars">Danh Sách Xe</a>
             <span class="divider">›</span>
             <span class="current"><?= htmlspecialchars($car['name']) ?></span>
         </div>
@@ -230,9 +230,13 @@ include __DIR__ . '/../layouts/header.php';
                 </div>
 
                 <div class="action-buttons">
-                    <a href="/autocar/order?car_id=<?= $car['id'] ?>" class="btn btn-primary">
+                    <button class="btn btn-primary btn-add-cart" onclick="addToCart(<?= $car['id'] ?>, this)">
                         <i class="fas fa-shopping-cart"></i>
-                        Đặt Mua Ngay
+                        Thêm Vào Giỏ Hàng
+                    </button>
+                    <a href="/cart" class="btn btn-outline">
+                        <i class="fas fa-eye"></i>
+                        Xem Giỏ Hàng
                     </a>
                     <button class="btn btn-outline" onclick="addToFavorite(<?= $car['id'] ?>)">
                         <i class="far fa-heart"></i>
@@ -242,7 +246,7 @@ include __DIR__ . '/../layouts/header.php';
                 <div class="contact-seller">
                     <h4>Cần tư vấn thêm?</h4>
                     <p>Liên hệ với chúng tôi để được hỗ trợ chi tiết về chiếc xe này</p>
-                    <a href="/autocar/contact">
+                    <a href="/contact">
                         <i class="fas fa-phone"></i>
                         0368 920 249
                     </a>
@@ -345,7 +349,7 @@ include __DIR__ . '/../layouts/header.php';
             <h2 class="section-title">Xe Tương Tự</h2>
             <div class="cars-grid">
                 <?php foreach ($similarCars as $similarCar): ?>
-                <a href="/autocar/car/<?= $similarCar['id'] ?>" class="car-card">
+                <a href="/car/<?= $similarCar['id'] ?>" class="car-card">
                     <div class="car-card-image">
                         <img src="<?= htmlspecialchars($similarCar['image_url'] ?? 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400') ?>" alt="<?= htmlspecialchars($similarCar['name']) ?>">
                     </div>
@@ -378,7 +382,7 @@ include __DIR__ . '/../layouts/header.php';
 
     function addToFavorite(carId) {
         <?php if (isset($_SESSION['user'])): ?>
-            fetch('/autocar/favorite/add', {
+            fetch('/favorite/add', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({car_id: carId})
@@ -393,7 +397,7 @@ include __DIR__ . '/../layouts/header.php';
             });
         <?php else: ?>
             alert('Vui lòng đăng nhập để thêm vào yêu thích!');
-            window.location.href = '/autocar/login';
+            window.location.href = '/login';
         <?php endif; ?>
     }
 </script>

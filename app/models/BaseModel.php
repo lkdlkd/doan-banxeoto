@@ -22,6 +22,12 @@ class BaseModel
         return $stmt->fetchAll();
     }
 
+    // Alias cho all() - để tương thích
+    public function getAll()
+    {
+        return $this->all();
+    }
+
     // Tìm bản ghi theo ID
     public function find($id)
     {

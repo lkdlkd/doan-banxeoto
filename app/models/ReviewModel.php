@@ -24,12 +24,14 @@ class ReviewModel extends BaseModel
     // Lấy reviews của một user
     public function getReviewsByUser($userId)
     {
-        $sql = "SELECT r.*, c.name as car_name, c.main_image as car_image, 
+        $sql = "SELECT r.*, c.name as car_name, ci.image_url as car_image, 
                 b.name as brand_name 
                 FROM {$this->table} r 
                 LEFT JOIN cars c ON r.car_id = c.id 
+                LEFT JOIN car_images ci ON c.id = ci.car_id 
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 WHERE r.user_id = ? 
+                GROUP BY r.id 
                 ORDER BY r.created_at DESC";
         
         $stmt = $this->db->prepare($sql);
@@ -40,12 +42,15 @@ class ReviewModel extends BaseModel
     // Lấy tất cả reviews với thông tin chi tiết
     public function getAllWithDetails()
     {
-        $sql = "SELECT r.*, c.name as car_name, b.name as brand_name, 
-                u.full_name as user_name 
+        $sql = "SELECT r.*, c.name as car_name, ci.image_url as car_image,
+                b.name as brand_name, 
+                u.full_name as user_name, u.email as user_email 
                 FROM {$this->table} r 
                 LEFT JOIN cars c ON r.car_id = c.id 
+                LEFT JOIN car_images ci ON c.id = ci.car_id 
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 LEFT JOIN users u ON r.user_id = u.id 
+                GROUP BY r.id 
                 ORDER BY r.created_at DESC";
         
         $stmt = $this->db->prepare($sql);

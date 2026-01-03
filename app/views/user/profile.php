@@ -6,6 +6,19 @@ if (!isset($_SESSION['user'])) {
 }
 
 $user = $_SESSION['user'];
+
+// Load models để lấy dữ liệu
+require_once __DIR__ . '/../../models/OrderModel.php';
+require_once __DIR__ . '/../../models/FavoriteModel.php';
+
+$orderModel = new OrderModel();
+$favoriteModel = new FavoriteModel();
+
+// Lấy đơn hàng của user
+$orders = $orderModel->getOrdersByUser($user['id']);
+
+// Lấy xe yêu thích của user
+$favorites = $favoriteModel->getFavoritesByUser($user['id']);
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -820,17 +833,17 @@ $user = $_SESSION['user'];
 <body>
     <!-- Header Navigation -->
     <nav class="header-nav">
-        <a href="/autocar/" class="logo">
+        <a href="/" class="logo">
             <div class="logo-icon">
                 <i class="fas fa-car"></i>
             </div>
             <span class="logo-text">Auto<span>Car</span></span>
         </a>
         <div class="nav-links">
-            <a href="/autocar/">Trang chủ</a>
-            <a href="/autocar/cars">Xe</a>
-            <a href="/autocar/about">Giới thiệu</a>
-            <a href="/autocar/contact">Liên hệ</a>
+            <a href="/">Trang chủ</a>
+            <a href="/cars">Xe</a>
+            <a href="/about">Giới thiệu</a>
+            <a href="/contact">Liên hệ</a>
             <a href="/logout" class="btn-logout">
                 <i class="fas fa-sign-out-alt"></i> Đăng xuất
             </a>
@@ -1018,7 +1031,7 @@ $user = $_SESSION['user'];
                         <i class="fas fa-shopping-cart"></i>
                         <h3>Chưa có đơn hàng</h3>
                         <p>Bạn chưa thực hiện đơn hàng nào. Hãy khám phá các mẫu xe sang trọng!</p>
-                        <a href="/autocar/cars" class="btn-primary">
+                        <a href="/cars" class="btn-primary">
                             <i class="fas fa-car"></i> Xem xe ngay
                         </a>
                     </div>
@@ -1058,7 +1071,7 @@ $user = $_SESSION['user'];
                         <i class="fas fa-heart"></i>
                         <h3>Chưa có xe yêu thích</h3>
                         <p>Hãy thêm các mẫu xe bạn yêu thích để theo dõi dễ dàng hơn!</p>
-                        <a href="/autocar/cars" class="btn-primary">
+                        <a href="/cars" class="btn-primary">
                             <i class="fas fa-search"></i> Tìm xe
                         </a>
                     </div>

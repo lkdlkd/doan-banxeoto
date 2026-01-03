@@ -489,10 +489,14 @@
             </div>
 
             <div class="register-form-wrapper">
-                <?php if (isset($error)): ?>
+                <?php if (!empty($errors)): ?>
                 <div class="error-message">
                     <i class="fas fa-exclamation-circle"></i>
-                    <?php echo htmlspecialchars($error); ?>
+                    <div>
+                        <?php foreach ($errors as $error): ?>
+                            <p><?= htmlspecialchars($error) ?></p>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
                 <?php endif; ?>
 
@@ -501,14 +505,14 @@
                         <div class="form-group">
                             <label for="fullname">Họ và tên</label>
                             <div class="input-wrapper">
-                                <input type="text" id="fullname" name="fullname" placeholder="Nguyễn Văn A" required>
+                                <input type="text" id="fullname" name="fullname" placeholder="Nguyễn Văn A" value="<?= htmlspecialchars($formData['fullname'] ?? '') ?>" required>
                                 <i class="fas fa-user input-icon"></i>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="phone">Số điện thoại</label>
                             <div class="input-wrapper">
-                                <input type="tel" id="phone" name="phone" placeholder="0901 234 567" required>
+                                <input type="tel" id="phone" name="phone" placeholder="0901 234 567" value="<?= htmlspecialchars($formData['phone'] ?? '') ?>" required>
                                 <i class="fas fa-phone input-icon"></i>
                             </div>
                         </div>
@@ -517,7 +521,7 @@
                     <div class="form-group">
                         <label for="email">Email</label>
                         <div class="input-wrapper">
-                            <input type="email" id="email" name="email" placeholder="email@example.com" required>
+                            <input type="email" id="email" name="email" placeholder="email@example.com" value="<?= htmlspecialchars($formData['email'] ?? '') ?>" required>
                             <i class="fas fa-envelope input-icon"></i>
                         </div>
                     </div>

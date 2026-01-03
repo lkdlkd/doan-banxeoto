@@ -27,7 +27,7 @@
                 <div class="footer-info-side">
                     <div class="footer-col footer-brand">
                         <div class="footer-logo">
-                            <img src="/autocar/assets/images/logo.png" alt="AutoCar Logo" style="height: 70px; width: auto;">
+                            <img src="/assets/images/logo.png" alt="AutoCar Logo" style="height: 70px; width: auto;">
                             <div class="logo-text">
                                 <span class="brand-name">AUTOCAR</span>
                                 <span class="brand-tagline">Luxury & Performance</span>
@@ -59,11 +59,11 @@
                                 Quick Links
                             </h3>
                             <ul class="footer-links">
-                                <li><a href="/autocar/"><span class="link-arrow">→</span> Home</a></li>
-                                <li><a href="/autocar/about"><span class="link-arrow">→</span> About Us</a></li>
-                                <li><a href="/autocar/cars"><span class="link-arrow">→</span> Our Cars</a></li>
-                                <li><a href="/autocar/services"><span class="link-arrow">→</span> Services</a></li>
-                                <li><a href="/autocar/contact"><span class="link-arrow">→</span> Contact</a></li>
+                                <li><a href="/"><span class="link-arrow">→</span> Home</a></li>
+                                <li><a href="/about"><span class="link-arrow">→</span> About Us</a></li>
+                                <li><a href="/cars"><span class="link-arrow">→</span> Our Cars</a></li>
+                                <li><a href="/services"><span class="link-arrow">→</span> Services</a></li>
+                                <li><a href="/contact"><span class="link-arrow">→</span> Contact</a></li>
                             </ul>
                         </div>
                         <div class="footer-col">
@@ -164,6 +164,6 @@
         </div>
     </footer>
 
-    <script src="/autocar/assets/js/main.js"></script>
+    <script src="/assets/js/main.js"></script>
 </body>
 </html>

@@ -11,11 +11,14 @@ class OrderModel extends BaseModel
     public function getAllWithDetails()
     {
         $sql = "SELECT o.*, c.name as car_name, c.price as car_price, 
-                b.name as brand_name, u.full_name as user_name 
+                ci.image_url as car_image, b.name as brand_name, 
+                u.full_name as user_name, u.email as user_email 
                 FROM {$this->table} o 
                 LEFT JOIN cars c ON o.car_id = c.id 
+                LEFT JOIN car_images ci ON c.id = ci.car_id 
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 LEFT JOIN users u ON o.user_id = u.id 
+                GROUP BY o.id 
                 ORDER BY o.created_at DESC";
         
         $stmt = $this->db->prepare($sql);
@@ -27,10 +30,11 @@ class OrderModel extends BaseModel
     public function getOrderWithDetails($id)
     {
         $sql = "SELECT o.*, c.name as car_name, c.price as car_price, 
-                c.main_image as car_image, b.name as brand_name, 
+                ci.image_url as car_image, b.name as brand_name, 
                 u.full_name as user_name, u.email as user_email 
                 FROM {$this->table} o 
                 LEFT JOIN cars c ON o.car_id = c.id 
+                LEFT JOIN car_images ci ON c.id = ci.car_id 
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 LEFT JOIN users u ON o.user_id = u.id 
                 WHERE o.id = ?";
@@ -44,16 +48,24 @@ class OrderModel extends BaseModel
     public function getOrdersByUser($userId)
     {
         $sql = "SELECT o.*, c.name as car_name, c.price as car_price, 
-                c.main_image as car_image, b.name as brand_name 
+                ci.image_url as car_image, b.name as brand_name 
                 FROM {$this->table} o 
                 LEFT JOIN cars c ON o.car_id = c.id 
+                LEFT JOIN car_images ci ON c.id = ci.car_id 
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 WHERE o.user_id = ? 
+                GROUP BY o.id 
                 ORDER BY o.created_at DESC";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$userId]);
         return $stmt->fetchAll();
+    }
+
+    // Alias cho getOrdersByUser
+    public function getByUserId($userId)
+    {
+        return $this->getOrdersByUser($userId);
     }
 
     // Lấy đơn hàng theo trạng thái

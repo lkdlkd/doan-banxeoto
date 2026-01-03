@@ -1,3 +1,108 @@
+<?php 
+if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.php'; }
+
+require_once __DIR__ . '/../../../models/CategoryModel.php';
+require_once __DIR__ . '/../../../models/CarModel.php';
+
+$categoryModel = new CategoryModel();
+$carModel = new CarModel();
+
+$categories = $categoryModel->getAll();
+$totalCategories = count($categories);
+
+// Đếm số xe theo category
+foreach ($categories as &$cat) {
+    $cat['car_count'] = $carModel->countByCategory($cat['id']);
+}
+
+// Icons for categories
+$icons = [
+    'Sedan' => 'fa-car-side',
+    'SUV' => 'fa-truck-monster', 
+    'Coupe' => 'fa-car-alt',
+    'Convertible' => 'fa-car',
+    'Sports Car' => 'fa-flag-checkered',
+    'Supercar' => 'fa-rocket',
+    'Crossover' => 'fa-car-rear'
+];
+
+// Xử lý form
+$message = '';
+$messageType = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+    
+    if ($action === 'add' || $action === 'edit') {
+        $name = trim($_POST['name'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $icon = trim($_POST['icon'] ?? 'fa-car');
+        $image = '';
+        
+        // Xử lý image - ưu tiên file upload
+        if (!empty($_FILES['image_file']['name'])) {
+            $uploadDir = BASE_PATH . '/assets/images/categories/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            
+            $fileName = time() . '_' . basename($_FILES['image_file']['name']);
+            $targetFile = $uploadDir . $fileName;
+            
+            if (move_uploaded_file($_FILES['image_file']['tmp_name'], $targetFile)) {
+                $image = BASE_URL . '/assets/images/categories/' . $fileName;
+            }
+        } elseif (!empty($_POST['image_url'])) {
+            $image = trim($_POST['image_url']);
+        }
+        
+        if (empty($name)) {
+            $message = 'Vui lòng nhập tên danh mục';
+            $messageType = 'error';
+        } else {
+            if ($action === 'add') {
+                $categoryModel->create([
+                    'name' => $name,
+                    'description' => $description,
+                    'icon' => $icon,
+                    'image' => $image
+                ]);
+                $message = 'Thêm danh mục thành công!';
+                $messageType = 'success';
+            } else {
+                $id = intval($_POST['id']);
+                $data = [
+                    'name' => $name,
+                    'description' => $description,
+                    'icon' => $icon
+                ];
+                if (!empty($image)) {
+                    $data['image'] = $image;
+                }
+                $categoryModel->update($id, $data);
+                $message = 'Cập nhật danh mục thành công!';
+                $messageType = 'success';
+            }
+            
+            // Refresh data
+            $categories = $categoryModel->getAll();
+            $totalCategories = count($categories);
+            foreach ($categories as &$cat) {
+                $cat['car_count'] = $carModel->countByCategory($cat['id']);
+            }
+        }
+    } elseif ($action === 'delete') {
+        $id = intval($_POST['id']);
+        $categoryModel->delete($id);
+        $message = 'Xóa danh mục thành công!';
+        $messageType = 'success';
+        
+        // Refresh data
+        $categories = $categoryModel->getAll();
+        $totalCategories = count($categories);
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -6,147 +111,12 @@
     <title>Quản lý danh mục - AutoCar Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Montserrat', sans-serif; background: #f5f2ed; min-height: 100vh; }
-
-        .admin-sidebar {
-            position: fixed; left: 0; top: 0; width: 280px; height: 100vh;
-            background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
-            padding: 25px 0; z-index: 100; overflow-y: auto;
-        }
-        .sidebar-logo {
-            display: flex; align-items: center; gap: 12px; padding: 0 25px 30px;
-            border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 25px; text-decoration: none;
-        }
-        .sidebar-logo img { height: 50px; }
-        .sidebar-logo-text { display: flex; flex-direction: column; }
-        .sidebar-logo-text .brand { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #D4AF37; }
-        .sidebar-logo-text .role { font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 2px; }
-        .sidebar-menu { list-style: none; padding: 0 15px; }
-        .sidebar-menu-title { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1.5px; padding: 15px 15px 10px; margin-top: 10px; }
-        .sidebar-menu li a {
-            display: flex; align-items: center; gap: 12px; padding: 14px 20px;
-            color: rgba(255,255,255,0.7); text-decoration: none; border-radius: 10px;
-            transition: all 0.3s ease; font-size: 14px;
-        }
-        .sidebar-menu li a:hover { background: rgba(212,175,55,0.1); color: #D4AF37; }
-        .sidebar-menu li a.active { background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%); color: #fff; }
-        .sidebar-menu li a i { width: 20px; text-align: center; font-size: 16px; }
-        .sidebar-menu li a .badge { margin-left: auto; background: #e74c3c; color: #fff; font-size: 10px; padding: 3px 8px; border-radius: 10px; }
-
-        .admin-main { margin-left: 280px; min-height: 100vh; }
-        .admin-header {
-            background: #fff; padding: 20px 30px; display: flex; justify-content: space-between;
-            align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 50;
-        }
-        .admin-header h1 { font-family: 'Playfair Display', serif; font-size: 24px; color: #1a1a1a; }
-        .header-profile img { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; }
-
-        .admin-content { padding: 30px; }
-        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .page-header h2 { font-family: 'Playfair Display', serif; font-size: 28px; color: #1a1a1a; }
-        .btn-primary {
-            display: inline-flex; align-items: center; gap: 8px; padding: 12px 25px;
-            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%); color: #fff;
-            text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 14px;
-            transition: all 0.3s ease; border: none; cursor: pointer;
-        }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212,175,55,0.4); }
-
-        /* Categories Grid */
-        .categories-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px;
-        }
-        .category-card {
-            background: #fff; border-radius: 15px; overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05); transition: all 0.3s ease;
-        }
-        .category-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .category-image {
-            height: 150px; background-size: cover; background-position: center;
-            position: relative;
-        }
-        .category-image::before {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-        }
-        .category-count {
-            position: absolute; bottom: 15px; left: 15px; color: #fff;
-            font-size: 13px; display: flex; align-items: center; gap: 5px;
-        }
-        .category-content { padding: 20px; }
-        .category-icon {
-            width: 50px; height: 50px; border-radius: 12px; background: rgba(212,175,55,0.1);
-            display: flex; align-items: center; justify-content: center;
-            color: #D4AF37; font-size: 22px; margin-bottom: 15px;
-        }
-        .category-name { font-family: 'Playfair Display', serif; font-size: 20px; color: #1a1a1a; margin-bottom: 8px; }
-        .category-desc { font-size: 13px; color: #999; line-height: 1.6; margin-bottom: 15px; }
-        .category-actions { display: flex; gap: 10px; }
-        .category-action {
-            flex: 1; padding: 10px; border: 2px solid #eee; border-radius: 8px;
-            background: #fff; cursor: pointer; display: flex; align-items: center;
-            justify-content: center; gap: 8px; transition: all 0.3s ease; font-size: 13px;
-        }
-        .category-action:hover { border-color: #D4AF37; color: #D4AF37; }
-        .category-action.delete:hover { border-color: #e74c3c; color: #e74c3c; }
-
-        /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
-        .modal.active { display: flex; }
-        .modal-content { background: #fff; border-radius: 15px; padding: 30px; width: 500px; max-width: 90%; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .modal-header h3 { font-family: 'Playfair Display', serif; font-size: 22px; }
-        .modal-close { background: none; border: none; font-size: 28px; cursor: pointer; color: #999; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 600; color: #333; margin-bottom: 8px; }
-        .form-control {
-            width: 100%; padding: 12px 15px; border: 2px solid #eee; border-radius: 10px;
-            font-size: 14px; font-family: 'Montserrat', sans-serif; transition: all 0.3s ease;
-        }
-        .form-control:focus { outline: none; border-color: #D4AF37; }
-        .icon-selector { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
-        .icon-option {
-            width: 45px; height: 45px; border: 2px solid #eee; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            transition: all 0.3s ease; font-size: 18px; color: #666;
-        }
-        .icon-option:hover, .icon-option.selected { border-color: #D4AF37; color: #D4AF37; background: rgba(212,175,55,0.05); }
-        .icon-option input { display: none; }
-        .modal-footer { display: flex; gap: 15px; justify-content: flex-end; margin-top: 25px; }
-        .btn { padding: 12px 25px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.3s ease; }
-        .btn-secondary { background: #f5f5f5; color: #333; }
-
-        @media (max-width: 768px) { .admin-sidebar { transform: translateX(-100%); } .admin-main { margin-left: 0; } }
-    </style>
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-common.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-categories.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-modal.css">
 </head>
 <body>
-    <aside class="admin-sidebar">
-        <a href="/autocar/admin" class="sidebar-logo">
-            <img src="/autocar/assets/images/logo.png" alt="Logo">
-            <div class="sidebar-logo-text">
-                <span class="brand">AUTOCAR</span>
-                <span class="role">Admin Panel</span>
-            </div>
-        </a>
-        <ul class="sidebar-menu">
-            <li><a href="/autocar/admin"><i class="fas fa-home"></i> Dashboard</a></li>
-            <li class="sidebar-menu-title">Quản lý</li>
-            <li><a href="/autocar/admin/cars"><i class="fas fa-car"></i> Quản lý xe</a></li>
-            <li><a href="/autocar/admin/brands"><i class="fas fa-copyright"></i> Thương hiệu</a></li>
-            <li><a href="/autocar/admin/categories" class="active"><i class="fas fa-tags"></i> Danh mục</a></li>
-            <li class="sidebar-menu-title">Kinh doanh</li>
-            <li><a href="/autocar/admin/orders"><i class="fas fa-shopping-cart"></i> Đơn hàng <span class="badge">5</span></a></li>
-            <li><a href="/autocar/admin/users"><i class="fas fa-users"></i> Khách hàng</a></li>
-            <li><a href="/autocar/admin/reviews"><i class="fas fa-star"></i> Đánh giá</a></li>
-            <li class="sidebar-menu-title">Hệ thống</li>
-            <li><a href="/autocar/admin/contacts"><i class="fas fa-envelope"></i> Liên hệ <span class="badge">3</span></a></li>
-            <li><a href="/autocar/admin/settings"><i class="fas fa-cog"></i> Cài đặt</a></li>
-            <li><a href="/autocar/"><i class="fas fa-globe"></i> Xem website</a></li>
-            <li><a href="/autocar/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
-        </ul>
-    </aside>
+    <?php $activePage = 'categories'; include __DIR__ . '/../layouts/sidebar.php'; ?>
 
     <main class="admin-main">
         <header class="admin-header">
@@ -158,174 +128,355 @@
 
         <div class="admin-content">
             <div class="page-header">
-                <h2>Danh sách danh mục (7)</h2>
-                <button class="btn-primary" onclick="openModal()">
-                    <i class="fas fa-plus"></i>
-                    Thêm danh mục
+                <h2>Danh sách danh mục (<?= $totalCategories ?>)</h2>
+                <button class="btn-primary" onclick="openAddModal()">
+                    <i class="fas fa-plus"></i> Thêm danh mục
                 </button>
             </div>
 
-            <!-- Categories Grid -->
-            <div class="categories-grid">
-                <div class="category-card">
-                    <div class="category-image" style="background-image: url('https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400');">
-                        <span class="category-count"><i class="fas fa-car"></i> 12 xe</span>
-                    </div>
-                    <div class="category-content">
-                        <div class="category-icon"><i class="fas fa-car-side"></i></div>
-                        <h3 class="category-name">Sedan</h3>
-                        <p class="category-desc">Xe sedan hạng sang với 4 cửa, thiết kế thanh lịch phù hợp cho gia đình và doanh nhân.</p>
-                        <div class="category-actions">
-                            <button class="category-action" onclick="editCategory(1)"><i class="fas fa-edit"></i> Sửa</button>
-                            <button class="category-action delete" onclick="deleteCategory(1)"><i class="fas fa-trash"></i> Xóa</button>
-                        </div>
+            <!-- Stats -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon purple"><i class="fas fa-layer-group"></i></div>
+                    <div class="stat-info">
+                        <h3><?= $totalCategories ?></h3>
+                        <p>Danh mục</p>
                     </div>
                 </div>
-
-                <div class="category-card">
-                    <div class="category-image" style="background-image: url('https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=400');">
-                        <span class="category-count"><i class="fas fa-car"></i> 8 xe</span>
-                    </div>
-                    <div class="category-content">
-                        <div class="category-icon"><i class="fas fa-truck-monster"></i></div>
-                        <h3 class="category-name">SUV</h3>
-                        <p class="category-desc">Xe gầm cao đa dụng, không gian rộng rãi, phù hợp cho địa hình đa dạng.</p>
-                        <div class="category-actions">
-                            <button class="category-action" onclick="editCategory(2)"><i class="fas fa-edit"></i> Sửa</button>
-                            <button class="category-action delete" onclick="deleteCategory(2)"><i class="fas fa-trash"></i> Xóa</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="category-card">
-                    <div class="category-image" style="background-image: url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400');">
-                        <span class="category-count"><i class="fas fa-car"></i> 5 xe</span>
-                    </div>
-                    <div class="category-content">
-                        <div class="category-icon"><i class="fas fa-flag-checkered"></i></div>
-                        <h3 class="category-name">Sports Car</h3>
-                        <p class="category-desc">Xe thể thao hiệu suất cao, thiết kế khí động học, dành cho những ai đam mê tốc độ.</p>
-                        <div class="category-actions">
-                            <button class="category-action" onclick="editCategory(3)"><i class="fas fa-edit"></i> Sửa</button>
-                            <button class="category-action delete" onclick="deleteCategory(3)"><i class="fas fa-trash"></i> Xóa</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="category-card">
-                    <div class="category-image" style="background-image: url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400');">
-                        <span class="category-count"><i class="fas fa-car"></i> 4 xe</span>
-                    </div>
-                    <div class="category-content">
-                        <div class="category-icon"><i class="fas fa-car-alt"></i></div>
-                        <h3 class="category-name">Coupe</h3>
-                        <p class="category-desc">Xe 2 cửa thể thao, đường nét mạnh mẽ, phong cách dành cho người trẻ năng động.</p>
-                        <div class="category-actions">
-                            <button class="category-action" onclick="editCategory(4)"><i class="fas fa-edit"></i> Sửa</button>
-                            <button class="category-action delete" onclick="deleteCategory(4)"><i class="fas fa-trash"></i> Xóa</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="category-card">
-                    <div class="category-image" style="background-image: url('https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=400');">
-                        <span class="category-count"><i class="fas fa-car"></i> 2 xe</span>
-                    </div>
-                    <div class="category-content">
-                        <div class="category-icon"><i class="fas fa-wind"></i></div>
-                        <h3 class="category-name">Convertible</h3>
-                        <p class="category-desc">Xe mui trần sang trọng, trải nghiệm lái xe tự do giữa thiên nhiên.</p>
-                        <div class="category-actions">
-                            <button class="category-action" onclick="editCategory(5)"><i class="fas fa-edit"></i> Sửa</button>
-                            <button class="category-action delete" onclick="deleteCategory(5)"><i class="fas fa-trash"></i> Xóa</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="category-card">
-                    <div class="category-image" style="background-image: url('https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400');">
-                        <span class="category-count"><i class="fas fa-car"></i> 2 xe</span>
-                    </div>
-                    <div class="category-content">
-                        <div class="category-icon"><i class="fas fa-bolt"></i></div>
-                        <h3 class="category-name">Electric</h3>
-                        <p class="category-desc">Xe điện cao cấp, công nghệ tiên tiến, thân thiện với môi trường.</p>
-                        <div class="category-actions">
-                            <button class="category-action" onclick="editCategory(6)"><i class="fas fa-edit"></i> Sửa</button>
-                            <button class="category-action delete" onclick="deleteCategory(6)"><i class="fas fa-trash"></i> Xóa</button>
-                        </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="fas fa-car"></i></div>
+                    <div class="stat-info">
+                        <h3><?= array_sum(array_column($categories, 'car_count')) ?></h3>
+                        <p>Tổng xe</p>
                     </div>
                 </div>
             </div>
+
+            <?php if ($totalCategories === 0): ?>
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <h3>Chưa có danh mục nào</h3>
+                <p>Bắt đầu thêm danh mục để phân loại các dòng xe.</p>
+                <button class="btn-primary" onclick="openAddModal()">
+                    <i class="fas fa-plus"></i> Thêm danh mục đầu tiên
+                </button>
+            </div>
+            <?php else: ?>
+            <!-- Categories Grid -->
+            <div class="categories-grid">
+                <?php foreach ($categories as $cat): ?>
+                <div class="category-card">
+                    <div class="category-content">
+                        <?php if (!empty($cat['image'])): ?>
+                        <div class="category-image">
+                            <img src="<?= $cat['image'] ?>" alt="<?= htmlspecialchars($cat['name']) ?>">
+                        </div>
+                        <?php else: ?>
+                        <div class="category-icon">
+                            <i class="fas <?= $cat['icon'] ?? $icons[$cat['name']] ?? 'fa-car' ?>"></i>
+                        </div>
+                        <?php endif; ?>
+                        <h3 class="category-name"><?= htmlspecialchars($cat['name']) ?></h3>
+                        <p class="category-desc"><?= htmlspecialchars($cat['description'] ?? 'Chưa có mô tả') ?></p>
+                        <div class="category-stats">
+                            <span class="category-stat">
+                                <i class="fas fa-car"></i> <?= $cat['car_count'] ?> xe
+                            </span>
+                        </div>
+                        <div class="category-actions">
+                            <button class="category-action" onclick="openEditModal(<?= htmlspecialchars(json_encode($cat)) ?>)">
+                                <i class="fas fa-edit"></i> Sửa
+                            </button>
+                            <button class="category-action delete" onclick="openDeleteModal(<?= $cat['id'] ?>, '<?= addslashes($cat['name']) ?>')">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
         </div>
     </main>
 
-    <!-- Add/Edit Category Modal -->
+    <!-- Add/Edit Modal -->
     <div class="modal" id="categoryModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modalTitle">Thêm danh mục mới</h3>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
+                <h3 id="modalTitle"><i class="fas fa-layer-group"></i> Thêm danh mục</h3>
+                <button class="modal-close" onclick="closeModal('categoryModal')">&times;</button>
             </div>
-            <form id="categoryForm" action="/autocar/admin/categories/store" method="POST">
+            <form id="categoryForm" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="action" id="formAction" value="add">
                 <input type="hidden" name="id" id="categoryId">
-                <div class="form-group">
-                    <label>Tên danh mục *</label>
-                    <input type="text" name="ten_loai" id="categoryName" class="form-control" placeholder="VD: Sedan" required>
-                </div>
-                <div class="form-group">
-                    <label>Icon</label>
-                    <div class="icon-selector">
-                        <label class="icon-option selected"><input type="radio" name="icon" value="fa-car-side" checked><i class="fas fa-car-side"></i></label>
-                        <label class="icon-option"><input type="radio" name="icon" value="fa-truck-monster"><i class="fas fa-truck-monster"></i></label>
-                        <label class="icon-option"><input type="radio" name="icon" value="fa-flag-checkered"><i class="fas fa-flag-checkered"></i></label>
-                        <label class="icon-option"><input type="radio" name="icon" value="fa-car-alt"><i class="fas fa-car-alt"></i></label>
-                        <label class="icon-option"><input type="radio" name="icon" value="fa-wind"><i class="fas fa-wind"></i></label>
-                        <label class="icon-option"><input type="radio" name="icon" value="fa-bolt"><i class="fas fa-bolt"></i></label>
+                
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Tên danh mục <span class="required">*</span></label>
+                        <input type="text" name="name" id="categoryName" required placeholder="VD: Sedan, SUV, Coupe...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Icon</label>
+                        <select name="icon" id="categoryIcon" class="form-control">
+                            <option value="fa-car">🚗 Car</option>
+                            <option value="fa-car-side">🚙 Car Side</option>
+                            <option value="fa-car-alt">🏎️ Car Alt</option>
+                            <option value="fa-truck-monster">🚙 SUV/Truck</option>
+                            <option value="fa-flag-checkered">🏁 Sports</option>
+                            <option value="fa-rocket">🚀 Supercar</option>
+                            <option value="fa-car-rear">🚘 Crossover</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Image Upload Section -->
+                    <div class="image-upload-section">
+                        <label>Hình ảnh danh mục (tùy chọn)</label>
+                        
+                        <div class="upload-tabs">
+                            <button type="button" class="upload-tab active" onclick="switchUploadTab('file')">
+                                <i class="fas fa-upload"></i> Tải từ máy
+                            </button>
+                            <button type="button" class="upload-tab" onclick="switchUploadTab('url')">
+                                <i class="fas fa-link"></i> Dùng link
+                            </button>
+                        </div>
+                        
+                        <div class="upload-panel active" id="filePanel">
+                            <div class="file-upload-area" id="dropZone">
+                                <input type="file" name="image_file" id="imageFile" accept="image/*">
+                                <div class="upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <h4>Kéo thả ảnh vào đây</h4>
+                                <p>hoặc click để chọn file</p>
+                                <span class="browse-btn">Chọn ảnh</span>
+                            </div>
+                        </div>
+                        
+                        <div class="upload-panel" id="urlPanel">
+                            <div class="url-input-wrapper">
+                                <input type="url" name="image_url" id="imageUrl" placeholder="https://example.com/image.jpg">
+                                <i class="fas fa-link"></i>
+                            </div>
+                            <p class="form-info"><i class="fas fa-info-circle"></i> Nhập URL hình ảnh từ internet</p>
+                        </div>
+                        
+                        <div class="image-preview-container" id="imagePreview" style="display: none;">
+                            <div class="image-preview-wrapper">
+                                <img id="previewImg" src="" alt="Preview">
+                                <div class="preview-actions">
+                                    <button type="button" class="preview-action-btn view" onclick="viewImage()">
+                                        <i class="fas fa-expand"></i>
+                                    </button>
+                                    <button type="button" class="preview-action-btn remove" onclick="removeImage()">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Mô tả</label>
+                        <textarea name="description" id="categoryDescription" rows="3" placeholder="Mô tả ngắn về danh mục xe..."></textarea>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Mô tả</label>
-                    <textarea name="mo_ta" id="categoryDesc" class="form-control" rows="3" placeholder="Mô tả về danh mục xe..."></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Hủy</button>
-                    <button type="submit" class="btn btn-primary">Lưu danh mục</button>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('categoryModal')">
+                        <i class="fas fa-times"></i> Hủy
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Lưu danh mục
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content modal-confirm">
+            <div class="modal-body">
+                <div class="confirm-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h4>Xác nhận xóa?</h4>
+                <p>Bạn có chắc chắn muốn xóa danh mục</p>
+                <p class="item-name" id="deleteName"></p>
+                <p style="color: #999; font-size: 0.85rem;">Hành động này không thể hoàn tác</p>
+            </div>
+            <form method="POST" class="form-actions">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="id" id="deleteId">
+                <button type="button" class="btn-secondary" onclick="closeModal('deleteModal')">
+                    <i class="fas fa-times"></i> Hủy
+                </button>
+                <button type="submit" class="btn-danger">
+                    <i class="fas fa-trash"></i> Xóa
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <?php if ($message): ?>
+    <div class="toast <?= $messageType ?>" id="toast">
+        <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
+        <span><?= htmlspecialchars($message) ?></span>
+    </div>
+    <?php endif; ?>
+
     <script>
-        function openModal() {
-            document.getElementById('categoryModal').classList.add('active');
-            document.getElementById('modalTitle').textContent = 'Thêm danh mục mới';
-            document.getElementById('categoryForm').reset();
+        // Show toast notification
+        <?php if ($message): ?>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toast = document.getElementById('toast');
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        });
+        <?php endif; ?>
+
+        // Open Add Modal
+        function openAddModal() {
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i> Thêm danh mục';
+            document.getElementById('formAction').value = 'add';
             document.getElementById('categoryId').value = '';
-        }
-
-        function closeModal() {
-            document.getElementById('categoryModal').classList.remove('active');
-        }
-
-        function editCategory(id) {
+            document.getElementById('categoryName').value = '';
+            document.getElementById('categoryDescription').value = '';
+            document.getElementById('categoryIcon').value = 'fa-car';
+            document.getElementById('imageUrl').value = '';
+            document.getElementById('imageFile').value = '';
+            removeImage();
             document.getElementById('categoryModal').classList.add('active');
-            document.getElementById('modalTitle').textContent = 'Chỉnh sửa danh mục';
-            document.getElementById('categoryId').value = id;
         }
 
-        function deleteCategory(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa danh mục này?')) {
-                window.location.href = '/autocar/admin/categories/delete/' + id;
+        // Open Edit Modal
+        function openEditModal(category) {
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Sửa danh mục';
+            document.getElementById('formAction').value = 'edit';
+            document.getElementById('categoryId').value = category.id;
+            document.getElementById('categoryName').value = category.name;
+            document.getElementById('categoryDescription').value = category.description || '';
+            document.getElementById('categoryIcon').value = category.icon || 'fa-car';
+            
+            if (category.image) {
+                document.getElementById('imageUrl').value = category.image;
+                document.getElementById('previewImg').src = category.image;
+                document.getElementById('imagePreview').style.display = 'block';
+            } else {
+                removeImage();
+            }
+            
+            document.getElementById('categoryModal').classList.add('active');
+        }
+
+        // Open Delete Modal
+        function openDeleteModal(id, name) {
+            document.getElementById('deleteId').value = id;
+            document.getElementById('deleteName').textContent = name;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        // Close Modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Switch Upload Tab
+        function switchUploadTab(tab) {
+            document.querySelectorAll('.upload-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.upload-panel').forEach(p => p.classList.remove('active'));
+            
+            if (tab === 'file') {
+                document.querySelector('.upload-tab:first-child').classList.add('active');
+                document.getElementById('filePanel').classList.add('active');
+            } else {
+                document.querySelector('.upload-tab:last-child').classList.add('active');
+                document.getElementById('urlPanel').classList.add('active');
             }
         }
 
-        // Icon selector
-        document.querySelectorAll('.icon-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.icon-option').forEach(o => o.classList.remove('selected'));
-                this.classList.add('selected');
+        // File Upload Preview
+        const imageFile = document.getElementById('imageFile');
+        const dropZone = document.getElementById('dropZone');
+        
+        imageFile.addEventListener('change', function(e) {
+            if (e.target.files[0]) {
+                previewFile(e.target.files[0]);
+            }
+        });
+
+        // Drag & Drop
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files[0] && files[0].type.startsWith('image/')) {
+                imageFile.files = files;
+                previewFile(files[0]);
+            }
+        });
+
+        // Preview File
+        function previewFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('previewImg').src = e.target.result;
+                document.getElementById('imagePreview').style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        }
+
+        // URL Input Preview
+        document.getElementById('imageUrl').addEventListener('input', function(e) {
+            if (e.target.value) {
+                document.getElementById('previewImg').src = e.target.value;
+                document.getElementById('imagePreview').style.display = 'block';
+            }
+        });
+
+        // View Image Full
+        function viewImage() {
+            const src = document.getElementById('previewImg').src;
+            window.open(src, '_blank');
+        }
+
+        // Remove Image
+        function removeImage() {
+            document.getElementById('previewImg').src = '';
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('imageFile').value = '';
+            document.getElementById('imageUrl').value = '';
+        }
+
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
             });
+        });
+
+        // ESC to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.active').forEach(m => m.classList.remove('active'));
+            }
         });
     </script>
 </body>

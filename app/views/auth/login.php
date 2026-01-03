@@ -416,18 +416,22 @@
             </div>
 
             <div class="login-form-wrapper">
-                <?php if (isset($error)): ?>
+                <?php if (!empty($errors)): ?>
                 <div class="error-message">
                     <i class="fas fa-exclamation-circle"></i>
-                    <?php echo htmlspecialchars($error); ?>
+                    <div>
+                        <?php foreach ($errors as $error): ?>
+                            <p><?= htmlspecialchars($error) ?></p>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
                 <?php endif; ?>
 
                 <form class="login-form" method="POST" action="/login">
                     <div class="form-group">
-                        <label for="email">Email</label>
+                        <label for="email">Email hoặc Tên đăng nhập</label>
                         <div class="input-wrapper">
-                            <input type="email" id="email" name="email" placeholder="Nhập địa chỉ email" required>
+                            <input type="text" id="email" name="email" placeholder="Nhập email hoặc tên đăng nhập" value="<?= htmlspecialchars($email ?? '') ?>" required>
                             <i class="fas fa-envelope"></i>
                         </div>
                     </div>

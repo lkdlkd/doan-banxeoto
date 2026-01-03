@@ -41,10 +41,27 @@ class UserModel extends BaseModel
         return $this->update($id, $data);
     }
 
-    // Xác thực đăng nhập
+    // Xác thực đăng nhập bằng username
     public function authenticate($username, $password)
     {
         $user = $this->findByUsername($username);
+        
+        if ($user && password_verify($password, $user['password'])) {
+            return $user;
+        }
+        
+        return false;
+    }
+
+    // Xác thực đăng nhập bằng email
+    public function authenticateByEmail($email, $password)
+    {
+        $user = $this->findByEmail($email);
+        
+        // Nếu không tìm thấy bằng email, thử tìm bằng username
+        if (!$user) {
+            $user = $this->findByUsername($email);
+        }
         
         if ($user && password_verify($password, $user['password'])) {
             return $user;
