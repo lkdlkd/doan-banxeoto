@@ -1,24 +1,8 @@
 <?php 
 if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.php'; }
 
-// Load models
-require_once __DIR__ . '/../../../models/CarModel.php';
-require_once __DIR__ . '/../../../models/BrandModel.php';
-require_once __DIR__ . '/../../../models/CategoryModel.php';
-
-$carModel = new CarModel();
-$brandModel = new BrandModel();
-$categoryModel = new CategoryModel();
-
-// Lấy danh sách xe với thông tin đầy đủ
-$cars = $carModel->getAllWithDetails();
-$brands = $brandModel->getAll();
-$categories = $categoryModel->getAll();
-
-// Tính thống kê
-$totalCars = count($cars);
-$availableCars = count(array_filter($cars, fn($c) => $c['status'] === 'available'));
-$soldCars = count(array_filter($cars, fn($c) => $c['status'] === 'sold'));
+// Dữ liệu được truyền từ controller:
+// $cars, $brands, $categories, $totalCars, $availableCars, $soldCars
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -169,7 +153,7 @@ $soldCars = count(array_filter($cars, fn($c) => $c['status'] === 'sold'));
                                     <a href="<?= BASE_URL ?>/car/<?= $car['id'] ?>" class="action-btn view" title="Xem" target="_blank">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="<?= BASE_URL ?>/admin/cars/edit/<?= $car['id'] ?>" class="action-btn edit" title="Sửa">
+                                    <a href="<?= BASE_URL ?>/admin/cars/edit?id=<?= $car['id'] ?>" class="action-btn edit" title="Sửa">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <button class="action-btn delete" title="Xóa" onclick="deleteCar(<?= $car['id'] ?>)">

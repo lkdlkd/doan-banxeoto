@@ -179,42 +179,279 @@ switch ($request) {
     // Admin Routes
     case '/admin':
     case '/admin/dashboard':
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
         require VIEW_PATH . '/admin/dashboard.php';
         break;
     
     case '/admin/cars':
-        require VIEW_PATH . '/admin/cars/list.php';
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
+        require_once APP_PATH . '/controllers/CarController.php';
+        $controller = new CarController();
+        $controller->index();
         break;
     
     case '/admin/cars/add':
-        require VIEW_PATH . '/admin/cars/add.php';
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
+        require_once APP_PATH . '/controllers/CarController.php';
+        $controller = new CarController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->add();
+        } else {
+            $controller->showAdd();
+        }
         break;
     
     case '/admin/cars/edit':
-        require VIEW_PATH . '/admin/cars/edit.php';
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
+        require_once APP_PATH . '/controllers/CarController.php';
+        $controller = new CarController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->edit();
+        } else {
+            $id = intval($_GET['id'] ?? 0);
+            $controller->showEdit($id);
+        }
+        break;
+    
+    case '/admin/cars/delete':
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
+        require_once APP_PATH . '/controllers/CarController.php';
+        $controller = new CarController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = intval($_POST['id'] ?? 0);
+            $controller->delete($id);
+        } else {
+            $id = intval($_GET['id'] ?? 0);
+            $controller->delete($id);
+        }
         break;
     
     case '/admin/brands':
-        require VIEW_PATH . '/admin/brands/list.php';
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
+        require_once APP_PATH . '/controllers/BrandController.php';
+        $controller = new BrandController();
+        $controller->index();
+        break;
+    
+    case '/admin/brands/add':
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
+        require_once APP_PATH . '/controllers/BrandController.php';
+        $controller = new BrandController();
+        $controller->add();
+        break;
+    
+    case '/admin/brands/edit':
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
+        require_once APP_PATH . '/controllers/BrandController.php';
+        $controller = new BrandController();
+        $controller->edit();
+        break;
+    
+    case '/admin/brands/delete':
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
+        require_once APP_PATH . '/controllers/BrandController.php';
+        $controller = new BrandController();
+        $controller->delete();
         break;
     
     case '/admin/categories':
-        require VIEW_PATH . '/admin/categories/list.php';
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
+        require_once APP_PATH . '/controllers/CategoryController.php';
+        $controller = new CategoryController();
+        $controller->index();
+        break;
+    
+    case '/admin/categories/add':
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
+        require_once APP_PATH . '/controllers/CategoryController.php';
+        $controller = new CategoryController();
+        $controller->add();
+        break;
+    
+    case '/admin/categories/edit':
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
+        require_once APP_PATH . '/controllers/CategoryController.php';
+        $controller = new CategoryController();
+        $controller->edit();
+        break;
+    
+    case '/admin/categories/delete':
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
+        require_once APP_PATH . '/controllers/CategoryController.php';
+        $controller = new CategoryController();
+        $controller->delete();
         break;
     
     case '/admin/orders':
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
         require VIEW_PATH . '/admin/orders/list.php';
         break;
     
     case '/admin/users':
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
         require VIEW_PATH . '/admin/users/list.php';
         break;
     
     case '/admin/reviews':
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
         require VIEW_PATH . '/admin/reviews/list.php';
         break;
     
     case '/admin/contacts':
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
         require VIEW_PATH . '/admin/contacts/list.php';
         break;
         

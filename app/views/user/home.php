@@ -9,24 +9,10 @@ $brandModel = new BrandModel();
 // Lấy tất cả brands có xe
 $allBrands = $brandModel->getBrandsWithCarCount();
 
-// Phân loại brands theo category
-$brandsByCategory = [
-    'popular' => [],
-    'premium' => [],
-    'luxury' => [],
-    'supercar' => []
-];
-
-foreach ($allBrands as $brand) {
-    if ($brand['car_count'] > 0) {
-        $category = strtolower($brand['category'] ?? 'popular');
-        if (isset($brandsByCategory[$category])) {
-            $brandsByCategory[$category][] = $brand;
-        } else {
-            $brandsByCategory['popular'][] = $brand;
-        }
-    }
-}
+// Lọc brands có xe
+$brandsWithCars = array_filter($allBrands, function($brand) {
+    return $brand['car_count'] > 0;
+});
 
 include __DIR__ . '/../layouts/header.php'; 
 ?>
@@ -83,153 +69,34 @@ include __DIR__ . '/../layouts/header.php';
                 <p>Lựa chọn từ những thương hiệu xe hàng đầu thế giới</p>
             </div>
 
-            <!-- Category Tabs -->
-            <div class="category-tabs">
-                <button class="tab-btn active" data-category="popular">Phổ Biến</button>
-                <button class="tab-btn" data-category="premium">Sang Trọng</button>
-                <button class="tab-btn" data-category="luxury">Cao Cấp</button>
-                <button class="tab-btn gold" data-category="supercar">Siêu Xe</button>
-            </div>
-
             <!-- Brands Container -->
             <div class="brands-container">
-                <!-- Popular Brands -->
-                <div class="brands-panel active" data-panel="popular">
+                <div class="brands-panel active">
                     <div class="brands-showcase-wrapper">
-                        <button class="slider-nav prev" onclick="slideBrands('popular', -1)">
+                        <button class="slider-nav prev" onclick="slideBrands(-1)">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M15 18l-6-6 6-6"/>
                             </svg>
                         </button>
-                        <div class="brands-showcase" id="brands-popular">
-                            <?php foreach ($brandsByCategory['popular'] as $brand): ?>
+                        <div class="brands-showcase" id="brands-showcase">
+                            <?php foreach ($brandsWithCars as $brand): ?>
                                 <a href="/cars?brand_id=<?= $brand['id'] ?>" class="brand-item">
                                     <div class="brand-inner">
-                                        <?php if (!empty($brand['logo_url'])): ?>
-                                            <img src="<?= htmlspecialchars($brand['logo_url']) ?>" alt="<?= htmlspecialchars($brand['name']) ?>">
+                                        <?php if (!empty($brand['logo'])): ?>
+                                            <img src="<?= htmlspecialchars($brand['logo']) ?>" alt="<?= htmlspecialchars($brand['name']) ?>">
                                         <?php else: ?>
                                             <img src="https://ui-avatars.com/api/?name=<?= urlencode($brand['name']) ?>&background=D4AF37&color=000&size=100" alt="<?= htmlspecialchars($brand['name']) ?>">
                                         <?php endif; ?>
                                         <span><?= htmlspecialchars($brand['name']) ?></span>
-                                        <?php if ($brand['car_count'] > 0): ?>
-                                            <small class="car-count"><?= $brand['car_count'] ?> xe</small>
-                                        <?php endif; ?>
+                                        <small class="car-count"><?= $brand['car_count'] ?> xe</small>
                                     </div>
                                 </a>
                             <?php endforeach; ?>
-                            <?php if (empty($brandsByCategory['popular'])): ?>
+                            <?php if (empty($brandsWithCars)): ?>
                                 <p style="text-align: center; color: #999; padding: 40px;">Chưa có thương hiệu nào</p>
                             <?php endif; ?>
                         </div>
-                        <button class="slider-nav next" onclick="slideBrands('popular', 1)">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M9 18l6-6-6-6"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Premium Brands -->
-                <div class="brands-panel" data-panel="premium">
-                    <div class="brands-showcase-wrapper">
-                        <button class="slider-nav prev" onclick="slideBrands('premium', -1)">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M15 18l-6-6 6-6"/>
-                            </svg>
-                        </button>
-                        <div class="brands-showcase" id="brands-premium">
-                            <?php foreach ($brandsByCategory['premium'] as $brand): ?>
-                                <a href="/cars?brand_id=<?= $brand['id'] ?>" class="brand-item">
-                                    <div class="brand-inner">
-                                        <?php if (!empty($brand['logo_url'])): ?>
-                                            <img src="<?= htmlspecialchars($brand['logo_url']) ?>" alt="<?= htmlspecialchars($brand['name']) ?>">
-                                        <?php else: ?>
-                                            <img src="https://ui-avatars.com/api/?name=<?= urlencode($brand['name']) ?>&background=D4AF37&color=000&size=100" alt="<?= htmlspecialchars($brand['name']) ?>">
-                                        <?php endif; ?>
-                                        <span><?= htmlspecialchars($brand['name']) ?></span>
-                                        <?php if ($brand['car_count'] > 0): ?>
-                                            <small class="car-count"><?= $brand['car_count'] ?> xe</small>
-                                        <?php endif; ?>
-                                    </div>
-                                </a>
-                            <?php endforeach; ?>
-                            <?php if (empty($brandsByCategory['premium'])): ?>
-                                <p style="text-align: center; color: #999; padding: 40px;">Chưa có thương hiệu nào</p>
-                            <?php endif; ?>
-                        </div>
-                        <button class="slider-nav next" onclick="slideBrands('premium', 1)">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M9 18l6-6-6-6"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Luxury Brands -->
-                <div class="brands-panel" data-panel="luxury">
-                    <div class="brands-showcase-wrapper">
-                        <button class="slider-nav prev" onclick="slideBrands('luxury', -1)">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M15 18l-6-6 6-6"/>
-                            </svg>
-                        </button>
-                        <div class="brands-showcase" id="brands-luxury">
-                            <?php foreach ($brandsByCategory['luxury'] as $brand): ?>
-                                <a href="/cars?brand_id=<?= $brand['id'] ?>" class="brand-item">
-                                    <div class="brand-inner">
-                                        <?php if (!empty($brand['logo_url'])): ?>
-                                            <img src="<?= htmlspecialchars($brand['logo_url']) ?>" alt="<?= htmlspecialchars($brand['name']) ?>">
-                                        <?php else: ?>
-                                            <img src="https://ui-avatars.com/api/?name=<?= urlencode($brand['name']) ?>&background=D4AF37&color=000&size=100" alt="<?= htmlspecialchars($brand['name']) ?>">
-                                        <?php endif; ?>
-                                        <span><?= htmlspecialchars($brand['name']) ?></span>
-                                        <?php if ($brand['car_count'] > 0): ?>
-                                            <small class="car-count"><?= $brand['car_count'] ?> xe</small>
-                                        <?php endif; ?>
-                                    </div>
-                                </a>
-                            <?php endforeach; ?>
-                            <?php if (empty($brandsByCategory['luxury'])): ?>
-                                <p style="text-align: center; color: #999; padding: 40px;">Chưa có thương hiệu nào</p>
-                            <?php endif; ?>
-                        </div>
-                        <button class="slider-nav next" onclick="slideBrands('luxury', 1)">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M9 18l6-6-6-6"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Supercar Brands -->
-                <div class="brands-panel supercar" data-panel="supercar">
-                    <div class="brands-showcase-wrapper">
-                        <button class="slider-nav prev" onclick="slideBrands('supercar', -1)">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M15 18l-6-6 6-6"/>
-                            </svg>
-                        </button>
-                        <div class="brands-showcase" id="brands-supercar">
-                            <?php foreach ($brandsByCategory['supercar'] as $brand): ?>
-                                <a href="/cars?brand_id=<?= $brand['id'] ?>" class="brand-item">
-                                    <div class="brand-inner">
-                                        <?php if (!empty($brand['logo_url'])): ?>
-                                            <img src="<?= htmlspecialchars($brand['logo_url']) ?>" alt="<?= htmlspecialchars($brand['name']) ?>">
-                                        <?php else: ?>
-                                            <img src="https://ui-avatars.com/api/?name=<?= urlencode($brand['name']) ?>&background=D4AF37&color=000&size=100" alt="<?= htmlspecialchars($brand['name']) ?>">
-                                        <?php endif; ?>
-                                        <span><?= htmlspecialchars($brand['name']) ?></span>
-                                        <?php if ($brand['car_count'] > 0): ?>
-                                            <small class="car-count"><?= $brand['car_count'] ?> xe</small>
-                                        <?php endif; ?>
-                                    </div>
-                                </a>
-                            <?php endforeach; ?>
-                            <?php if (empty($brandsByCategory['supercar'])): ?>
-                                <p style="text-align: center; color: #999; padding: 40px;">Chưa có thương hiệu nào</p>
-                            <?php endif; ?>
-                        </div>
-                        <button class="slider-nav next" onclick="slideBrands('supercar', 1)">
+                        <button class="slider-nav next" onclick="slideBrands(1)">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M9 18l6-6-6-6"/>
                             </svg>
@@ -251,24 +118,9 @@ include __DIR__ . '/../layouts/header.php';
 
     <!-- Brands Slider Script -->
     <script>
-        // Tab switching
-        document.querySelectorAll('.category-tabs .tab-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const category = this.dataset.category;
-                
-                // Update active tab
-                document.querySelectorAll('.category-tabs .tab-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                
-                // Update active panel
-                document.querySelectorAll('.brands-panel').forEach(p => p.classList.remove('active'));
-                document.querySelector(`.brands-panel[data-panel="${category}"]`).classList.add('active');
-            });
-        });
-
         // Slider function
-        function slideBrands(category, direction) {
-            const showcase = document.getElementById('brands-' + category);
+        function slideBrands(direction) {
+            const showcase = document.getElementById('brands-showcase');
             const scrollAmount = 220; // brand-item width + gap
             showcase.scrollBy({
                 left: direction * scrollAmount * 2,
@@ -277,7 +129,8 @@ include __DIR__ . '/../layouts/header.php';
         }
 
         // Enable drag to scroll
-        document.querySelectorAll('.brands-showcase').forEach(showcase => {
+        const showcase = document.getElementById('brands-showcase');
+        if (showcase) {
             let isDown = false;
             let startX;
             let scrollLeft;
@@ -306,7 +159,7 @@ include __DIR__ . '/../layouts/header.php';
                 const walk = (x - startX) * 2;
                 showcase.scrollLeft = scrollLeft - walk;
             });
-        });
+        }
     </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

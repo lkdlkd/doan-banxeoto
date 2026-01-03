@@ -1,4 +1,14 @@
-<?php if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.php'; } ?>
+<?php 
+if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.php'; }
+
+// Dữ liệu được truyền từ controller:
+// $car, $brands, $categories, $carImages
+
+// Lấy thông báo từ session
+$message = $_SESSION['success'] ?? $_SESSION['error'] ?? '';
+$messageType = isset($_SESSION['success']) ? 'success' : 'error';
+unset($_SESSION['success'], $_SESSION['error']);
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -37,16 +47,25 @@
         <div class="admin-content">
             <!-- Page Header -->
             <div class="page-header">
-                <h2>Chỉnh sửa: <?= $car['ten_xe'] ?? 'Mercedes-Benz S-Class 2024' ?></h2>
+                <h2>Chỉnh sửa: <?= htmlspecialchars($car['name'] ?? 'Xe') ?></h2>
                 <a href="/admin/cars" class="btn-back">
                     <i class="fas fa-arrow-left"></i>
                     Quay lại
                 </a>
             </div>
 
+            <?php if ($message): ?>
+            <div class="alert alert-<?= $messageType ?>">
+                <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
+                <?= htmlspecialchars($message) ?>
+            </div>
+            <?php endif; ?>
+
             <!-- Form -->
-            <form action="/admin/cars/update/<?= $car['id'] ?? 1 ?>" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="id" value="<?= $car['id'] ?? 1 ?>">
+            <form action="/admin/cars/edit" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="id" value="<?= $car['id'] ?? 0 ?>">
+                <!-- Hidden input để lưu danh sách ID ảnh cần xóa -->
+                <input type="hidden" name="deleted_image_ids" id="deletedImageIds" value="">
                 
                 <div class="form-grid">
                     <!-- Left Column -->
@@ -58,54 +77,45 @@
                             </div>
                             <div class="form-group">
                                 <label>Tên xe <span class="required">*</span></label>
-                                <input type="text" name="ten_xe" class="form-control" value="<?= $car['ten_xe'] ?? 'Mercedes-Benz S-Class 2024' ?>" required>
+                                <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($car['name'] ?? '') ?>" required>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Thương hiệu <span class="required">*</span></label>
-                                    <select name="id_hang" class="form-control" required>
+                                    <select name="brand_id" class="form-control" required>
                                         <option value="">Chọn thương hiệu</option>
-                                        <?php if (isset($brands)): ?>
-                                            <?php foreach ($brands as $brand): ?>
-                                                <option value="<?= $brand['id'] ?>" <?= ($car['id_hang'] ?? '') == $brand['id'] ? 'selected' : '' ?>><?= $brand['ten_hang'] ?></option>
-                                            <?php endforeach; ?>
-                                        <?php else: ?>
-                                            <option value="1" selected>Mercedes-Benz</option>
-                                            <option value="2">BMW</option>
-                                            <option value="3">Audi</option>
-                                            <option value="4">Porsche</option>
-                                        <?php endif; ?>
+                                        <?php foreach ($brands as $brand): ?>
+                                            <option value="<?= $brand['id'] ?>" <?= ($car['brand_id'] ?? 0) == $brand['id'] ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($brand['name']) ?>
+                                            </option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label>Danh mục <span class="required">*</span></label>
-                                    <select name="id_loai" class="form-control" required>
+                                    <select name="category_id" class="form-control" required>
                                         <option value="">Chọn danh mục</option>
-                                        <?php if (isset($categories)): ?>
-                                            <?php foreach ($categories as $category): ?>
-                                                <option value="<?= $category['id'] ?>" <?= ($car['id_loai'] ?? '') == $category['id'] ? 'selected' : '' ?>><?= $category['ten_loai'] ?></option>
-                                            <?php endforeach; ?>
-                                        <?php else: ?>
-                                            <option value="1" selected>Sedan</option>
-                                            <option value="2">SUV</option>
-                                            <option value="3">Coupe</option>
-                                        <?php endif; ?>
+                                        <?php foreach ($categories as $category): ?>
+                                            <option value="<?= $category['id'] ?>" <?= ($car['category_id'] ?? 0) == $category['id'] ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($category['name']) ?>
+                                            </option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Giá bán (VNĐ) <span class="required">*</span></label>
-                                    <input type="number" name="gia" class="form-control" value="<?= $car['gia'] ?? 5200000000 ?>" required>
+                                    <input type="number" name="price" class="form-control" value="<?= $car['price'] ?? 0 ?>" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Năm sản xuất <span class="required">*</span></label>
-                                    <input type="number" name="nam_san_xuat" class="form-control" value="<?= $car['nam_san_xuat'] ?? 2024 ?>" required>
+                                    <input type="number" name="year" class="form-control" value="<?= $car['year'] ?? date('Y') ?>" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>Mô tả ngắn</label>
-                                <textarea name="mo_ta" class="form-control"><?= $car['mo_ta'] ?? 'Xe sedan hạng sang với công nghệ tiên tiến và nội thất sang trọng.' ?></textarea>
+                                <label>Mô tả</label>
+                                <textarea name="description" class="form-control" rows="4"><?= htmlspecialchars($car['description'] ?? '') ?></textarea>
                             </div>
                         </div>
 
@@ -117,35 +127,27 @@
                             <div class="specs-grid">
                                 <div class="spec-input">
                                     <i class="fas fa-tachometer-alt"></i>
-                                    <input type="text" name="dong_co" value="<?= $car['dong_co'] ?? '3.0L I6 Turbo' ?>" placeholder="Động cơ">
-                                </div>
-                                <div class="spec-input">
-                                    <i class="fas fa-bolt"></i>
-                                    <input type="text" name="cong_suat" value="<?= $car['cong_suat'] ?? '429 HP' ?>" placeholder="Công suất">
-                                </div>
-                                <div class="spec-input">
-                                    <i class="fas fa-cog"></i>
-                                    <input type="text" name="hop_so" value="<?= $car['hop_so'] ?? '9G-Tronic' ?>" placeholder="Hộp số">
-                                </div>
-                                <div class="spec-input">
-                                    <i class="fas fa-road"></i>
-                                    <input type="text" name="dan_dong" value="<?= $car['dan_dong'] ?? '4MATIC' ?>" placeholder="Dẫn động">
+                                    <input type="number" name="mileage" value="<?= $car['mileage'] ?? 0 ?>" placeholder="Số km đã đi">
                                 </div>
                                 <div class="spec-input">
                                     <i class="fas fa-gas-pump"></i>
-                                    <input type="text" name="nhien_lieu" value="<?= $car['nhien_lieu'] ?? 'Xăng' ?>" placeholder="Nhiên liệu">
+                                    <select name="fuel" class="form-control">
+                                        <option value="gasoline" <?= ($car['fuel'] ?? '') === 'gasoline' ? 'selected' : '' ?>>Xăng</option>
+                                        <option value="diesel" <?= ($car['fuel'] ?? '') === 'diesel' ? 'selected' : '' ?>>Dầu</option>
+                                        <option value="electric" <?= ($car['fuel'] ?? '') === 'electric' ? 'selected' : '' ?>>Điện</option>
+                                        <option value="hybrid" <?= ($car['fuel'] ?? '') === 'hybrid' ? 'selected' : '' ?>>Hybrid</option>
+                                    </select>
                                 </div>
                                 <div class="spec-input">
-                                    <i class="fas fa-users"></i>
-                                    <input type="number" name="so_cho" value="<?= $car['so_cho'] ?? 5 ?>" placeholder="Số chỗ">
+                                    <i class="fas fa-cog"></i>
+                                    <select name="transmission" class="form-control">
+                                        <option value="automatic" <?= ($car['transmission'] ?? '') === 'automatic' ? 'selected' : '' ?>>Tự động</option>
+                                        <option value="manual" <?= ($car['transmission'] ?? '') === 'manual' ? 'selected' : '' ?>>Số sàn</option>
+                                    </select>
                                 </div>
                                 <div class="spec-input">
                                     <i class="fas fa-palette"></i>
-                                    <input type="text" name="mau_sac" value="<?= $car['mau_sac'] ?? 'Đen Obsidian' ?>" placeholder="Màu sắc">
-                                </div>
-                                <div class="spec-input">
-                                    <i class="fas fa-tachometer-alt"></i>
-                                    <input type="text" name="so_km" value="<?= $car['so_km'] ?? '0' ?>" placeholder="Số km">
+                                    <input type="text" name="color" value="<?= htmlspecialchars($car['color'] ?? '') ?>" placeholder="Màu sắc">
                                 </div>
                             </div>
                         </div>
@@ -156,7 +158,7 @@
                                 <h3><i class="fas fa-file-alt" style="color: #D4AF37; margin-right: 10px;"></i>Mô tả chi tiết</h3>
                             </div>
                             <div class="form-group" style="margin-bottom: 0;">
-                                <textarea name="mo_ta_chi_tiet" class="form-control" style="min-height: 200px;"><?= $car['mo_ta_chi_tiet'] ?? 'Mercedes-Benz S-Class là biểu tượng của sự sang trọng và đẳng cấp. Với thiết kế tinh tế, công nghệ tiên tiến và hiệu suất vượt trội, S-Class mang đến trải nghiệm lái xe hoàn hảo nhất.' ?></textarea>
+                                <textarea name="description_detail" class="form-control" style="min-height: 200px;"><?= htmlspecialchars($car['description'] ?? '') ?></textarea>
                             </div>
                         </div>
                     </div>
@@ -169,23 +171,20 @@
                                 <h3><i class="fas fa-images" style="color: #D4AF37; margin-right: 10px;"></i>Hình ảnh hiện tại</h3>
                             </div>
                             <div class="image-preview" id="currentImages">
-                                <?php if (isset($car['images']) && count($car['images']) > 0): ?>
-                                    <?php foreach ($car['images'] as $index => $image): ?>
-                                        <div class="preview-item">
-                                            <img src="<?= $image ?>" alt="Car image">
+                                <?php if (!empty($carImages)): ?>
+                                    <?php foreach ($carImages as $index => $image): ?>
+                                        <div class="preview-item" data-image-id="<?= $image['id'] ?>">
+                                            <img src="<?= htmlspecialchars($image['image_url']) ?>" alt="Car image">
                                             <?php if ($index === 0): ?>
                                                 <span class="main-badge">Ảnh chính</span>
                                             <?php endif; ?>
-                                            <button type="button" class="remove" onclick="removeCurrentImage(this)"><i class="fas fa-times"></i></button>
-                                            <input type="hidden" name="existing_images[]" value="<?= $image ?>">
+                                            <button type="button" class="remove" onclick="removeCurrentImage(this, <?= $image['id'] ?>)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
                                         </div>
                                     <?php endforeach; ?>
                                 <?php else: ?>
-                                    <div class="preview-item">
-                                        <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=300" alt="">
-                                        <span class="main-badge">Ảnh chính</span>
-                                        <button type="button" class="remove" onclick="removeCurrentImage(this)"><i class="fas fa-times"></i></button>
-                                    </div>
+                                    <p style="text-align: center; color: #999; padding: 20px;">Chưa có hình ảnh nào</p>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -222,7 +221,7 @@
                                     <label>URL ảnh</label>
                                     <div class="url-input-group">
                                         <input type="url" id="newImageUrl" class="form-control" placeholder="https://example.com/image.jpg">
-                                        <button type="button" class="btn-add-url" onclick="addImageFromUrl()">
+                                        <button type="button" class="btn-primary" onclick="addImageFromUrl()">
                                             <i class="fas fa-plus"></i> Thêm
                                         </button>
                                     </div>
@@ -242,51 +241,26 @@
                                 <h3><i class="fas fa-toggle-on" style="color: #D4AF37; margin-right: 10px;"></i>Trạng thái</h3>
                             </div>
                             <div class="status-options">
-                                <label class="status-option available <?= ($car['trang_thai'] ?? 'available') == 'available' ? 'selected' : '' ?>">
-                                    <input type="radio" name="trang_thai" value="available" <?= ($car['trang_thai'] ?? 'available') == 'available' ? 'checked' : '' ?>>
+                                <label class="status-option available <?= ($car['status'] ?? 'available') == 'available' ? 'selected' : '' ?>">
+                                    <input type="radio" name="status" value="available" <?= ($car['status'] ?? 'available') == 'available' ? 'checked' : '' ?>>
                                     <i class="fas fa-check-circle"></i>
                                     <span>Còn hàng</span>
                                 </label>
-                                <label class="status-option reserved <?= ($car['trang_thai'] ?? '') == 'reserved' ? 'selected' : '' ?>">
-                                    <input type="radio" name="trang_thai" value="reserved" <?= ($car['trang_thai'] ?? '') == 'reserved' ? 'checked' : '' ?>>
-                                    <i class="fas fa-clock"></i>
-                                    <span>Đã đặt</span>
-                                </label>
-                                <label class="status-option sold <?= ($car['trang_thai'] ?? '') == 'sold' ? 'selected' : '' ?>">
-                                    <input type="radio" name="trang_thai" value="sold" <?= ($car['trang_thai'] ?? '') == 'sold' ? 'checked' : '' ?>>
+                                <label class="status-option sold <?= ($car['status'] ?? '') == 'sold' ? 'selected' : '' ?>">
+                                    <input type="radio" name="status" value="sold" <?= ($car['status'] ?? '') == 'sold' ? 'checked' : '' ?>>
                                     <i class="fas fa-times-circle"></i>
                                     <span>Đã bán</span>
                                 </label>
                             </div>
                         </div>
 
-                        <!-- Options -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h3><i class="fas fa-star" style="color: #D4AF37; margin-right: 10px;"></i>Tùy chọn</h3>
-                            </div>
-                            <div class="form-group" style="margin-bottom: 15px;">
-                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                                    <input type="checkbox" name="noi_bat" value="1" <?= ($car['noi_bat'] ?? 0) ? 'checked' : '' ?> style="width: 18px; height: 18px;">
-                                    <span>Đánh dấu là xe nổi bật</span>
-                                </label>
-                            </div>
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                                    <input type="checkbox" name="khuyen_mai" value="1" <?= ($car['khuyen_mai'] ?? 0) ? 'checked' : '' ?> style="width: 18px; height: 18px;">
-                                    <span>Đang có khuyến mãi</span>
-                                </label>
-                            </div>
-                        </div>
-
                         <!-- Submit -->
                         <div class="form-actions">
-                            <button type="submit" class="btn btn-primary" style="flex: 1;">
-                                <i class="fas fa-save" style="margin-right: 8px;"></i>
-                                Cập nhật
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-save"></i> Cập nhật
                             </button>
-                            <button type="button" class="btn btn-danger" onclick="confirmDelete(<?= $car['id'] ?? 1 ?>, '<?= addslashes($car['ten_xe'] ?? 'xe này') ?>')">
-                                <i class="fas fa-trash"></i>
+                            <button type="button" class="btn-danger" onclick="if(confirm('Bạn có chắc chắn muốn xóa xe này?')) window.location.href='/admin/cars/delete?id=<?= $car['id'] ?>'">
+                                <i class="fas fa-trash"></i> Xóa xe
                             </button>
                         </div>
                     </div>
@@ -460,8 +434,25 @@
         }
 
         // Remove current image
-        function removeCurrentImage(btn) {
-            btn.parentElement.remove();
+        function removeCurrentImage(btn, imageId) {
+            if (confirm('Bạn có chắc chắn muốn xóa ảnh này?')) {
+                // Thêm ID vào danh sách ảnh cần xóa
+                const deletedIdsInput = document.getElementById('deletedImageIds');
+                const currentIds = deletedIdsInput.value ? deletedIdsInput.value.split(',') : [];
+                currentIds.push(imageId);
+                deletedIdsInput.value = currentIds.join(',');
+                
+                // Xóa element khỏi DOM
+                btn.parentElement.remove();
+                
+                // Kiểm tra nếu không còn ảnh nào
+                const currentImagesDiv = document.getElementById('currentImages');
+                if (currentImagesDiv.querySelectorAll('.preview-item').length === 0) {
+                    currentImagesDiv.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Chưa có hình ảnh nào</p>';
+                }
+                
+                showToast('Ảnh sẽ bị xóa khi bạn lưu thay đổi', 'warning');
+            }
         }
 
         // Status option selection
@@ -479,6 +470,14 @@
             toast.className = 'toast ' + type + ' show';
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
+
+        // Form submit validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const deletedIds = document.getElementById('deletedImageIds').value;
+            if (deletedIds) {
+                console.log('Ảnh sẽ bị xóa:', deletedIds);
+            }
+        });
 
         <?php if (isset($_GET['success'])): ?>
         showToast('<?= htmlspecialchars($_GET['success']) ?>');

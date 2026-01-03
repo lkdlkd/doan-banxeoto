@@ -90,17 +90,21 @@ include __DIR__ . '/../layouts/header.php';
                 <?php foreach ($cartItems as $item): ?>
                 <div class="cart-item" data-id="<?= $item['id'] ?>">
                     <div class="item-image">
-                        <img src="<?= $item['image_url'] ?? 'https://via.placeholder.com/300x200?text=No+Image' ?>" 
+                        <img src="<?= htmlspecialchars($item['image_url'] ?? 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400') ?>" 
                              alt="<?= htmlspecialchars($item['name']) ?>">
-                        <?php if ($item['status'] === 'sold'): ?>
+                        <?php if (isset($item['status']) && $item['status'] === 'sold'): ?>
                         <span class="sold-badge">Đã bán</span>
                         <?php endif; ?>
                     </div>
                     
                     <div class="item-info">
                         <div class="item-brand">
-                            <img src="<?= $item['brand_logo'] ?>" alt="<?= $item['brand_name'] ?>" class="brand-logo">
-                            <span><?= htmlspecialchars($item['brand_name']) ?></span>
+                            <?php if (!empty($item['brand_logo'])): ?>
+                                <img src="<?= htmlspecialchars($item['brand_logo']) ?>" alt="<?= htmlspecialchars($item['brand_name']) ?>" class="brand-logo">
+                            <?php else: ?>
+                                <img src="https://ui-avatars.com/api/?name=<?= urlencode($item['brand_name'] ?? 'Brand') ?>&background=D4AF37&color=000&size=50" alt="<?= htmlspecialchars($item['brand_name']) ?>" class="brand-logo">
+                            <?php endif; ?>
+                            <span><?= htmlspecialchars($item['brand_name'] ?? 'N/A') ?></span>
                         </div>
                         <h3 class="item-name">
                             <a href="/car/<?= $item['id'] ?>"><?= htmlspecialchars($item['name']) ?></a>
@@ -113,31 +117,31 @@ include __DIR__ . '/../layouts/header.php';
                                     <line x1="8" y1="2" x2="8" y2="6"></line>
                                     <line x1="3" y1="10" x2="21" y2="10"></line>
                                 </svg>
-                                <?= $item['year'] ?>
+                                <?= $item['year'] ?? 'N/A' ?>
                             </span>
                             <span class="detail">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <polyline points="12 6 12 12 16 14"></polyline>
                                 </svg>
-                                <?= number_format($item['mileage']) ?> km
+                                <?= isset($item['mileage']) ? number_format($item['mileage']) : '0' ?> km
                             </span>
                             <span class="detail">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                     <polyline points="14 2 14 8 20 8"></polyline>
                                 </svg>
-                                <?= ucfirst($item['transmission']) ?>
+                                <?= $item['transmission'] == 'automatic' ? 'Tự động' : 'Số sàn' ?>
                             </span>
                             <span class="detail category">
-                                <?= htmlspecialchars($item['category_name']) ?>
+                                <?= htmlspecialchars($item['category_name'] ?? 'N/A') ?>
                             </span>
                         </div>
                     </div>
                     
                     <div class="item-price-action">
                         <div class="item-price">
-                            <?= number_format($item['price'], 0, ',', '.') ?> ₫
+                            <?= number_format($item['price'] ?? 0, 0, ',', '.') ?> ₫
                         </div>
                         <a href="/cart?action=remove&id=<?= $item['id'] ?>" class="btn-remove" 
                            onclick="return confirm('Bạn có chắc muốn xóa xe này khỏi giỏ hàng?')">

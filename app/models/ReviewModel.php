@@ -10,7 +10,7 @@ class ReviewModel extends BaseModel
     // Lấy reviews của một xe
     public function getReviewsByCar($carId)
     {
-        $sql = "SELECT r.*, u.full_name as user_name, u.avatar as user_avatar 
+        $sql = "SELECT r.*, u.full_name as user_name, u.email as user_email 
                 FROM {$this->table} r 
                 LEFT JOIN users u ON r.user_id = u.id 
                 WHERE r.car_id = ? 
@@ -97,5 +97,11 @@ class ReviewModel extends BaseModel
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$carId, $rating]);
         return $stmt->fetchAll();
+    }
+
+    // Alias method cho getReviewsByCar
+    public function getByCarId($carId)
+    {
+        return $this->getReviewsByCar($carId);
     }
 }

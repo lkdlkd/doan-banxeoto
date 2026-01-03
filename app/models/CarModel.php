@@ -40,39 +40,52 @@ class CarModel extends BaseModel
     }
 
     // Tìm kiếm xe
-    public function search($keyword, $brandId = null, $categoryId = null, $minPrice = null, $maxPrice = null)
+    public function search($keyword, $brandIds = null, $categoryIds = null, $minPrice = null, $maxPrice = null)
     {
         $sql = "SELECT c.*, b.name as brand_name, cat.name as category_name 
                 FROM {$this->table} c 
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 LEFT JOIN categories cat ON c.category_id = cat.id 
-                WHERE 1=1";
+                WHERE c.status = 'available'";
         
         $params = [];
         
         if ($keyword) {
-            $sql .= " AND (c.name LIKE ? OR c.description LIKE ?)";
+            $sql .= " AND (c.name LIKE ? OR c.description LIKE ? OR b.name LIKE ?)";
             $searchTerm = "%{$keyword}%";
             $params[] = $searchTerm;
             $params[] = $searchTerm;
+            $params[] = $searchTerm;
         }
         
-        if ($brandId) {
-            $sql .= " AND c.brand_id = ?";
-            $params[] = $brandId;
+        if ($brandIds) {
+            // Support comma-separated brand IDs
+            $brandArray = is_array($brandIds) ? $brandIds : explode(',', $brandIds);
+            $brandArray = array_filter($brandArray); // Remove empty values
+            if (!empty($brandArray)) {
+                $placeholders = str_repeat('?,', count($brandArray) - 1) . '?';
+                $sql .= " AND c.brand_id IN ($placeholders)";
+                $params = array_merge($params, $brandArray);
+            }
         }
         
-        if ($categoryId) {
-            $sql .= " AND c.category_id = ?";
-            $params[] = $categoryId;
+        if ($categoryIds) {
+            // Support comma-separated category IDs
+            $categoryArray = is_array($categoryIds) ? $categoryIds : explode(',', $categoryIds);
+            $categoryArray = array_filter($categoryArray); // Remove empty values
+            if (!empty($categoryArray)) {
+                $placeholders = str_repeat('?,', count($categoryArray) - 1) . '?';
+                $sql .= " AND c.category_id IN ($placeholders)";
+                $params = array_merge($params, $categoryArray);
+            }
         }
         
-        if ($minPrice) {
+        if ($minPrice !== null && $minPrice !== '') {
             $sql .= " AND c.price >= ?";
             $params[] = $minPrice;
         }
         
-        if ($maxPrice) {
+        if ($maxPrice !== null && $maxPrice !== '') {
             $sql .= " AND c.price <= ?";
             $params[] = $maxPrice;
         }
@@ -207,5 +220,73 @@ class CarModel extends BaseModel
         $stmt->execute([$categoryId]);
         $result = $stmt->fetch();
         return $result['total'];
+    }
+
+    // Tìm xe theo ID với đầy đủ thông tin
+    public function findWithDetails($id)
+    {
+        $sql = "SELECT c.*, b.name as brand_name, cat.name as category_name 
+                FROM {$this->table} c 
+                LEFT JOIN brands b ON c.brand_id = b.id 
+                LEFT JOIN categories cat ON c.category_id = cat.id 
+                WHERE c.id = ?";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
+    // Lấy danh sách ảnh của xe
+    public function getImages($carId)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM car_images WHERE car_id = ? ORDER BY id");
+        $stmt->execute([$carId]);
+        return $stmt->fetchAll();
+    }
+
+    // Thêm ảnh mới cho xe
+    public function addImage($carId, $imageUrl)
+    {
+        $stmt = $this->db->prepare("INSERT INTO car_images (car_id, image_url) VALUES (?, ?)");
+        return $stmt->execute([$carId, $imageUrl]);
+    }
+
+    // Xóa ảnh
+    public function deleteImage($imageId)
+    {
+        $stmt = $this->db->prepare("DELETE FROM car_images WHERE id = ?");
+        return $stmt->execute([$imageId]);
+    }
+
+    // Lấy xe theo ID (alias cho findWithDetails)
+    public function getById($id)
+    {
+        return $this->findWithDetails($id);
+    }
+
+    // Lấy xe tương tự (cùng brand hoặc category)
+    public function getSimilarCars($currentCarId, $brandId, $categoryId, $limit = 4)
+    {
+        $sql = "SELECT c.*, b.name as brand_name, cat.name as category_name,
+                (SELECT image_url FROM car_images WHERE car_id = c.id LIMIT 1) as image_url
+                FROM {$this->table} c
+                LEFT JOIN brands b ON c.brand_id = b.id
+                LEFT JOIN categories cat ON c.category_id = cat.id
+                WHERE c.id != ? 
+                AND (c.brand_id = ? OR c.category_id = ?)
+                AND c.status = 'available'
+                ORDER BY 
+                    CASE WHEN c.brand_id = ? THEN 2 ELSE 1 END DESC,
+                    c.created_at DESC
+                LIMIT ?";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(1, $currentCarId, PDO::PARAM_INT);
+        $stmt->bindValue(2, $brandId, PDO::PARAM_INT);
+        $stmt->bindValue(3, $categoryId, PDO::PARAM_INT);
+        $stmt->bindValue(4, $brandId, PDO::PARAM_INT);
+        $stmt->bindValue(5, $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 }

@@ -1,107 +1,12 @@
 <?php 
 if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.php'; }
 
-require_once __DIR__ . '/../../../models/CategoryModel.php';
-require_once __DIR__ . '/../../../models/CarModel.php';
+// Lấy thông báo từ session
+$message = $_SESSION['success'] ?? $_SESSION['error'] ?? '';
+$messageType = isset($_SESSION['success']) ? 'success' : 'error';
 
-$categoryModel = new CategoryModel();
-$carModel = new CarModel();
-
-$categories = $categoryModel->getAll();
-$totalCategories = count($categories);
-
-// Đếm số xe theo category
-foreach ($categories as &$cat) {
-    $cat['car_count'] = $carModel->countByCategory($cat['id']);
-}
-
-// Icons for categories
-$icons = [
-    'Sedan' => 'fa-car-side',
-    'SUV' => 'fa-truck-monster', 
-    'Coupe' => 'fa-car-alt',
-    'Convertible' => 'fa-car',
-    'Sports Car' => 'fa-flag-checkered',
-    'Supercar' => 'fa-rocket',
-    'Crossover' => 'fa-car-rear'
-];
-
-// Xử lý form
-$message = '';
-$messageType = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'] ?? '';
-    
-    if ($action === 'add' || $action === 'edit') {
-        $name = trim($_POST['name'] ?? '');
-        $description = trim($_POST['description'] ?? '');
-        $icon = trim($_POST['icon'] ?? 'fa-car');
-        $image = '';
-        
-        // Xử lý image - ưu tiên file upload
-        if (!empty($_FILES['image_file']['name'])) {
-            $uploadDir = BASE_PATH . '/assets/images/categories/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-            
-            $fileName = time() . '_' . basename($_FILES['image_file']['name']);
-            $targetFile = $uploadDir . $fileName;
-            
-            if (move_uploaded_file($_FILES['image_file']['tmp_name'], $targetFile)) {
-                $image = BASE_URL . '/assets/images/categories/' . $fileName;
-            }
-        } elseif (!empty($_POST['image_url'])) {
-            $image = trim($_POST['image_url']);
-        }
-        
-        if (empty($name)) {
-            $message = 'Vui lòng nhập tên danh mục';
-            $messageType = 'error';
-        } else {
-            if ($action === 'add') {
-                $categoryModel->create([
-                    'name' => $name,
-                    'description' => $description,
-                    'icon' => $icon,
-                    'image' => $image
-                ]);
-                $message = 'Thêm danh mục thành công!';
-                $messageType = 'success';
-            } else {
-                $id = intval($_POST['id']);
-                $data = [
-                    'name' => $name,
-                    'description' => $description,
-                    'icon' => $icon
-                ];
-                if (!empty($image)) {
-                    $data['image'] = $image;
-                }
-                $categoryModel->update($id, $data);
-                $message = 'Cập nhật danh mục thành công!';
-                $messageType = 'success';
-            }
-            
-            // Refresh data
-            $categories = $categoryModel->getAll();
-            $totalCategories = count($categories);
-            foreach ($categories as &$cat) {
-                $cat['car_count'] = $carModel->countByCategory($cat['id']);
-            }
-        }
-    } elseif ($action === 'delete') {
-        $id = intval($_POST['id']);
-        $categoryModel->delete($id);
-        $message = 'Xóa danh mục thành công!';
-        $messageType = 'success';
-        
-        // Refresh data
-        $categories = $categoryModel->getAll();
-        $totalCategories = count($categories);
-    }
-}
+// Xóa thông báo sau khi hiển thị
+unset($_SESSION['success'], $_SESSION['error']);
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -169,15 +74,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php foreach ($categories as $cat): ?>
                 <div class="category-card">
                     <div class="category-content">
-                        <?php if (!empty($cat['image'])): ?>
-                        <div class="category-image">
-                            <img src="<?= $cat['image'] ?>" alt="<?= htmlspecialchars($cat['name']) ?>">
-                        </div>
-                        <?php else: ?>
                         <div class="category-icon">
-                            <i class="fas <?= $cat['icon'] ?? $icons[$cat['name']] ?? 'fa-car' ?>"></i>
+                            <i class="fas fa-layer-group"></i>
                         </div>
-                        <?php endif; ?>
                         <h3 class="category-name"><?= htmlspecialchars($cat['name']) ?></h3>
                         <p class="category-desc"><?= htmlspecialchars($cat['description'] ?? 'Chưa có mô tả') ?></p>
                         <div class="category-stats">
@@ -219,69 +118,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     
                     <div class="form-group">
-                        <label>Icon</label>
-                        <select name="icon" id="categoryIcon" class="form-control">
-                            <option value="fa-car">🚗 Car</option>
-                            <option value="fa-car-side">🚙 Car Side</option>
-                            <option value="fa-car-alt">🏎️ Car Alt</option>
-                            <option value="fa-truck-monster">🚙 SUV/Truck</option>
-                            <option value="fa-flag-checkered">🏁 Sports</option>
-                            <option value="fa-rocket">🚀 Supercar</option>
-                            <option value="fa-car-rear">🚘 Crossover</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Image Upload Section -->
-                    <div class="image-upload-section">
-                        <label>Hình ảnh danh mục (tùy chọn)</label>
-                        
-                        <div class="upload-tabs">
-                            <button type="button" class="upload-tab active" onclick="switchUploadTab('file')">
-                                <i class="fas fa-upload"></i> Tải từ máy
-                            </button>
-                            <button type="button" class="upload-tab" onclick="switchUploadTab('url')">
-                                <i class="fas fa-link"></i> Dùng link
-                            </button>
-                        </div>
-                        
-                        <div class="upload-panel active" id="filePanel">
-                            <div class="file-upload-area" id="dropZone">
-                                <input type="file" name="image_file" id="imageFile" accept="image/*">
-                                <div class="upload-icon">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                </div>
-                                <h4>Kéo thả ảnh vào đây</h4>
-                                <p>hoặc click để chọn file</p>
-                                <span class="browse-btn">Chọn ảnh</span>
-                            </div>
-                        </div>
-                        
-                        <div class="upload-panel" id="urlPanel">
-                            <div class="url-input-wrapper">
-                                <input type="url" name="image_url" id="imageUrl" placeholder="https://example.com/image.jpg">
-                                <i class="fas fa-link"></i>
-                            </div>
-                            <p class="form-info"><i class="fas fa-info-circle"></i> Nhập URL hình ảnh từ internet</p>
-                        </div>
-                        
-                        <div class="image-preview-container" id="imagePreview" style="display: none;">
-                            <div class="image-preview-wrapper">
-                                <img id="previewImg" src="" alt="Preview">
-                                <div class="preview-actions">
-                                    <button type="button" class="preview-action-btn view" onclick="viewImage()">
-                                        <i class="fas fa-expand"></i>
-                                    </button>
-                                    <button type="button" class="preview-action-btn remove" onclick="removeImage()">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
                         <label>Mô tả</label>
-                        <textarea name="description" id="categoryDescription" rows="3" placeholder="Mô tả ngắn về danh mục xe..."></textarea>
+                        <textarea name="description" id="categoryDescription" rows="5" placeholder="Mô tả chi tiết về danh mục xe..."></textarea>
                     </div>
                 </div>
                 
@@ -309,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p class="item-name" id="deleteName"></p>
                 <p style="color: #999; font-size: 0.85rem;">Hành động này không thể hoàn tác</p>
             </div>
-            <form method="POST" class="form-actions">
+            <form method="POST" action="/admin/categories/delete" class="form-actions">
                 <input type="hidden" name="action" value="delete">
                 <input type="hidden" name="id" id="deleteId">
                 <button type="button" class="btn-secondary" onclick="closeModal('deleteModal')">
@@ -342,35 +180,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Open Add Modal
         function openAddModal() {
+            const form = document.getElementById('categoryForm');
+            form.action = '/admin/categories/add';
             document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i> Thêm danh mục';
             document.getElementById('formAction').value = 'add';
             document.getElementById('categoryId').value = '';
             document.getElementById('categoryName').value = '';
             document.getElementById('categoryDescription').value = '';
-            document.getElementById('categoryIcon').value = 'fa-car';
-            document.getElementById('imageUrl').value = '';
-            document.getElementById('imageFile').value = '';
-            removeImage();
             document.getElementById('categoryModal').classList.add('active');
         }
 
         // Open Edit Modal
         function openEditModal(category) {
+            const form = document.getElementById('categoryForm');
+            form.action = '/admin/categories/edit';
             document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Sửa danh mục';
             document.getElementById('formAction').value = 'edit';
             document.getElementById('categoryId').value = category.id;
             document.getElementById('categoryName').value = category.name;
             document.getElementById('categoryDescription').value = category.description || '';
-            document.getElementById('categoryIcon').value = category.icon || 'fa-car';
-            
-            if (category.image) {
-                document.getElementById('imageUrl').value = category.image;
-                document.getElementById('previewImg').src = category.image;
-                document.getElementById('imagePreview').style.display = 'block';
-            } else {
-                removeImage();
-            }
-            
             document.getElementById('categoryModal').classList.add('active');
         }
 
@@ -384,83 +212,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Close Modal
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
-        }
-
-        // Switch Upload Tab
-        function switchUploadTab(tab) {
-            document.querySelectorAll('.upload-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.upload-panel').forEach(p => p.classList.remove('active'));
-            
-            if (tab === 'file') {
-                document.querySelector('.upload-tab:first-child').classList.add('active');
-                document.getElementById('filePanel').classList.add('active');
-            } else {
-                document.querySelector('.upload-tab:last-child').classList.add('active');
-                document.getElementById('urlPanel').classList.add('active');
-            }
-        }
-
-        // File Upload Preview
-        const imageFile = document.getElementById('imageFile');
-        const dropZone = document.getElementById('dropZone');
-        
-        imageFile.addEventListener('change', function(e) {
-            if (e.target.files[0]) {
-                previewFile(e.target.files[0]);
-            }
-        });
-
-        // Drag & Drop
-        dropZone.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.classList.add('dragover');
-        });
-
-        dropZone.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
-        });
-
-        dropZone.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files[0] && files[0].type.startsWith('image/')) {
-                imageFile.files = files;
-                previewFile(files[0]);
-            }
-        });
-
-        // Preview File
-        function previewFile(file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('previewImg').src = e.target.result;
-                document.getElementById('imagePreview').style.display = 'block';
-            }
-            reader.readAsDataURL(file);
-        }
-
-        // URL Input Preview
-        document.getElementById('imageUrl').addEventListener('input', function(e) {
-            if (e.target.value) {
-                document.getElementById('previewImg').src = e.target.value;
-                document.getElementById('imagePreview').style.display = 'block';
-            }
-        });
-
-        // View Image Full
-        function viewImage() {
-            const src = document.getElementById('previewImg').src;
-            window.open(src, '_blank');
-        }
-
-        // Remove Image
-        function removeImage() {
-            document.getElementById('previewImg').src = '';
-            document.getElementById('imagePreview').style.display = 'none';
-            document.getElementById('imageFile').value = '';
-            document.getElementById('imageUrl').value = '';
         }
 
         // Close modal when clicking outside

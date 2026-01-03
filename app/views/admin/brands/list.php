@@ -1,93 +1,12 @@
 <?php 
 if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.php'; }
 
-require_once __DIR__ . '/../../../models/BrandModel.php';
-require_once __DIR__ . '/../../../models/CarModel.php';
+// Lấy thông báo từ session
+$message = $_SESSION['success'] ?? $_SESSION['error'] ?? '';
+$messageType = isset($_SESSION['success']) ? 'success' : 'error';
 
-$brandModel = new BrandModel();
-$carModel = new CarModel();
-
-$brands = $brandModel->getAll();
-$totalBrands = count($brands);
-
-// Đếm số xe theo brand
-foreach ($brands as &$brand) {
-    $brand['car_count'] = $carModel->countByBrand($brand['id']);
-}
-
-// Xử lý form
-$message = '';
-$messageType = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'] ?? '';
-    
-    if ($action === 'add' || $action === 'edit') {
-        $name = trim($_POST['name'] ?? '');
-        $description = trim($_POST['description'] ?? '');
-        $logo = '';
-        
-        // Xử lý logo - ưu tiên file upload
-        if (!empty($_FILES['logo_file']['name'])) {
-            $uploadDir = BASE_PATH . '/assets/images/brands/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-            
-            $fileName = time() . '_' . basename($_FILES['logo_file']['name']);
-            $targetFile = $uploadDir . $fileName;
-            
-            if (move_uploaded_file($_FILES['logo_file']['tmp_name'], $targetFile)) {
-                $logo = BASE_URL . '/assets/images/brands/' . $fileName;
-            }
-        } elseif (!empty($_POST['logo_url'])) {
-            $logo = trim($_POST['logo_url']);
-        }
-        
-        if (empty($name)) {
-            $message = 'Vui lòng nhập tên thương hiệu';
-            $messageType = 'error';
-        } else {
-            if ($action === 'add') {
-                $brandModel->create([
-                    'name' => $name,
-                    'logo' => $logo,
-                    'description' => $description
-                ]);
-                $message = 'Thêm thương hiệu thành công!';
-                $messageType = 'success';
-            } else {
-                $id = intval($_POST['id']);
-                $data = [
-                    'name' => $name,
-                    'description' => $description
-                ];
-                if (!empty($logo)) {
-                    $data['logo'] = $logo;
-                }
-                $brandModel->update($id, $data);
-                $message = 'Cập nhật thương hiệu thành công!';
-                $messageType = 'success';
-            }
-            
-            // Refresh data
-            $brands = $brandModel->getAll();
-            $totalBrands = count($brands);
-            foreach ($brands as &$brand) {
-                $brand['car_count'] = $carModel->countByBrand($brand['id']);
-            }
-        }
-    } elseif ($action === 'delete') {
-        $id = intval($_POST['id']);
-        $brandModel->delete($id);
-        $message = 'Xóa thương hiệu thành công!';
-        $messageType = 'success';
-        
-        // Refresh data
-        $brands = $brandModel->getAll();
-        $totalBrands = count($brands);
-    }
-}
+// Xóa thông báo sau khi hiển thị
+unset($_SESSION['success'], $_SESSION['error']);
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -275,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p class="item-name" id="deleteName"></p>
                 <p style="color: #999; font-size: 0.85rem;">Hành động này không thể hoàn tác</p>
             </div>
-            <form method="POST" class="form-actions">
+            <form method="POST" action="/admin/brands/delete" class="form-actions">
                 <input type="hidden" name="action" value="delete">
                 <input type="hidden" name="id" id="deleteId">
                 <button type="button" class="btn-secondary" onclick="closeModal('deleteModal')">
@@ -308,6 +227,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Open Add Modal
         function openAddModal() {
+            const form = document.getElementById('brandForm');
+            form.action = '/admin/brands/add';
             document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i> Thêm thương hiệu';
             document.getElementById('formAction').value = 'add';
             document.getElementById('brandId').value = '';
@@ -321,6 +242,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Open Edit Modal
         function openEditModal(brand) {
+            const form = document.getElementById('brandForm');
+            form.action = '/admin/brands/edit';
             document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Sửa thương hiệu';
             document.getElementById('formAction').value = 'edit';
             document.getElementById('brandId').value = brand.id;
