@@ -64,7 +64,13 @@ switch ($request) {
         break;
         
     case '/contact':
-        require VIEW_PATH . '/user/contact.php';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require_once APP_PATH . '/controllers/ContactController.php';
+            $controller = new ContactController();
+            $controller->submit();
+        } else {
+            require VIEW_PATH . '/user/contact.php';
+        }
         break;
     
     case '/cart':
@@ -573,17 +579,21 @@ switch ($request) {
         break;
     
     case '/admin/contacts':
-        // Kiểm tra đăng nhập và quyền admin
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: /login');
-            exit;
-        }
-        if ($_SESSION['role'] !== 'admin') {
-            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
-            header('Location: /');
-            exit;
-        }
-        require VIEW_PATH . '/admin/contacts/list.php';
+        require_once APP_PATH . '/controllers/ContactController.php';
+        $controller = new ContactController();
+        $controller->adminList();
+        break;
+
+    case (preg_match('/^\/admin\/contacts\/update-status\/(\d+)\/(\w+)$/', $request, $matches) ? true : false):
+        require_once APP_PATH . '/controllers/ContactController.php';
+        $controller = new ContactController();
+        $controller->adminUpdateStatus($matches[1], $matches[2]);
+        break;
+
+    case (preg_match('/^\/admin\/contacts\/delete\/(\d+)$/', $request, $matches) ? true : false):
+        require_once APP_PATH . '/controllers/ContactController.php';
+        $controller = new ContactController();
+        $controller->adminDelete($matches[1]);
         break;
         
     default:

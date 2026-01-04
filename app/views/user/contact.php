@@ -520,19 +520,33 @@ include __DIR__ . '/../layouts/header.php';
                 <h2>Gửi <span>Tin Nhắn</span></h2>
                 <p>Điền thông tin bên dưới, chúng tôi sẽ liên hệ lại trong thời gian sớm nhất</p>
                 
+                <?php if (isset($_SESSION['contact_success'])): ?>
+                    <div class="alert alert-success" style="background: #d4edda; color: #155724; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+                        <i class="fas fa-check-circle"></i> <?= $_SESSION['contact_success'] ?>
+                    </div>
+                    <?php unset($_SESSION['contact_success']); ?>
+                <?php endif; ?>
+                
+                <?php if (isset($_SESSION['contact_error'])): ?>
+                    <div class="alert alert-danger" style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                        <i class="fas fa-exclamation-circle"></i> <?= $_SESSION['contact_error'] ?>
+                    </div>
+                    <?php unset($_SESSION['contact_error']); ?>
+                <?php endif; ?>
+                
                 <form class="contact-form" method="POST" action="/contact">
                     <div class="form-row">
                         <div class="form-group">
                             <label for="name">Họ và tên *</label>
                             <div class="input-wrapper">
-                                <input type="text" id="name" name="name" placeholder="Nguyễn Văn A" required>
+                                <input type="text" id="name" name="name" placeholder="Nguyễn Văn A" value="<?= htmlspecialchars($_SESSION['contact_old']['name'] ?? '') ?>" required>
                                 <i class="fas fa-user"></i>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="phone">Số điện thoại *</label>
                             <div class="input-wrapper">
-                                <input type="tel" id="phone" name="phone" placeholder="0901 234 567" required>
+                                <input type="tel" id="phone" name="phone" placeholder="0901 234 567" value="<?= htmlspecialchars($_SESSION['contact_old']['phone'] ?? '') ?>" required>
                                 <i class="fas fa-phone"></i>
                             </div>
                         </div>
@@ -541,7 +555,7 @@ include __DIR__ . '/../layouts/header.php';
                     <div class="form-group">
                         <label for="email">Email</label>
                         <div class="input-wrapper">
-                            <input type="email" id="email" name="email" placeholder="email@example.com">
+                            <input type="email" id="email" name="email" placeholder="email@example.com" value="<?= htmlspecialchars($_SESSION['contact_old']['email'] ?? '') ?>">
                             <i class="fas fa-envelope"></i>
                         </div>
                     </div>
@@ -564,7 +578,7 @@ include __DIR__ . '/../layouts/header.php';
                     <div class="form-group">
                         <label for="message">Nội dung tin nhắn *</label>
                         <div class="input-wrapper">
-                            <textarea id="message" name="message" placeholder="Nhập nội dung tin nhắn của bạn..." required></textarea>
+                            <textarea id="message" name="message" placeholder="Nhập nội dung tin nhắn của bạn..." required><?= htmlspecialchars($_SESSION['contact_old']['message'] ?? '') ?></textarea>
                             <i class="fas fa-comment-alt"></i>
                         </div>
                     </div>
