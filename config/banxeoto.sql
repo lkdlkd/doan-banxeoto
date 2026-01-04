@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th1 03, 2026 lúc 04:25 AM
+-- Thời gian đã tạo: Th1 04, 2026 lúc 06:57 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -20,6 +20,26 @@ SET time_zone = "+00:00";
 --
 -- Cơ sở dữ liệu: `banxeoto`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `appointments`
+--
+
+CREATE TABLE `appointments` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `car_id` int(11) NOT NULL,
+  `appointment_date` date NOT NULL,
+  `appointment_time` time NOT NULL,
+  `full_name` varchar(100) NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  `email` varchar(150) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `status` enum('pending','confirmed','cancelled','completed') DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -80,10 +100,10 @@ CREATE TABLE `cars` (
 --
 
 INSERT INTO `cars` (`id`, `name`, `brand_id`, `category_id`, `price`, `year`, `mileage`, `fuel`, `transmission`, `color`, `description`, `status`, `created_at`) VALUES
-(1, 'AMG GT 63 S', 1, 3, 12500000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen', 'Mercedes-AMG GT 63 S 4MATIC+ với động cơ V8 4.0L twin-turbo 639 mã lực', 'available', '2026-01-02 07:00:58'),
-(2, 'S-Class S450', 1, 1, 5200000000.00, 2024, 0, 'gasoline', 'automatic', 'Trắng', 'Mercedes-Benz S450 4MATIC Luxury sedan flagship', 'available', '2026-01-02 07:00:58'),
-(3, 'GLE 450 AMG', 1, 2, 4800000000.00, 2024, 5000, 'gasoline', 'automatic', 'Xám', 'Mercedes GLE 450 4MATIC Coupe AMG Line', 'available', '2026-01-02 07:00:58'),
-(4, 'M8 Competition', 2, 3, 13200000000.00, 2024, 0, 'gasoline', 'automatic', 'Xanh San Marino', 'BMW M8 Competition Coupe với động cơ V8 4.4L 617 mã lực', 'available', '2026-01-02 07:00:58'),
+(1, 'AMG GT 63 S', 1, 3, 12500000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen', 'Mercedes-AMG GT 63 S 4MATIC+ với động cơ V8 4.0L twin-turbo 639 mã lực', 'sold', '2026-01-02 07:00:58'),
+(2, 'S-Class S450', 1, 1, 5200000000.00, 2024, 0, 'gasoline', 'automatic', 'Trắng', 'Mercedes-Benz S450 4MATIC Luxury sedan flagship', 'sold', '2026-01-02 07:00:58'),
+(3, 'GLE 450 AMG', 1, 2, 4800000000.00, 2024, 5000, 'gasoline', 'automatic', 'Xám', 'Mercedes GLE 450 4MATIC Coupe AMG Line', 'sold', '2026-01-02 07:00:58'),
+(4, 'M8 Competition', 2, 3, 13200000000.00, 2024, 0, 'gasoline', 'automatic', 'Xanh San Marino', 'BMW M8 Competition Coupe với động cơ V8 4.4L 617 mã lực', 'sold', '2026-01-02 07:00:58'),
 (5, 'X7 xDrive40i', 2, 2, 6800000000.00, 2024, 3000, 'gasoline', 'automatic', 'Đen Sapphire', 'BMW X7 xDrive40i M Sport 7 chỗ luxury SUV', 'available', '2026-01-02 07:00:58'),
 (6, '7 Series 740i', 2, 1, 5900000000.00, 2025, 0, 'gasoline', 'automatic', 'Trắng Alpine', 'BMW 740i M Sport flagship sedan', 'available', '2026-01-02 07:00:58'),
 (7, 'RS7 Sportback', 3, 1, 8900000000.00, 2024, 0, 'gasoline', 'automatic', 'Xám Nardo', 'Audi RS7 Sportback với động cơ V8 4.0L TFSI 621 mã lực', 'available', '2026-01-02 07:00:58'),
@@ -207,6 +227,14 @@ CREATE TABLE `contacts` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `contacts`
+--
+
+INSERT INTO `contacts` (`id`, `name`, `email`, `phone`, `subject`, `message`, `status`, `created_at`) VALUES
+(2, 'Le Khanh Dang', 'khanhdang2440@gmail.com', '0868065672', 'baogia', 'fdsf', 'replied', '2026-01-04 05:49:43'),
+(3, 'Chùa Âng', 'khanhdang@gmail.com', '0868065672', 'baoduong', 'fsfd', 'read', '2026-01-04 05:49:53');
+
 -- --------------------------------------------------------
 
 --
@@ -219,6 +247,13 @@ CREATE TABLE `favorites` (
   `car_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `favorites`
+--
+
+INSERT INTO `favorites` (`id`, `user_id`, `car_id`, `created_at`) VALUES
+(1, 1, 1, '2026-01-04 04:52:26');
 
 -- --------------------------------------------------------
 
@@ -239,25 +274,15 @@ CREATE TABLE `orders` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
--- Cấu trúc bảng cho bảng `appointments`
+-- Đang đổ dữ liệu cho bảng `orders`
 --
 
-CREATE TABLE `appointments` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `car_id` int(11) NOT NULL,
-  `appointment_date` date NOT NULL,
-  `appointment_time` time NOT NULL,
-  `full_name` varchar(100) NOT NULL,
-  `phone` varchar(20) NOT NULL,
-  `email` varchar(150) DEFAULT NULL,
-  `notes` text DEFAULT NULL,
-  `status` enum('pending','confirmed','cancelled','completed') DEFAULT 'pending',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `orders` (`id`, `user_id`, `car_id`, `price`, `deposit_percentage`, `deposit_amount`, `payment_method`, `status`, `notes`, `created_at`) VALUES
+(1, 1, 1, 12500000000.00, 30, 3750000000.00, 'deposit', 'completed', '', '2026-01-04 04:52:43'),
+(2, 1, 2, 5200000000.00, 0, NULL, 'cash', 'confirmed', '', '2026-01-04 05:47:35'),
+(3, 1, 4, 13200000000.00, 50, 6600000000.00, 'deposit', 'confirmed', '', '2026-01-04 05:47:49'),
+(4, 1, 3, 4800000000.00, 0, NULL, 'bank_transfer', 'confirmed', '', '2026-01-04 05:47:59');
 
 -- --------------------------------------------------------
 
@@ -273,6 +298,14 @@ CREATE TABLE `reviews` (
   `comment` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `reviews`
+--
+
+INSERT INTO `reviews` (`id`, `user_id`, `car_id`, `rating`, `comment`, `created_at`) VALUES
+(1, 1, 1, 3, 'ffđgg', '2026-01-04 04:56:30'),
+(2, 1, 3, 5, 'fdfd', '2026-01-04 05:49:31');
 
 -- --------------------------------------------------------
 
@@ -299,12 +332,20 @@ CREATE TABLE `users` (
 -- Đang đổ dữ liệu cho bảng `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `full_name`, `phone`, `address`, `role`, `status`, `created_at`) VALUES
-(1, 'khanhdang', 'khanhdang2440@gmail.com', '$2y$10$G8IdZF3lcO0fpEjTjLxRSOpMxySQGNMgQTgPUxMJUYl5zhp9wrUgq', 'Lê Khánh Đăng', '0868065672', NULL, 'user', 1, '2025-12-30 07:21:32');
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `full_name`, `phone`, `address`, `avatar`, `remember_token`, `role`, `status`, `created_at`) VALUES
+(1, 'khanhdang', 'khanhdang2440@gmail.com', '$2y$10$G8IdZF3lcO0fpEjTjLxRSOpMxySQGNMgQTgPUxMJUYl5zhp9wrUgq', 'Lê Khánh Đăng', '0868065672', NULL, NULL, NULL, 'admin', 1, '2025-12-30 07:21:32');
 
 --
 -- Chỉ mục cho các bảng đã đổ
 --
+
+--
+-- Chỉ mục cho bảng `appointments`
+--
+ALTER TABLE `appointments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `car_id` (`car_id`);
 
 --
 -- Chỉ mục cho bảng `brands`
@@ -350,14 +391,6 @@ ALTER TABLE `favorites`
   ADD KEY `car_id` (`car_id`);
 
 --
--- Chỉ mục cho bảng `appointments`
---
-ALTER TABLE `appointments`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `car_id` (`car_id`);
-
---
 -- Chỉ mục cho bảng `orders`
 --
 ALTER TABLE `orders`
@@ -384,6 +417,12 @@ ALTER TABLE `users`
 --
 -- AUTO_INCREMENT cho các bảng đã đổ
 --
+
+--
+-- AUTO_INCREMENT cho bảng `appointments`
+--
+ALTER TABLE `appointments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `brands`
@@ -413,31 +452,25 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT cho bảng `contacts`
 --
 ALTER TABLE `contacts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT cho bảng `favorites`
 --
 ALTER TABLE `favorites`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT cho bảng `appointments`
---
-ALTER TABLE `appointments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT cho bảng `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
@@ -448,6 +481,13 @@ ALTER TABLE `users`
 --
 -- Các ràng buộc cho các bảng đã đổ
 --
+
+--
+-- Các ràng buộc cho bảng `appointments`
+--
+ALTER TABLE `appointments`
+  ADD CONSTRAINT `appointments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `appointments_ibfk_2` FOREIGN KEY (`car_id`) REFERENCES `cars` (`id`) ON DELETE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `cars`
@@ -468,13 +508,6 @@ ALTER TABLE `car_images`
 ALTER TABLE `favorites`
   ADD CONSTRAINT `favorites_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `favorites_ibfk_2` FOREIGN KEY (`car_id`) REFERENCES `cars` (`id`) ON DELETE CASCADE;
-
---
--- Các ràng buộc cho bảng `appointments`
---
-ALTER TABLE `appointments`
-  ADD CONSTRAINT `appointments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `appointments_ibfk_2` FOREIGN KEY (`car_id`) REFERENCES `cars` (`id`) ON DELETE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `orders`
