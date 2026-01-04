@@ -44,6 +44,15 @@ class OrderModel extends BaseModel
         return $stmt->fetch();
     }
 
+    // Lấy đơn hàng theo ID (đơn giản)
+    public function findById($id)
+    {
+        $sql = "SELECT * FROM {$this->table} WHERE id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
     // Lấy đơn hàng theo user
     public function getOrdersByUser($userId)
     {
@@ -63,9 +72,25 @@ class OrderModel extends BaseModel
     }
 
     // Alias cho getOrdersByUser
-    public function getByUserId($userId)
+    public function getByUserId($userId, $limit = null)
     {
-        return $this->getOrdersByUser($userId);
+        $sql = "SELECT o.*, c.name as car_name, c.price as car_price, 
+                ci.image_url as car_image, b.name as brand_name 
+                FROM {$this->table} o 
+                LEFT JOIN cars c ON o.car_id = c.id 
+                LEFT JOIN car_images ci ON c.id = ci.car_id 
+                LEFT JOIN brands b ON c.brand_id = b.id 
+                WHERE o.user_id = ? 
+                GROUP BY o.id 
+                ORDER BY o.created_at DESC";
+        
+        if ($limit !== null) {
+            $sql .= " LIMIT " . (int)$limit;
+        }
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll();
     }
 
     // Lấy đơn hàng theo trạng thái
@@ -133,5 +158,19 @@ class OrderModel extends BaseModel
         $stmt->execute();
         $result = $stmt->fetch();
         return $result['total_revenue'] ?? 0;
+    }
+
+    // Kiểm tra user đã mua xe chưa (đã confirmed hoặc completed)
+    public function checkUserPurchased($userId, $carId)
+    {
+        $sql = "SELECT COUNT(*) as total FROM {$this->table} 
+                WHERE user_id = ? AND car_id = ? 
+                AND status IN ('confirmed', 'completed')";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$userId, $carId]);
+        $result = $stmt->fetch();
+        
+        return $result['total'] > 0;
     }
 }

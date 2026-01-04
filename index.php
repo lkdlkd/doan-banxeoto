@@ -89,6 +89,58 @@ switch ($request) {
         $controller->getInfo();
         break;
     
+    case '/checkout':
+        require_once APP_PATH . '/controllers/OrderController.php';
+        $controller = new OrderController();
+        $controller->showCheckout();
+        break;
+    
+    case '/order/place':
+        require_once APP_PATH . '/controllers/OrderController.php';
+        $controller = new OrderController();
+        $controller->placeOrder();
+        break;
+    
+    case (preg_match('/^\/order\/(\d+)$/', $request, $matches) ? true : false):
+        require_once APP_PATH . '/controllers/OrderController.php';
+        $controller = new OrderController();
+        $controller->showOrder($matches[1]);
+        break;
+    
+    case (preg_match('/^\/order\/cancel\/(\d+)$/', $request, $matches) ? true : false):
+        require_once APP_PATH . '/controllers/OrderController.php';
+        $controller = new OrderController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->cancelOrder($matches[1]);
+        } else {
+            // Redirect to orders if accessed via GET
+            header('Location: /orders');
+            exit;
+        }
+        break;
+    
+    case (preg_match('/^\/appointment\/book\/(\d+)$/', $request, $matches) ? true : false):
+        require VIEW_PATH . '/user/book_appointment.php';
+        break;
+    
+    case '/appointment/create':
+        require_once APP_PATH . '/controllers/AppointmentController.php';
+        $controller = new AppointmentController();
+        $controller->createAppointment();
+        break;
+    
+    case (preg_match('/^\/appointment\/cancel\/(\d+)$/', $request, $matches) ? true : false):
+        require_once APP_PATH . '/controllers/AppointmentController.php';
+        $controller = new AppointmentController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->cancelAppointment($matches[1]);
+        } else {
+            // Redirect to appointments if accessed via GET
+            header('Location: /appointments');
+            exit;
+        }
+        break;
+    
     case '/compare':
         require VIEW_PATH . '/user/compare.php';
         break;
@@ -117,7 +169,18 @@ switch ($request) {
             header('Location: /login');
             exit;
         }
-        require VIEW_PATH . '/user/orders.php';
+        require_once APP_PATH . '/controllers/OrderController.php';
+        $controller = new OrderController();
+        $controller->showMyOrders();
+        break;
+    
+    case '/appointments':
+        // Kiểm tra đăng nhập
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        require VIEW_PATH . '/user/appointments.php';
         break;
     
     case '/favorites':
@@ -168,6 +231,24 @@ switch ($request) {
             exit;
         }
         require VIEW_PATH . '/user/profile.php';
+        break;
+    
+    case (preg_match('/^\/review\/create\/(\d+)$/', $request, $matches) ? true : false):
+        require_once APP_PATH . '/controllers/ReviewController.php';
+        $controller = new ReviewController();
+        $controller->showReviewForm($matches[1]);
+        break;
+    
+    case '/review/submit':
+        require_once APP_PATH . '/controllers/ReviewController.php';
+        $controller = new ReviewController();
+        $controller->submitReview();
+        break;
+    
+    case (preg_match('/^\/review\/delete\/(\d+)$/', $request, $matches) ? true : false):
+        require_once APP_PATH . '/controllers/ReviewController.php';
+        $controller = new ReviewController();
+        $controller->deleteReview($matches[1]);
         break;
     
     case '/logout':
@@ -410,7 +491,51 @@ switch ($request) {
             header('Location: /');
             exit;
         }
-        require VIEW_PATH . '/admin/orders/list.php';
+        require_once APP_PATH . '/controllers/OrderController.php';
+        $controller = new OrderController();
+        $controller->adminList();
+        break;
+    
+    case (preg_match('/^\/admin\/orders\/detail\/(\d+)$/', $request, $matches) ? true : false):
+        require_once APP_PATH . '/controllers/OrderController.php';
+        $controller = new OrderController();
+        $controller->adminDetail($matches[1]);
+        break;
+    
+    case (preg_match('/^\/admin\/orders\/update-status\/(\d+)\/(pending|confirmed|cancelled|completed)$/', $request, $matches) ? true : false):
+        require_once APP_PATH . '/controllers/OrderController.php';
+        $controller = new OrderController();
+        $controller->adminUpdateStatus($matches[1], $matches[2]);
+        break;
+    
+    case (preg_match('/^\/admin\/orders\/delete\/(\d+)$/', $request, $matches) ? true : false):
+        require_once APP_PATH . '/controllers/OrderController.php';
+        $controller = new OrderController();
+        $controller->adminDelete($matches[1]);
+        break;
+    
+    case '/admin/appointments':
+        require_once APP_PATH . '/controllers/AppointmentController.php';
+        $controller = new AppointmentController();
+        $controller->adminList();
+        break;
+    
+    case (preg_match('/^\/admin\/appointments\/detail\/(\d+)$/', $request, $matches) ? true : false):
+        require_once APP_PATH . '/controllers/AppointmentController.php';
+        $controller = new AppointmentController();
+        $controller->adminDetail($matches[1]);
+        break;
+    
+    case (preg_match('/^\/admin\/appointments\/update-status\/(\d+)\/(pending|confirmed|completed|cancelled)$/', $request, $matches) ? true : false):
+        require_once APP_PATH . '/controllers/AppointmentController.php';
+        $controller = new AppointmentController();
+        $controller->adminUpdateStatus($matches[1], $matches[2]);
+        break;
+    
+    case (preg_match('/^\/admin\/appointments\/delete\/(\d+)$/', $request, $matches) ? true : false):
+        require_once APP_PATH . '/controllers/AppointmentController.php';
+        $controller = new AppointmentController();
+        $controller->adminDelete($matches[1]);
         break;
     
     case '/admin/users':
@@ -439,6 +564,12 @@ switch ($request) {
             exit;
         }
         require VIEW_PATH . '/admin/reviews/list.php';
+        break;
+    
+    case (preg_match('/^\/admin\/reviews\/delete\/(\d+)$/', $request, $matches) ? true : false):
+        require_once APP_PATH . '/controllers/ReviewController.php';
+        $controller = new ReviewController();
+        $controller->adminDelete($matches[1]);
         break;
     
     case '/admin/contacts':

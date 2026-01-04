@@ -2,63 +2,61 @@
 if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../config/config.php'; }
 
 // Load model
-require_once __DIR__ . '/../../models/OrderModel.php';
-require_once __DIR__ . '/../../models/ReviewModel.php';
+require_once __DIR__ . '/../../models/AppointmentModel.php';
 
-$orderModel = new OrderModel();
-$reviewModel = new ReviewModel();
+$appointmentModel = new AppointmentModel();
 $userId = $_SESSION['user_id'];
 
-// Lấy danh sách đơn hàng của user
-$orders = $orderModel->getByUserId($userId);
+// Lấy danh sách lịch hẹn của user
+$appointments = $appointmentModel->getAppointmentsByUser($userId);
 
-$pageTitle = 'Đơn hàng của tôi - AutoCar';
-$currentPage = 'orders';
+$pageTitle = 'Lịch hẹn xem xe - AutoCar';
+$currentPage = 'appointments';
 
 include __DIR__ . '/../layouts/header.php';
 ?>
 
 <style>
-.orders-page {
+.appointments-page {
     padding: 120px 0 80px;
     background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
     min-height: 100vh;
 }
 
-.orders-container {
+.appointments-container {
     max-width: 1000px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-.orders-header {
+.appointments-header {
     text-align: center;
     margin-bottom: 50px;
 }
 
-.orders-header h1 {
+.appointments-header h1 {
     font-family: 'Playfair Display', serif;
     font-size: 42px;
     color: #fff;
     margin-bottom: 10px;
 }
 
-.orders-header h1 span {
+.appointments-header h1 span {
     color: #D4AF37;
 }
 
-.orders-header p {
+.appointments-header p {
     color: rgba(255,255,255,0.6);
     font-size: 16px;
 }
 
-.orders-list {
+.appointments-list {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.order-card {
+.appointment-card {
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(212, 175, 55, 0.2);
     border-radius: 16px;
@@ -66,12 +64,12 @@ include __DIR__ . '/../layouts/header.php';
     transition: all 0.3s ease;
 }
 
-.order-card:hover {
+.appointment-card:hover {
     border-color: rgba(212, 175, 55, 0.5);
     transform: translateY(-2px);
 }
 
-.order-header {
+.appointment-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -80,19 +78,19 @@ include __DIR__ . '/../layouts/header.php';
     border-bottom: 1px solid rgba(212, 175, 55, 0.1);
 }
 
-.order-info h3 {
+.appointment-info h3 {
     font-family: 'Playfair Display', serif;
     font-size: 18px;
     color: #D4AF37;
     margin: 0 0 5px 0;
 }
 
-.order-info span {
+.appointment-info span {
     color: rgba(255,255,255,0.5);
     font-size: 13px;
 }
 
-.order-status {
+.appointment-status {
     padding: 8px 16px;
     border-radius: 20px;
     font-size: 12px;
@@ -101,37 +99,37 @@ include __DIR__ . '/../layouts/header.php';
     letter-spacing: 0.5px;
 }
 
-.order-status.pending {
+.appointment-status.pending {
     background: rgba(245, 158, 11, 0.2);
     color: #f59e0b;
 }
 
-.order-status.confirmed {
+.appointment-status.confirmed {
     background: rgba(59, 130, 246, 0.2);
     color: #3b82f6;
 }
 
-.order-status.completed {
+.appointment-status.completed {
     background: rgba(16, 185, 129, 0.2);
     color: #10b981;
 }
 
-.order-status.cancelled {
+.appointment-status.cancelled {
     background: rgba(239, 68, 68, 0.2);
     color: #ef4444;
 }
 
-.order-body {
+.appointment-body {
     padding: 24px;
 }
 
-.order-items {
+.appointment-items {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-.order-item {
+.appointment-item {
     display: flex;
     gap: 16px;
     padding: 16px;
@@ -139,7 +137,7 @@ include __DIR__ . '/../layouts/header.php';
     border-radius: 12px;
 }
 
-.order-item-image {
+.appointment-item-image {
     width: 120px;
     height: 80px;
     border-radius: 8px;
@@ -147,40 +145,58 @@ include __DIR__ . '/../layouts/header.php';
     flex-shrink: 0;
 }
 
-.order-item-image img {
+.appointment-item-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.order-item-info {
+.appointment-item-info {
     flex: 1;
 }
 
-.order-item-info h4 {
+.appointment-item-info h4 {
     color: #fff;
     font-size: 16px;
     margin: 0 0 8px 0;
 }
 
-.order-item-info p {
+.appointment-item-info p {
     color: rgba(255,255,255,0.5);
     font-size: 13px;
     margin: 0;
 }
 
-.order-item-price {
+.appointment-datetime {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.appointment-datetime-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #e0e0e0;
+    font-size: 14px;
+}
+
+.appointment-datetime-item i {
+    color: #D4AF37;
+}
+
+.appointment-item-price {
     text-align: right;
 }
 
-.order-item-price .price {
+.appointment-item-price .price {
     font-family: 'Playfair Display', serif;
     font-size: 18px;
     color: #D4AF37;
     font-weight: 600;
 }
 
-.order-footer {
+.appointment-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -189,30 +205,31 @@ include __DIR__ . '/../layouts/header.php';
     background: rgba(0,0,0,0.2);
 }
 
-.order-total {
+.appointment-details {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-direction: column;
+    gap: 5px;
 }
 
-.order-total span {
+.appointment-details span {
     color: rgba(255,255,255,0.6);
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.order-total .total-price {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
+.appointment-details span i {
     color: #D4AF37;
-    font-weight: 700;
+    width: 16px;
 }
 
-.order-actions {
+.appointment-actions {
     display: flex;
     gap: 10px;
 }
 
-.btn-order {
+.btn-appointment {
     padding: 10px 20px;
     border-radius: 8px;
     font-size: 13px;
@@ -223,63 +240,52 @@ include __DIR__ . '/../layouts/header.php';
     cursor: pointer;
 }
 
-.btn-order.primary {
+.btn-appointment.primary {
     background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
     color: #000;
 }
 
-.btn-order.primary:hover {
+.btn-appointment.primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
 }
 
-.btn-order.secondary {
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.2);
-    color: #fff;
+.btn-appointment.danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-.btn-order.secondary:hover {
-    border-color: #D4AF37;
-    color: #D4AF37;
-}
-
-.btn-order.review {
-    background: transparent;
-    border: 1px solid rgba(212, 175, 55, 0.5);
-    color: #D4AF37;
-}
-
-.btn-order.review:hover {
-    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
-    color: #000;
+.btn-appointment.danger:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
 }
 
 /* Empty State */
-.empty-orders {
+.empty-appointments {
     text-align: center;
     padding: 80px 20px;
 }
 
-.empty-orders i {
+.empty-appointments i {
     font-size: 80px;
     color: rgba(212, 175, 55, 0.3);
     margin-bottom: 24px;
 }
 
-.empty-orders h3 {
+.empty-appointments h3 {
     font-family: 'Playfair Display', serif;
     font-size: 28px;
     color: #fff;
     margin-bottom: 12px;
 }
 
-.empty-orders p {
+.empty-appointments p {
     color: rgba(255,255,255,0.5);
     margin-bottom: 30px;
 }
 
-.empty-orders .btn-explore {
+.empty-appointments .btn-explore {
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -292,7 +298,7 @@ include __DIR__ . '/../layouts/header.php';
     transition: all 0.3s ease;
 }
 
-.empty-orders .btn-explore:hover {
+.empty-appointments .btn-explore:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
 }
@@ -338,37 +344,43 @@ include __DIR__ . '/../layouts/header.php';
 }
 
 @media (max-width: 768px) {
-    .orders-header h1 {
+    .appointments-header h1 {
         font-size: 32px;
     }
     
-    .order-header {
+    .appointment-header {
         flex-direction: column;
         gap: 12px;
         align-items: flex-start;
     }
     
-    .order-item {
+    .appointment-item {
         flex-direction: column;
     }
     
-    .order-item-image {
+    .appointment-item-image {
         width: 100%;
         height: 150px;
     }
     
-    .order-footer {
+    .appointment-datetime {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .appointment-footer {
         flex-direction: column;
         gap: 16px;
+        align-items: flex-start;
     }
 }
 </style>
 
-<div class="orders-page">
-    <div class="orders-container">
-        <div class="orders-header">
-            <h1>Đơn hàng <span>của tôi</span></h1>
-            <p>Quản lý và theo dõi tất cả đơn hàng của bạn</p>
+<div class="appointments-page">
+    <div class="appointments-container">
+        <div class="appointments-header">
+            <h1>Lịch hẹn <span>xem xe</span></h1>
+            <p>Quản lý và theo dõi tất cả lịch hẹn của bạn</p>
         </div>
 
         <!-- Alert Messages -->
@@ -386,79 +398,80 @@ include __DIR__ . '/../layouts/header.php';
             </div>
         <?php endif; ?>
 
-        <?php if (empty($orders)): ?>
-        <div class="empty-orders">
-            <i class="fas fa-shopping-bag"></i>
-            <h3>Chưa có đơn hàng nào</h3>
-            <p>Bạn chưa có đơn hàng nào. Hãy khám phá bộ sưu tập xe của chúng tôi!</p>
+        <?php if (empty($appointments)): ?>
+        <div class="empty-appointments">
+            <i class="fas fa-calendar-times"></i>
+            <h3>Chưa có lịch hẹn nào</h3>
+            <p>Bạn chưa đặt lịch xem xe nào. Hãy khám phá bộ sưu tập xe của chúng tôi!</p>
             <a href="/cars" class="btn-explore">
                 <i class="fas fa-car"></i>
                 Khám phá xe
             </a>
         </div>
         <?php else: ?>
-        <div class="orders-list">
-            <?php foreach ($orders as $order): ?>
-            <div class="order-card">
-                <div class="order-header">
-                    <div class="order-info">
-                        <h3>Đơn hàng #<?= str_pad($order['id'], 6, '0', STR_PAD_LEFT) ?></h3>
-                        <span><i class="fas fa-calendar-alt"></i> <?= date('d/m/Y H:i', strtotime($order['created_at'])) ?></span>
+        <div class="appointments-list">
+            <?php foreach ($appointments as $appointment): ?>
+            <div class="appointment-card">
+                <div class="appointment-header">
+                    <div class="appointment-info">
+                        <h3>Lịch hẹn #<?= str_pad($appointment['id'], 6, '0', STR_PAD_LEFT) ?></h3>
+                        <span><i class="fas fa-calendar-plus"></i> Đặt lúc: <?= date('d/m/Y H:i', strtotime($appointment['created_at'])) ?></span>
                     </div>
-                    <span class="order-status <?= $order['status'] ?? 'pending' ?>">
+                    <span class="appointment-status <?= $appointment['status'] ?? 'pending' ?>">
                         <?php 
-                        switch($order['status'] ?? 'pending') {
-                            case 'pending': echo 'Chờ xử lý'; break;
+                        switch($appointment['status'] ?? 'pending') {
+                            case 'pending': echo 'Chờ xác nhận'; break;
                             case 'confirmed': echo 'Đã xác nhận'; break;
                             case 'completed': echo 'Hoàn thành'; break;
                             case 'cancelled': echo 'Đã hủy'; break;
-                            default: echo 'Chờ xử lý';
+                            default: echo 'Chờ xác nhận';
                         }
                         ?>
                     </span>
                 </div>
-                <div class="order-body">
-                    <div class="order-items">
-                        <div class="order-item">
-                            <div class="order-item-image">
-                                <img src="<?= $order['car_image'] ?? 'https://via.placeholder.com/120x80' ?>" alt="">
+                <div class="appointment-body">
+                    <div class="appointment-items">
+                        <div class="appointment-item">
+                            <div class="appointment-item-image">
+                                <img src="<?= $appointment['car_image'] ?? 'https://via.placeholder.com/120x80' ?>" alt="">
                             </div>
-                            <div class="order-item-info">
-                                <h4><?= htmlspecialchars($order['car_name'] ?? 'Xe') ?></h4>
-                                <p><?= htmlspecialchars($order['brand_name'] ?? '') ?></p>
+                            <div class="appointment-item-info">
+                                <h4><?= htmlspecialchars($appointment['car_name'] ?? 'Xe') ?></h4>
+                                <p><?= htmlspecialchars($appointment['brand_name'] ?? '') ?></p>
+                                <div class="appointment-datetime">
+                                    <div class="appointment-datetime-item">
+                                        <i class="fas fa-calendar"></i>
+                                        <span><?= date('d/m/Y', strtotime($appointment['appointment_date'])) ?></span>
+                                    </div>
+                                    <div class="appointment-datetime-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span><?= date('H:i', strtotime($appointment['appointment_time'])) ?></span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="order-item-price">
-                                <span class="price"><?= number_format($order['price'] ?? 0, 0, ',', '.') ?>₫</span>
+                            <div class="appointment-item-price">
+                                <span class="price"><?= number_format($appointment['car_price'] ?? 0, 0, ',', '.') ?>₫</span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="order-footer">
-                    <div class="order-total">
-                        <span>Tổng cộng:</span>
-                        <span class="total-price"><?= number_format($order['price'] ?? 0, 0, ',', '.') ?>₫</span>
+                <div class="appointment-footer">
+                    <div class="appointment-details">
+                        <span><i class="fas fa-user"></i> <?= htmlspecialchars($appointment['full_name']) ?></span>
+                        <span><i class="fas fa-phone"></i> <?= htmlspecialchars($appointment['phone']) ?></span>
+                        <span><i class="fas fa-envelope"></i> <?= htmlspecialchars($appointment['email']) ?></span>
                     </div>
-                    <div class="order-actions">
-                        <a href="/order/<?= $order['id'] ?>" class="btn-order primary">Xem chi tiết</a>
-                        <?php if (($order['status'] ?? 'pending') === 'pending'): ?>
-                        <form method="POST" action="/order/cancel/<?= $order['id'] ?>" style="display: inline;" 
-                              onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
-                            <button type="submit" class="btn-order secondary">Hủy đơn</button>
+                    <div class="appointment-actions">
+                        <a href="/car/<?= $appointment['car_id'] ?>" class="btn-appointment primary">
+                            <i class="fas fa-eye"></i> Xem xe
+                        </a>
+                        <?php if (($appointment['status'] ?? 'pending') === 'pending'): ?>
+                        <form method="POST" action="/appointment/cancel/<?= $appointment['id'] ?>" style="display: inline;" 
+                              onsubmit="return confirm('Bạn có chắc chắn muốn hủy lịch hẹn này?');">
+                            <button type="submit" class="btn-appointment danger">
+                                <i class="fas fa-times"></i> Hủy lịch
+                            </button>
                         </form>
-                        <?php elseif (in_array($order['status'] ?? '', ['confirmed', 'completed'])): ?>
-                            <?php 
-                            // Kiểm tra đã đánh giá chưa
-                            $hasReviewed = $reviewModel->hasUserReviewed($userId, $order['car_id']);
-                            if (!$hasReviewed): 
-                            ?>
-                            <a href="<?= BASE_URL ?>/review/create/<?= $order['car_id'] ?>" class="btn-order review">
-                                <i class="fas fa-star"></i> Đánh giá
-                            </a>
-                            <?php else: ?>
-                            <span class="btn-order" style="cursor: default; opacity: 0.5;">
-                                <i class="fas fa-check"></i> Đã đánh giá
-                            </span>
-                            <?php endif; ?>
                         <?php endif; ?>
                     </div>
                 </div>

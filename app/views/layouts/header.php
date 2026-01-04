@@ -57,7 +57,7 @@
                             </svg>
                             <i class="fas fa-chevron-down dropdown-arrow"></i>
                         </button>
-                        <div class="dropdown-menu">
+                        <div class="user-dropdown-menu">
                             <a href="/profile" class="dropdown-item">
                                 <i class="fas fa-user"></i>
                                 <span>Thông tin cá nhân</span>
@@ -65,6 +65,10 @@
                             <a href="/orders" class="dropdown-item">
                                 <i class="fas fa-shopping-bag"></i>
                                 <span>Đơn hàng của tôi</span>
+                            </a>
+                            <a href="/appointments" class="dropdown-item">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Lịch hẹn xem xe</span>
                             </a>
                             <a href="/favorites" class="dropdown-item">
                                 <i class="fas fa-heart"></i>

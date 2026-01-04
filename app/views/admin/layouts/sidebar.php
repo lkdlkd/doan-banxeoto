@@ -17,6 +17,7 @@
         
         <li class="sidebar-menu-title">Kinh doanh</li>
         <li><a href="<?= BASE_URL ?>/admin/orders" class="<?= ($activePage ?? '') === 'orders' ? 'active' : '' ?>"><i class="fas fa-shopping-cart"></i> Đơn hàng</a></li>
+        <li><a href="<?= BASE_URL ?>/admin/appointments" class="<?= ($activePage ?? '') === 'appointments' ? 'active' : '' ?>"><i class="fas fa-calendar-alt"></i> Lịch xem xe</a></li>
         <li><a href="<?= BASE_URL ?>/admin/users" class="<?= ($activePage ?? '') === 'users' ? 'active' : '' ?>"><i class="fas fa-users"></i> Khách hàng</a></li>
         <li><a href="<?= BASE_URL ?>/admin/reviews" class="<?= ($activePage ?? '') === 'reviews' ? 'active' : '' ?>"><i class="fas fa-star"></i> Đánh giá</a></li>
         

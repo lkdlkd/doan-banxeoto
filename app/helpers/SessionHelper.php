@@ -60,6 +60,29 @@ class SessionHelper
         return $_SESSION['role'] ?? null;
     }
 
+    // Yêu cầu đăng nhập - redirect nếu chưa login
+    public static function requireLogin()
+    {
+        self::start();
+        if (!self::isLoggedIn()) {
+            $_SESSION['error'] = 'Vui lòng đăng nhập để tiếp tục';
+            header('Location: /login');
+            exit;
+        }
+    }
+
+    // Yêu cầu quyền admin - redirect nếu không phải admin
+    public static function requireAdmin()
+    {
+        self::start();
+        self::requireLogin();
+        if (!self::isAdmin()) {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
+    }
+
     // Set flash message
     public static function setFlash($key, $message)
     {

@@ -2,27 +2,27 @@
 if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.php'; }
 
 // Load models
-require_once __DIR__ . '/../../../models/OrderModel.php';
+require_once __DIR__ . '/../../../models/AppointmentModel.php';
 require_once __DIR__ . '/../../../models/CarModel.php';
 
-$orderModel = new OrderModel();
+$appointmentModel = new AppointmentModel();
 
-// Lấy danh sách orders từ database
-$orders = $orderModel->getAllWithDetails();
+// Lấy danh sách appointments từ database
+$appointments = $appointmentModel->getAllWithDetails();
 
 // Tính thống kê
-$totalOrders = count($orders);
-$pendingOrders = count(array_filter($orders, fn($o) => $o['status'] === 'pending'));
-$confirmedOrders = count(array_filter($orders, fn($o) => $o['status'] === 'confirmed'));
-$cancelledOrders = count(array_filter($orders, fn($o) => $o['status'] === 'cancelled'));
-$totalRevenue = array_sum(array_map(fn($o) => $o['status'] === 'confirmed' ? $o['price'] : 0, $orders));
+$totalAppointments = count($appointments);
+$pendingAppointments = count(array_filter($appointments, fn($a) => $a['status'] === 'pending'));
+$confirmedAppointments = count(array_filter($appointments, fn($a) => $a['status'] === 'confirmed'));
+$completedAppointments = count(array_filter($appointments, fn($a) => $a['status'] === 'completed'));
+$cancelledAppointments = count(array_filter($appointments, fn($a) => $a['status'] === 'cancelled'));
 ?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý đơn hàng - AutoCar Admin</title>
+    <title>Quản lý lịch xem xe - AutoCar Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-common.css">
@@ -30,11 +30,11 @@ $totalRevenue = array_sum(array_map(fn($o) => $o['status'] === 'confirmed' ? $o[
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-modal.css">
 </head>
 <body>
-    <?php $activePage = 'orders'; include __DIR__ . '/../layouts/sidebar.php'; ?>
+    <?php $activePage = 'appointments'; include __DIR__ . '/../layouts/sidebar.php'; ?>
 
     <main class="admin-main">
         <header class="admin-header">
-            <h1>Quản lý đơn hàng</h1>
+            <h1>Quản lý lịch xem xe</h1>
             <div class="header-profile">
                 <img src="https://ui-avatars.com/api/?name=Admin&background=D4AF37&color=fff" alt="Admin">
             </div>
@@ -42,37 +42,37 @@ $totalRevenue = array_sum(array_map(fn($o) => $o['status'] === 'confirmed' ? $o[
 
         <div class="admin-content">
             <div class="page-header">
-                <h2>Danh sách đơn hàng (<?= $totalOrders ?>)</h2>
+                <h2>Danh sách lịch hẹn (<?= $totalAppointments ?>)</h2>
             </div>
 
-            <!-- Order Stats -->
+            <!-- Appointment Stats -->
             <div class="order-stats">
                 <div class="order-stat">
-                    <div class="order-stat-icon total"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="order-stat-icon total"><i class="fas fa-calendar-alt"></i></div>
                     <div class="order-stat-info">
-                        <h3><?= $totalOrders ?></h3>
-                        <p>Tổng đơn hàng</p>
+                        <h3><?= $totalAppointments ?></h3>
+                        <p>Tổng lịch hẹn</p>
                     </div>
                 </div>
                 <div class="order-stat">
                     <div class="order-stat-icon pending"><i class="fas fa-clock"></i></div>
                     <div class="order-stat-info">
-                        <h3><?= $pendingOrders ?></h3>
-                        <p>Chờ xử lý</p>
+                        <h3><?= $pendingAppointments ?></h3>
+                        <p>Chờ xác nhận</p>
                     </div>
                 </div>
                 <div class="order-stat">
                     <div class="order-stat-icon confirmed"><i class="fas fa-check-circle"></i></div>
                     <div class="order-stat-info">
-                        <h3><?= $confirmedOrders ?></h3>
+                        <h3><?= $confirmedAppointments ?></h3>
                         <p>Đã xác nhận</p>
                     </div>
                 </div>
                 <div class="order-stat">
-                    <div class="order-stat-icon revenue"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="order-stat-icon revenue"><i class="fas fa-calendar-check"></i></div>
                     <div class="order-stat-info">
-                        <h3><?= number_format($totalRevenue, 0, ',', '.') ?>₫</h3>
-                        <p>Doanh thu</p>
+                        <h3><?= $completedAppointments ?></h3>
+                        <p>Hoàn thành</p>
                     </div>
                 </div>
             </div>
@@ -83,115 +83,103 @@ $totalRevenue = array_sum(array_map(fn($o) => $o['status'] === 'confirmed' ? $o[
                     <label>Trạng thái:</label>
                     <select id="filterStatus">
                         <option value="">Tất cả</option>
-                        <option value="pending">Chờ xử lý</option>
+                        <option value="pending">Chờ xác nhận</option>
                         <option value="confirmed">Đã xác nhận</option>
+                        <option value="completed">Hoàn thành</option>
                         <option value="cancelled">Đã hủy</option>
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label>Thanh toán:</label>
-                    <select id="filterPayment">
-                        <option value="">Tất cả</option>
-                        <option value="bank_transfer">Chuyển khoản</option>
-                        <option value="cash">Tiền mặt</option>
-                        <option value="deposit">Đặt cọc</option>
-                    </select>
+                    <label>Ngày hẹn:</label>
+                    <input type="date" id="filterDate">
                 </div>
                 <div class="filter-search">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="searchOrder" placeholder="Tìm theo mã đơn, tên khách...">
+                    <input type="text" id="searchAppointment" placeholder="Tìm theo tên khách, xe...">
                 </div>
             </div>
 
-            <?php if ($totalOrders === 0): ?>
+            <?php if ($totalAppointments === 0): ?>
             <!-- Empty State -->
             <div class="empty-state">
                 <div class="empty-icon">
-                    <i class="fas fa-shopping-cart"></i>
+                    <i class="fas fa-calendar-alt"></i>
                 </div>
-                <h3>Chưa có đơn hàng nào</h3>
-                <p>Hiện tại chưa có đơn đặt hàng nào. Các đơn hàng sẽ xuất hiện ở đây khi khách hàng đặt mua xe.</p>
+                <h3>Chưa có lịch hẹn nào</h3>
+                <p>Hiện tại chưa có lịch hẹn xem xe nào. Các lịch hẹn sẽ xuất hiện ở đây khi khách hàng đặt lịch.</p>
             </div>
             <?php else: ?>
-            <!-- Orders Table -->
+            <!-- Appointments Table -->
             <div class="orders-table-container">
                 <table class="orders-table">
                     <thead>
                         <tr>
-                            <th>Mã đơn</th>
+                            <th>Mã</th>
                             <th>Khách hàng</th>
                             <th>Xe</th>
-                            <th>Giá</th>
-                            <th>Thanh toán</th>
+                            <th>Ngày hẹn</th>
+                            <th>Giờ hẹn</th>
+                            <th>Số điện thoại</th>
                             <th>Trạng thái</th>
-                            <th>Ngày đặt</th>
                             <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($orders as $order): ?>
-                        <tr data-status="<?= $order['status'] ?>" data-payment="<?= $order['payment_method'] ?>">
-                            <td><span class="order-id">#<?= str_pad($order['id'], 5, '0', STR_PAD_LEFT) ?></span></td>
+                        <?php foreach ($appointments as $appointment): ?>
+                        <tr data-status="<?= $appointment['status'] ?>" data-date="<?= $appointment['appointment_date'] ?>">
+                            <td><span class="order-id">#<?= str_pad($appointment['id'], 5, '0', STR_PAD_LEFT) ?></span></td>
                             <td>
                                 <div class="customer-info">
-                                    <img src="https://ui-avatars.com/api/?name=<?= urlencode($order['user_name'] ?? 'User') ?>&background=D4AF37&color=fff" alt="">
+                                    <img src="https://ui-avatars.com/api/?name=<?= urlencode($appointment['full_name'] ?? 'User') ?>&background=D4AF37&color=fff" alt="">
                                     <div>
-                                        <strong><?= htmlspecialchars($order['user_name'] ?? 'Khách hàng') ?></strong>
-                                        <span><?= htmlspecialchars($order['user_email'] ?? '') ?></span>
+                                        <strong><?= htmlspecialchars($appointment['full_name'] ?? 'Khách hàng') ?></strong>
+                                        <span><?= htmlspecialchars($appointment['email'] ?? '') ?></span>
                                     </div>
                                 </div>
                             </td>
                             <td>
                                 <div class="car-info">
-                                    <img src="<?= $order['car_image'] ?? 'https://via.placeholder.com/60' ?>" alt="">
+                                    <img src="<?= $appointment['car_image'] ?? 'https://via.placeholder.com/60' ?>" alt="">
                                     <div>
-                                        <strong><?= htmlspecialchars($order['car_name'] ?? 'Xe') ?></strong>
-                                        <span><?= htmlspecialchars($order['brand_name'] ?? '') ?></span>
+                                        <strong><?= htmlspecialchars($appointment['car_name'] ?? 'Xe') ?></strong>
+                                        <span><?= htmlspecialchars($appointment['brand_name'] ?? '') ?></span>
                                     </div>
                                 </div>
                             </td>
-                            <td><span class="order-price"><?= number_format($order['price'], 0, ',', '.') ?>₫</span></td>
+                            <td><span class="order-date"><?= date('d/m/Y', strtotime($appointment['appointment_date'])) ?></span></td>
+                            <td><span class="order-price"><?= date('H:i', strtotime($appointment['appointment_time'])) ?></span></td>
+                            <td><span style="color: #6b7280;"><?= htmlspecialchars($appointment['phone']) ?></span></td>
                             <td>
-                                <span class="payment-method <?= $order['payment_method'] ?>">
+                                <span class="order-status <?= $appointment['status'] ?>">
                                     <?php 
-                                    switch($order['payment_method']) {
-                                        case 'bank_transfer': echo 'Chuyển khoản'; break;
-                                        case 'cash': echo 'Tiền mặt'; break;
-                                        case 'deposit': 
-                                            echo 'Đặt cọc ' . ($order['deposit_percentage'] ?? 10) . '%';
-                                            break;
-                                        default: echo $order['payment_method'];
-                                    }
-                                    ?>
-                                </span>
-                            </td>
-                            <td>
-                                <span class="order-status <?= $order['status'] ?>">
-                                    <?php 
-                                    switch($order['status']) {
-                                        case 'pending': echo 'Chờ xử lý'; break;
+                                    switch($appointment['status']) {
+                                        case 'pending': echo 'Chờ xác nhận'; break;
                                         case 'confirmed': echo 'Đã xác nhận'; break;
+                                        case 'completed': echo 'Hoàn thành'; break;
                                         case 'cancelled': echo 'Đã hủy'; break;
-                                        default: echo $order['status'];
+                                        default: echo $appointment['status'];
                                     }
                                     ?>
                                 </span>
                             </td>
-                            <td><span class="order-date"><?= date('d/m/Y', strtotime($order['created_at'])) ?></span></td>
                             <td>
                                 <div class="order-actions">
-                                    <?php if ($order['status'] === 'pending'): ?>
-                                    <button class="action-btn confirm" onclick="updateStatus(<?= $order['id'] ?>, 'confirmed')" title="Xác nhận">
+                                    <?php if ($appointment['status'] === 'pending'): ?>
+                                    <button class="action-btn confirm" onclick="updateStatus(<?= $appointment['id'] ?>, 'confirmed')" title="Xác nhận">
                                         <i class="fas fa-check"></i>
                                     </button>
-                                    <button class="action-btn cancel" onclick="updateStatus(<?= $order['id'] ?>, 'cancelled')" title="Hủy đơn">
+                                    <button class="action-btn cancel" onclick="updateStatus(<?= $appointment['id'] ?>, 'cancelled')" title="Hủy lịch">
                                         <i class="fas fa-times"></i>
                                     </button>
+                                    <?php elseif ($appointment['status'] === 'confirmed'): ?>
+                                    <button class="action-btn confirm" onclick="updateStatus(<?= $appointment['id'] ?>, 'completed')" title="Hoàn thành">
+                                        <i class="fas fa-check-double"></i>
+                                    </button>
                                     <?php endif; ?>
-                                    <button class="action-btn" onclick="viewDetail(<?= $order['id'] ?>)" title="Xem chi tiết">
+                                    <button class="action-btn" onclick="viewDetail(<?= $appointment['id'] ?>)" title="Xem chi tiết">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button class="action-btn delete" onclick="openDeleteModal(<?= $order['id'] ?>, '#<?= str_pad($order['id'], 5, '0', STR_PAD_LEFT) ?>')" title="Xóa">
+                                    <button class="action-btn delete" onclick="openDeleteModal(<?= $appointment['id'] ?>, '#<?= str_pad($appointment['id'], 5, '0', STR_PAD_LEFT) ?>')" title="Xóa">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -213,7 +201,7 @@ $totalRevenue = array_sum(array_map(fn($o) => $o['status'] === 'confirmed' ? $o[
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
                 <h4>Xác nhận xóa?</h4>
-                <p>Bạn có chắc chắn muốn xóa đơn hàng</p>
+                <p>Bạn có chắc chắn muốn xóa lịch hẹn</p>
                 <p class="item-name" id="deleteName"></p>
                 <p style="color: #999; font-size: 0.85rem;">Hành động này không thể hoàn tác</p>
             </div>
@@ -243,45 +231,45 @@ $totalRevenue = array_sum(array_map(fn($o) => $o['status'] === 'confirmed' ? $o[
 
         function confirmDelete() {
             if (deleteId) {
-                window.location.href = '<?= BASE_URL ?>/admin/orders/delete/' + deleteId;
+                window.location.href = '<?= BASE_URL ?>/admin/appointments/delete/' + deleteId;
             }
         }
 
         function updateStatus(id, status) {
-            const statusText = status === 'confirmed' ? 'xác nhận' : 'hủy';
-            if (confirm(`Bạn có chắc chắn muốn ${statusText} đơn hàng này?`)) {
-                window.location.href = `<?= BASE_URL ?>/admin/orders/update-status/${id}/${status}`;
+            let statusText = '';
+            switch(status) {
+                case 'confirmed': statusText = 'xác nhận'; break;
+                case 'cancelled': statusText = 'hủy'; break;
+                case 'completed': statusText = 'đánh dấu hoàn thành'; break;
+            }
+            
+            if (confirm(`Bạn có chắc chắn muốn ${statusText} lịch hẹn này?`)) {
+                window.location.href = `<?= BASE_URL ?>/admin/appointments/update-status/${id}/${status}`;
             }
         }
 
         function viewDetail(id) {
-            window.location.href = `<?= BASE_URL ?>/admin/orders/detail/${id}`;
-        }
-
-        function deleteOrder(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa đơn hàng này?')) {
-                window.location.href = '<?= BASE_URL ?>/admin/orders/delete/' + id;
-            }
+            window.location.href = `<?= BASE_URL ?>/admin/appointments/detail/${id}`;
         }
 
         // Filter by status
-        document.getElementById('filterStatus').addEventListener('change', filterOrders);
-        document.getElementById('filterPayment').addEventListener('change', filterOrders);
+        document.getElementById('filterStatus').addEventListener('change', filterAppointments);
+        document.getElementById('filterDate').addEventListener('change', filterAppointments);
 
-        function filterOrders() {
+        function filterAppointments() {
             const status = document.getElementById('filterStatus').value;
-            const payment = document.getElementById('filterPayment').value;
+            const date = document.getElementById('filterDate').value;
             const rows = document.querySelectorAll('.orders-table tbody tr');
             
             rows.forEach(row => {
                 const matchStatus = !status || row.dataset.status === status;
-                const matchPayment = !payment || row.dataset.payment === payment;
-                row.style.display = matchStatus && matchPayment ? '' : 'none';
+                const matchDate = !date || row.dataset.date === date;
+                row.style.display = matchStatus && matchDate ? '' : 'none';
             });
         }
 
         // Search
-        document.getElementById('searchOrder').addEventListener('input', function() {
+        document.getElementById('searchAppointment').addEventListener('input', function() {
             const search = this.value.toLowerCase();
             const rows = document.querySelectorAll('.orders-table tbody tr');
             rows.forEach(row => {

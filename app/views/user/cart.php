@@ -190,7 +190,7 @@ include __DIR__ . '/../layouts/header.php';
                     </p>
                     
                     <div class="summary-actions">
-                        <?php if (isset($_SESSION['user'])): ?>
+                        <?php if (isset($_SESSION['user_id'])): ?>
                         <a href="/checkout" class="btn-checkout">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>

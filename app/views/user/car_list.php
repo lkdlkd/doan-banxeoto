@@ -6,10 +6,19 @@ $pageTitle = 'Danh Sách Xe';
 require_once __DIR__ . '/../../models/BrandModel.php';
 require_once __DIR__ . '/../../models/CategoryModel.php';
 require_once __DIR__ . '/../../models/CarModel.php';
+require_once __DIR__ . '/../../models/FavoriteModel.php';
 
 $brandModel = new BrandModel();
 $categoryModel = new CategoryModel();
 $carModel = new CarModel();
+$favoriteModel = new FavoriteModel();
+
+// Lấy danh sách xe yêu thích của user (nếu đã đăng nhập)
+$userFavorites = [];
+if (isset($_SESSION['user_id'])) {
+    $favorites = $favoriteModel->getFavoritesByUser($_SESSION['user_id']);
+    $userFavorites = array_column($favorites, 'car_id');
+}
 
 // Lấy danh sách brands và categories từ DB
 $brands = $brandModel->getBrandsWithCarCount();
@@ -305,8 +314,8 @@ include __DIR__ . '/../layouts/header.php';
                                     </div>
                                     <?php endif; ?>
                                     <div class="car-quick-actions">
-                                        <button class="quick-btn favorite-btn" data-car-id="<?= $car['id'] ?>" title="Yêu thích">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <button class="quick-btn favorite-btn <?= in_array($car['id'], $userFavorites) ? 'favorited' : '' ?>" data-car-id="<?= $car['id'] ?>" title="Yêu thích">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="<?= in_array($car['id'], $userFavorites) ? 'currentColor' : 'none' ?>" stroke="currentColor" stroke-width="2">
                                                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                                             </svg>
                                         </button>
@@ -490,12 +499,61 @@ function clearFilters() {
     window.location.href = '/cars';
 }
 
-// Initialize price inputs on page load
+// Toggle favorite function
+function toggleFavorite(button, carId) {
+    <?php if (isset($_SESSION['user_id'])): ?>
+        // Check if already favorited
+        const isFavorited = button.classList.contains('favorited');
+        const endpoint = isFavorited ? '/favorites/remove' : '/favorites/add';
+        
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ car_id: carId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Toggle visual state
+                if (isFavorited) {
+                    button.classList.remove('favorited');
+                    button.querySelector('svg').style.fill = 'none';
+                } else {
+                    button.classList.add('favorited');
+                    button.querySelector('svg').style.fill = 'currentColor';
+                }
+            } else {
+                alert(data.message || 'Có lỗi xảy ra!');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra!');
+        });
+    <?php else: ?>
+        alert('Vui lòng đăng nhập để thêm vào yêu thích!');
+        window.location.href = '/login';
+    <?php endif; ?>
+}
+
+// Initialize favorite buttons
 window.addEventListener('DOMContentLoaded', function() {
     const priceSelect = document.querySelector('.price-filter');
     if (priceSelect && priceSelect.value) {
         updatePriceInputs(priceSelect);
     }
+    
+    // Add click event to favorite buttons
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const carId = this.getAttribute('data-car-id');
+            toggleFavorite(this, carId);
+        });
+    });
 });
 </script>
 

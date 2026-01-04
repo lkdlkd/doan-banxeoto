@@ -7,9 +7,17 @@ $carId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 // Kết nối cơ sở dữ liệu
 require_once __DIR__ . '/../../models/CarModel.php';
 require_once __DIR__ . '/../../models/ReviewModel.php';
+require_once __DIR__ . '/../../models/FavoriteModel.php';
 
 $carModel = new CarModel();
 $reviewModel = new ReviewModel();
+$favoriteModel = new FavoriteModel();
+
+// Kiểm tra xe đã được yêu thích chưa
+$isFavorite = false;
+if (isset($_SESSION['user_id'])) {
+    $isFavorite = $favoriteModel->isFavorite($_SESSION['user_id'], $carId);
+}
 
 // Lấy thông tin chi tiết xe
 $car = $carModel->getById($carId);
@@ -677,12 +685,16 @@ include __DIR__ . '/../layouts/header.php';
                         <i class="fas fa-shopping-cart"></i>
                         Thêm Vào Giỏ Hàng
                     </button>
+                    <a href="/appointment/book/<?= $car['id'] ?>" class="btn btn-primary" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                        <i class="fas fa-calendar-check"></i>
+                        Đặt Lịch Xem Xe
+                    </a>
                     <a href="/cart" class="btn btn-outline">
                         <i class="fas fa-eye"></i>
                         Xem Giỏ Hàng
                     </a>
-                    <button class="btn btn-outline" onclick="addToFavorite(<?= $car['id'] ?>)">
-                        <i class="far fa-heart"></i>
+                    <button class="btn btn-outline" id="favoriteBtn" onclick="toggleFavorite(<?= $car['id'] ?>)" data-is-favorite="<?= $isFavorite ? 'true' : 'false' ?>">
+                        <i class="<?= $isFavorite ? 'fas' : 'far' ?> fa-heart" id="favoriteIcon"></i>
                     </button>
                 </div>
 
@@ -840,9 +852,14 @@ include __DIR__ . '/../layouts/header.php';
         document.getElementById(tabName).classList.add('active');
     }
 
-    function addToFavorite(carId) {
-        <?php if (isset($_SESSION['user'])): ?>
-            fetch('/favorite/add', {
+    function toggleFavorite(carId) {
+        <?php if (isset($_SESSION['user_id'])): ?>
+            const btn = document.getElementById('favoriteBtn');
+            const icon = document.getElementById('favoriteIcon');
+            const isFavorite = btn.getAttribute('data-is-favorite') === 'true';
+            const endpoint = isFavorite ? '/favorites/remove' : '/favorites/add';
+            
+            fetch(endpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -854,10 +871,23 @@ include __DIR__ . '/../layouts/header.php';
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Đã thêm vào yêu thích!');
+                        // Toggle icon
+                        if (isFavorite) {
+                            icon.className = 'far fa-heart';
+                            btn.setAttribute('data-is-favorite', 'false');
+                            alert('Đã xóa khỏi danh sách yêu thích!');
+                        } else {
+                            icon.className = 'fas fa-heart';
+                            btn.setAttribute('data-is-favorite', 'true');
+                            alert('Đã thêm vào yêu thích!');
+                        }
                     } else {
                         alert(data.message || 'Có lỗi xảy ra!');
                     }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra!');
                 });
         <?php else: ?>
             alert('Vui lòng đăng nhập để thêm vào yêu thích!');

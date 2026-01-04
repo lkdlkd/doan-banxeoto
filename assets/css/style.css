@@ -234,12 +234,12 @@ body {
     transform: rotate(180deg);
 }
 
-.dropdown-menu {
+.user-dropdown-menu {
     position: absolute;
     top: 100%;
     right: 0;
     margin-top: 8px;
-    min-width: 220px;
+    min-width: 240px;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
@@ -249,10 +249,11 @@ body {
     transform: translateY(10px);
     transition: all 0.3s ease;
     z-index: 1000;
-    overflow: hidden;
+    max-height: 500px;
+    overflow-y: auto;
 }
 
-.user-dropdown:hover .dropdown-menu {
+.user-dropdown:hover .user-dropdown-menu {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
@@ -430,8 +431,8 @@ nav ul li a:hover::after {
     width: 100%;
 }
 
-/* Dropdown Menu */
-.dropdown-menu {
+/* Navigation Dropdown Menu */
+.nav-dropdown-menu {
     position: absolute;
     top: 100%;
     left: 50%;
@@ -452,7 +453,7 @@ nav ul li a:hover::after {
     margin-top: 15px;
 }
 
-.dropdown:hover .dropdown-menu {
+.dropdown:hover .nav-dropdown-menu {
     opacity: 1;
     visibility: visible;
     transform: translateX(-50%) translateY(0);
