@@ -19,37 +19,106 @@ include __DIR__ . '/../layouts/header.php';
 ?>
 
 <style>
-.orders-page {
-    padding: 120px 0 80px;
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-    min-height: 100vh;
+/* Banner */
+.orders-banner {
+    position: relative;
+    height: 280px;
+    background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 100%), 
+                url('https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1920&q=80') center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: -60px;
 }
 
-.orders-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.orders-header {
+.orders-banner-content {
     text-align: center;
-    margin-bottom: 50px;
-}
-
-.orders-header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 42px;
     color: #fff;
-    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
 }
 
-.orders-header h1 span {
+.orders-banner h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.orders-banner h1 span {
     color: #D4AF37;
 }
 
-.orders-header p {
-    color: rgba(255,255,255,0.6);
-    font-size: 16px;
+.orders-banner p {
+    font-size: 18px;
+    color: rgba(255,255,255,0.9);
+    text-shadow: 0 1px 5px rgba(0,0,0,0.3);
+}
+
+.orders-page {
+    background: linear-gradient(135deg, #f9f7f3 0%, #f5f2ed 100%);
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+.orders-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 30px;
+    position: relative;
+    z-index: 2;
+}
+
+.orders-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    transition: all 0.3s;
+}
+
+.stat-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(212,175,55,0.2);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.2) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+}
+
+.stat-icon i {
+    font-size: 22px;
+    color: #D4AF37;
+}
+
+.stat-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .orders-list {
@@ -59,45 +128,64 @@ include __DIR__ . '/../layouts/header.php';
 }
 
 .order-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(212, 175, 55, 0.2);
+    background: #fff;
+    border: 1px solid rgba(212, 175, 55, 0.15);
     border-radius: 16px;
     overflow: hidden;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
 .order-card:hover {
-    border-color: rgba(212, 175, 55, 0.5);
-    transform: translateY(-2px);
+    border-color: #D4AF37;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(212,175,55,0.15);
 }
 
 .order-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 24px;
-    background: rgba(212, 175, 55, 0.05);
+    padding: 20px 28px;
+    background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
     border-bottom: 1px solid rgba(212, 175, 55, 0.1);
 }
 
 .order-info h3 {
     font-family: 'Playfair Display', serif;
     font-size: 18px;
-    color: #D4AF37;
+    color: #1a1a1a;
     margin: 0 0 5px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.order-id {
+    color: #D4AF37;
+    font-weight: 600;
 }
 
 .order-info span {
-    color: rgba(255,255,255,0.5);
+    color: #666;
     font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.order-info span i {
+    color: #D4AF37;
 }
 
 .order-status {
-    padding: 8px 16px;
+    padding: 8px 18px;
     border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
     letter-spacing: 0.5px;
 }
 
@@ -122,35 +210,48 @@ include __DIR__ . '/../layouts/header.php';
 }
 
 .order-body {
-    padding: 24px;
+    padding: 28px;
 }
 
 .order-items {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
 }
 
 .order-item {
     display: flex;
-    gap: 16px;
-    padding: 16px;
-    background: rgba(255,255,255,0.02);
+    gap: 20px;
+    padding: 20px;
+    background: #f9f9f9;
+    border: 1px solid #e5e5e5;
     border-radius: 12px;
+    transition: all 0.3s;
+}
+
+.order-item:hover {
+    background: #fff;
+    border-color: #D4AF37;
 }
 
 .order-item-image {
-    width: 120px;
-    height: 80px;
+    width: 140px;
+    height: 90px;
     border-radius: 8px;
     overflow: hidden;
     flex-shrink: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .order-item-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.order-item:hover .order-item-image img {
+    transform: scale(1.05);
 }
 
 .order-item-info {
@@ -158,62 +259,76 @@ include __DIR__ . '/../layouts/header.php';
 }
 
 .order-item-info h4 {
-    color: #fff;
-    font-size: 16px;
+    color: #1a1a1a;
+    font-size: 17px;
+    font-weight: 600;
     margin: 0 0 8px 0;
+    font-family: 'Playfair Display', serif;
 }
 
 .order-item-info p {
-    color: rgba(255,255,255,0.5);
+    color: #666;
     font-size: 13px;
     margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.order-item-info p i {
+    color: #D4AF37;
+    font-size: 12px;
 }
 
 .order-item-price {
     text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .order-item-price .price {
     font-family: 'Playfair Display', serif;
-    font-size: 18px;
+    font-size: 20px;
     color: #D4AF37;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .order-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 24px;
-    border-top: 1px solid rgba(212, 175, 55, 0.1);
-    background: rgba(0,0,0,0.2);
+    padding: 20px 28px;
+    border-top: 2px solid rgba(212, 175, 55, 0.15);
+    background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
 }
 
 .order-total {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .order-total span {
-    color: rgba(255,255,255,0.6);
-    font-size: 14px;
+    color: #666;
+    font-size: 15px;
+    font-weight: 500;
 }
 
 .order-total .total-price {
     font-family: 'Playfair Display', serif;
-    font-size: 24px;
+    font-size: 26px;
     color: #D4AF37;
     font-weight: 700;
 }
 
 .order-actions {
     display: flex;
-    gap: 10px;
+    gap: 12px;
 }
 
 .btn-order {
-    padding: 10px 20px;
+    padding: 11px 24px;
     border-radius: 8px;
     font-size: 13px;
     font-weight: 600;
@@ -221,6 +336,9 @@ include __DIR__ . '/../layouts/header.php';
     transition: all 0.3s ease;
     border: none;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .btn-order.primary {
@@ -230,13 +348,13 @@ include __DIR__ . '/../layouts/header.php';
 
 .btn-order.primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+    box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
 }
 
 .btn-order.secondary {
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.2);
-    color: #fff;
+    background: #fff;
+    border: 2px solid #e5e5e5;
+    color: #666;
 }
 
 .btn-order.secondary:hover {
@@ -246,7 +364,7 @@ include __DIR__ . '/../layouts/header.php';
 
 .btn-order.review {
     background: transparent;
-    border: 1px solid rgba(212, 175, 55, 0.5);
+    border: 2px solid #D4AF37;
     color: #D4AF37;
 }
 
@@ -258,7 +376,10 @@ include __DIR__ . '/../layouts/header.php';
 /* Empty State */
 .empty-orders {
     text-align: center;
-    padding: 80px 20px;
+    padding: 100px 20px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
 .empty-orders i {
@@ -270,13 +391,14 @@ include __DIR__ . '/../layouts/header.php';
 .empty-orders h3 {
     font-family: 'Playfair Display', serif;
     font-size: 28px;
-    color: #fff;
+    color: #1a1a1a;
     margin-bottom: 12px;
 }
 
 .empty-orders p {
-    color: rgba(255,255,255,0.5);
+    color: #666;
     margin-bottom: 30px;
+    font-size: 15px;
 }
 
 .empty-orders .btn-explore {
@@ -338,8 +460,12 @@ include __DIR__ . '/../layouts/header.php';
 }
 
 @media (max-width: 768px) {
-    .orders-header h1 {
-        font-size: 32px;
+    .orders-banner h1 {
+        font-size: 36px;
+    }
+    
+    .orders-stats {
+        grid-template-columns: repeat(2, 1fr);
     }
     
     .order-header {
@@ -360,15 +486,58 @@ include __DIR__ . '/../layouts/header.php';
     .order-footer {
         flex-direction: column;
         gap: 16px;
+        align-items: flex-start;
     }
 }
 </style>
 
+<!-- Banner -->
+<div class="orders-banner">
+    <div class="orders-banner-content">
+        <h1>Đơn hàng <span>của tôi</span></h1>
+        <p>Quản lý và theo dõi tất cả đơn hàng của bạn</p>
+    </div>
+</div>
+
 <div class="orders-page">
     <div class="orders-container">
-        <div class="orders-header">
-            <h1>Đơn hàng <span>của tôi</span></h1>
-            <p>Quản lý và theo dõi tất cả đơn hàng của bạn</p>
+        <!-- Stats -->
+        <?php
+        $totalOrders = count($orders);
+        $pendingCount = count(array_filter($orders, fn($o) => $o['status'] === 'pending'));
+        $confirmedCount = count(array_filter($orders, fn($o) => $o['status'] === 'confirmed'));
+        $completedCount = count(array_filter($orders, fn($o) => $o['status'] === 'completed'));
+        ?>
+        
+        <div class="orders-stats">
+            <div class="stat-box">
+                <div class="stat-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="stat-number"><?= $totalOrders ?></div>
+                <div class="stat-label">Tổng đơn</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-number"><?= $pendingCount ?></div>
+                <div class="stat-label">Chờ xử lý</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-number"><?= $confirmedCount ?></div>
+                <div class="stat-label">Đã xác nhận</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-number"><?= $completedCount ?></div>
+                <div class="stat-label">Hoàn thành</div>
+            </div>
         </div>
 
         <!-- Alert Messages -->
@@ -402,7 +571,7 @@ include __DIR__ . '/../layouts/header.php';
             <div class="order-card">
                 <div class="order-header">
                     <div class="order-info">
-                        <h3>Đơn hàng #<?= str_pad($order['id'], 6, '0', STR_PAD_LEFT) ?></h3>
+                        <h3><span class="order-id">#<?= str_pad($order['id'], 6, '0', STR_PAD_LEFT) ?></span></h3>
                         <span><i class="fas fa-calendar-alt"></i> <?= date('d/m/Y H:i', strtotime($order['created_at'])) ?></span>
                     </div>
                     <span class="order-status <?= $order['status'] ?? 'pending' ?>">
@@ -425,10 +594,10 @@ include __DIR__ . '/../layouts/header.php';
                             </div>
                             <div class="order-item-info">
                                 <h4><?= htmlspecialchars($order['car_name'] ?? 'Xe') ?></h4>
-                                <p><?= htmlspecialchars($order['brand_name'] ?? '') ?></p>
+                                <p><i class="fas fa-tag"></i> <?= htmlspecialchars($order['brand_name'] ?? '') ?></p>
                             </div>
                             <div class="order-item-price">
-                                <span class="price"><?= number_format($order['price'] ?? 0, 0, ',', '.') ?>₫</span>
+                                <span class="price"><?= number_format($order['car_price'] ?? 0, 0, ',', '.') ?> VNĐ</span>
                             </div>
                         </div>
                     </div>

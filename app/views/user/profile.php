@@ -1,202 +1,870 @@
 <?php
+$pageTitle = 'Tài khoản - AutoCar';
+require_once __DIR__ . '/../layouts/header.php';
+
 // Kiểm tra đăng nhập
-if (!isset($_SESSION['user'])) {
+if (!isset($_SESSION['user_id'])) {
     header('Location: /login');
     exit;
 }
 
-$user = $_SESSION['user'];
-
-// Load models để lấy dữ liệu
+// Load models
+require_once __DIR__ . '/../../models/UserModel.php';
 require_once __DIR__ . '/../../models/OrderModel.php';
-require_once __DIR__ . '/../../models/FavoriteModel.php';
 
+$userModel = new UserModel();
 $orderModel = new OrderModel();
-$favoriteModel = new FavoriteModel();
 
-// Lấy đơn hàng của user
-$orders = $orderModel->getOrdersByUser($user['id']);
+$user = $userModel->getUserById($_SESSION['user_id']);
+$orders = $orderModel->getOrdersByUser($_SESSION['user_id']);
 
-// Lấy xe yêu thích của user
-$favorites = $favoriteModel->getFavoritesByUser($user['id']);
+if (!$user) {
+    header('Location: /login');
+    exit;
+}
+
+// Đếm số lượng
+$totalOrders = count($orders);
+$pendingOrders = count(array_filter($orders, fn($o) => $o['status'] === 'pending'));
+$completedOrders = count(array_filter($orders, fn($o) => $o['status'] === 'completed'));
 ?>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tài Khoản - AutoCar Luxury</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #f9f7f3 0%, #f5f2ed 100%);
-            min-height: 100vh;
-            color: #1a1a1a;
-        }
+<style>
+    /* Profile Banner */
+    .profile-banner {
+        position: relative;
+        height: 300px;
+        background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 100%), 
+                    url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80') center/cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: -80px;
+    }
 
-        /* Header */
-        .profile-header {
-            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(250,247,243,0.95) 100%),
-                        url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920') center/cover no-repeat;
-            padding: 120px 0 60px;
-            position: relative;
-        }
+    .profile-banner-content {
+        text-align: center;
+        color: #fff;
+        position: relative;
+        z-index: 1;
+    }
 
-        .profile-header::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 150px;
-            background: linear-gradient(transparent, #f9f7f3);
-        }
+    .profile-banner h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 48px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
 
-        .header-nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 20px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(212,175,55,0.2);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
+    .profile-banner p {
+        font-size: 18px;
+        color: rgba(255,255,255,0.9);
+        text-shadow: 0 1px 5px rgba(0,0,0,0.3);
+    }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
+    .profile-container {
+        max-width: 1200px;
+        margin: 0 auto 60px;
+        padding: 0 30px;
+        position: relative;
+        z-index: 2;
+    }
 
-        .logo-icon {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .profile-grid {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 30px;
+    }
 
-        .logo-icon i {
-            font-size: 20px;
-            color: #000;
-        }
+    /* Sidebar */
+    .profile-sidebar {
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        height: fit-content;
+    }
 
-        .logo-text {
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: #1a1a1a;
-        }
+    .profile-avatar-section {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 25px;
+        border-bottom: 1px solid #f0f0f0;
+    }
 
-        .logo-text span {
-            color: #D4AF37;
-        }
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        box-shadow: 0 4px 15px rgba(212,175,55,0.2);
+    }
 
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
+    .profile-avatar i {
+        font-size: 50px;
+        color: #000;
+    }
 
-        .nav-links a {
-            color: #666;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
+    .profile-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #1a1a1a;
+    }
 
-        .nav-links a:hover {
-            color: #D4AF37;
-        }
+    .profile-email {
+        font-size: 13px;
+        color: #666;
+    }
 
-        .btn-logout {
-            padding: 10px 25px;
-            background: transparent;
-            border: 1px solid #D4AF37;
-            color: #D4AF37;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-        }
+    .profile-menu {
+        list-style: none;
+    }
 
-        .btn-logout:hover {
-            background: #D4AF37;
-            color: #000;
-        }
+    .profile-menu li {
+        margin-bottom: 5px;
+    }
 
-        /* Profile Info Card */
-        .profile-card {
-            max-width: 400px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-            text-align: center;
-        }
+    .profile-menu a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 15px;
+        color: #666;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
 
-        .profile-avatar {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 25px;
-            position: relative;
-            box-shadow: 0 10px 40px rgba(212,175,55,0.3);
-        }
+    .profile-menu a:hover,
+    .profile-menu a.active {
+        background: rgba(212, 175, 55, 0.1);
+        color: #D4AF37;
+    }
 
-        .profile-avatar i {
-            font-size: 60px;
-            color: #000;
-        }
+    .profile-menu i {
+        width: 18px;
+        text-align: center;
+    }
 
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
+    /* Main Content */
+    .profile-main {
+        background: #fff;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
 
-        .avatar-edit {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            width: 40px;
-            height: 40px;
-            background: #ffffff;
-            border: 2px solid #D4AF37;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 28px;
+        margin-bottom: 30px;
+        color: #1a1a1a;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
-        .avatar-edit:hover {
-            background: #D4AF37;
+    .section-title i {
+        color: #D4AF37;
+    }
+
+    /* Tabs */
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    /* Form */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        display: block;
+        color: #333;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        background: #f9f9f9;
+        border: 2px solid #e5e5e5;
+        border-radius: 8px;
+        color: #1a1a1a;
+        font-size: 14px;
+        font-family: 'Montserrat', sans-serif;
+        transition: all 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #D4AF37;
+        background: #fff;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: flex-end;
+        padding-top: 20px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+        color: #000;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn-secondary {
+        background: #f0f0f0;
+        color: #666;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e5e5;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
+        border: 1px solid #e5e5e5;
+        border-radius: 12px;
+        padding: 25px;
+        text-align: center;
+        transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        border-color: #D4AF37;
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.2) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+    }
+
+    .stat-icon i {
+        font-size: 22px;
+        color: #D4AF37;
+    }
+
+    .stat-number {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Quick Links */
+    .quick-links {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .quick-link {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        background: #f9f9f9;
+        border: 1px solid #e5e5e5;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #333;
+        transition: all 0.3s;
+    }
+
+    .quick-link:hover {
+        background: #fff;
+        border-color: #D4AF37;
+        transform: translateX(5px);
+    }
+
+    .quick-link-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.2) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .quick-link-icon i {
+        font-size: 18px;
+        color: #D4AF37;
+    }
+
+    .quick-link-content h4 {
+        font-size: 15px;
+        margin-bottom: 3px;
+        color: #1a1a1a;
+    }
+
+    .quick-link-content p {
+        font-size: 12px;
+        color: #666;
+        margin: 0;
+    }
+
+    /* Orders Table */
+    .orders-table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+
+    .orders-table thead {
+        background: #f9f9f9;
+    }
+
+    .orders-table th {
+        padding: 15px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 600;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #e5e5e5;
+    }
+
+    .orders-table td {
+        padding: 15px;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 14px;
+    }
+
+    .orders-table tbody tr {
+        transition: all 0.3s;
+    }
+
+    .orders-table tbody tr:hover {
+        background: #f9f9f9;
+    }
+
+    .order-car {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .order-car-img {
+        width: 60px;
+        height: 40px;
+        border-radius: 6px;
+        object-fit: cover;
+    }
+
+    .order-car-name {
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 3px;
+    }
+
+    .order-car-brand {
+        font-size: 12px;
+        color: #666;
+    }
+
+    .order-status {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .status-pending {
+        background: rgba(255, 193, 7, 0.1);
+        color: #ff9800;
+    }
+
+    .status-confirmed {
+        background: rgba(33, 150, 243, 0.1);
+        color: #2196F3;
+    }
+
+    .status-completed {
+        background: rgba(76, 175, 80, 0.1);
+        color: #4CAF50;
+    }
+
+    .status-cancelled {
+        background: rgba(244, 67, 54, 0.1);
+        color: #f44336;
+    }
+
+    .order-price {
+        font-size: 16px;
+        font-weight: 700;
+        color: #D4AF37;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .empty-state i {
+        font-size: 60px;
+        color: #e5e5e5;
+        margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+        font-size: 18px;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        color: #999;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .profile-grid {
+            grid-template-columns: 1fr;
         }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .quick-links {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Profile Banner -->
+<div class="profile-banner">
+    <div class="profile-banner-content">
+        <h1>Tài khoản của tôi</h1>
+        <p>Quản lý thông tin cá nhân và đơn hàng</p>
+    </div>
+</div>
+
+<div class="profile-container">
+    <div class="profile-grid">
+        <!-- Sidebar -->
+        <aside class="profile-sidebar">
+            <div class="profile-avatar-section">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 class="profile-name"><?= htmlspecialchars($user['full_name']) ?></h3>
+                <p class="profile-email"><?= htmlspecialchars($user['email']) ?></p>
+            </div>
+            
+            <ul class="profile-menu">
+                <li>
+                    <a href="#" class="active" data-tab="overview">
+                        <i class="fas fa-th-large"></i>
+                        <span>Tổng quan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-tab="info">
+                        <i class="fas fa-user-edit"></i>
+                        <span>Thông tin cá nhân</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-tab="orders">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span>Đơn hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-tab="security">
+                        <i class="fas fa-lock"></i>
+                        <span>Đổi mật khẩu</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/appointments">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Lịch hẹn</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/favorites">
+                        <i class="fas fa-heart"></i>
+                        <span>Xe yêu thích</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="profile-main">
+            <!-- Overview Tab -->
+            <div id="overview-tab" class="tab-content active">
+                <h2 class="section-title">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Tổng quan tài khoản
+                </h2>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="stat-number"><?= $totalOrders ?></div>
+                        <div class="stat-label">Đơn hàng</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-number"><?= $pendingOrders ?></div>
+                        <div class="stat-label">Chờ xử lý</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-number"><?= $completedOrders ?></div>
+                        <div class="stat-label">Hoàn thành</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Lịch hẹn</div>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 18px; margin: 30px 0 15px; color: #1a1a1a;">Truy cập nhanh</h3>
+                <div class="quick-links">
+                    <a href="/cars" class="quick-link">
+                        <div class="quick-link-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="quick-link-content">
+                            <h4>Xem xe</h4>
+                            <p>Khám phá các mẫu xe</p>
+                        </div>
+                    </a>
+                    <a href="/cart" class="quick-link">
+                        <div class="quick-link-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="quick-link-content">
+                            <h4>Giỏ hàng</h4>
+                            <p>Xem giỏ hàng của bạn</p>
+                        </div>
+                    </a>
+                    <a href="/contact" class="quick-link">
+                        <div class="quick-link-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="quick-link-content">
+                            <h4>Liên hệ</h4>
+                            <p>Hỗ trợ khách hàng</p>
+                        </div>
+                    </a>
+                    <a href="#" data-tab="info" class="quick-link menu-link">
+                        <div class="quick-link-icon">
+                            <i class="fas fa-user-edit"></i>
+                        </div>
+                        <div class="quick-link-content">
+                            <h4>Cập nhật thông tin</h4>
+                            <p>Chỉnh sửa tài khoản</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Personal Info Tab -->
+            <div id="info-tab" class="tab-content">
+                <h2 class="section-title">
+                    <i class="fas fa-user-edit"></i>
+                    Thông tin cá nhân
+                </h2>
+
+                <form method="POST" action="/profile/update">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Họ và tên *</label>
+                            <input type="text" name="full_name" value="<?= htmlspecialchars($user['full_name']) ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" value="<?= htmlspecialchars($user['email']) ?>" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Số điện thoại</label>
+                            <input type="tel" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" pattern="[0-9]{10}">
+                        </div>
+                        <div class="form-group">
+                            <label>Ngày sinh</label>
+                            <input type="date" name="birth_date" value="<?= htmlspecialchars($user['birth_date'] ?? '') ?>">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Địa chỉ</label>
+                            <input type="text" name="address" value="<?= htmlspecialchars($user['address'] ?? '') ?>">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="location.reload()">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Orders Tab -->
+            <div id="orders-tab" class="tab-content">
+                <h2 class="section-title">
+                    <i class="fas fa-shopping-bag"></i>
+                    Đơn hàng của tôi
+                </h2>
+
+                <?php if (empty($orders)): ?>
+                    <div class="empty-state">
+                        <i class="fas fa-shopping-bag"></i>
+                        <h3>Chưa có đơn hàng</h3>
+                        <p>Bạn chưa có đơn hàng nào. Hãy khám phá các mẫu xe của chúng tôi!</p>
+                        <a href="/cars" class="btn btn-primary">Xem xe</a>
+                    </div>
+                <?php else: ?>
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Xe</th>
+                                <th>Giá</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày đặt</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($orders as $order): ?>
+                                <tr>
+                                    <td>#<?= $order['id'] ?></td>
+                                    <td>
+                                        <div class="order-car">
+                                            <?php if (!empty($order['car_image'])): ?>
+                                                <img src="<?= $order['car_image'] ?>" alt="<?= htmlspecialchars($order['car_name']) ?>" class="order-car-img">
+                                            <?php else: ?>
+                                                <div class="order-car-img" style="background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="fas fa-car" style="color: #999;"></i>
+                                                </div>
+                                            <?php endif; ?>
+                                            <div>
+                                                <div class="order-car-name"><?= htmlspecialchars($order['car_name']) ?></div>
+                                                <div class="order-car-brand"><?= htmlspecialchars($order['brand_name']) ?></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="order-price"><?= number_format($order['car_price'], 0, ',', '.') ?> VNĐ</div>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        $statusClass = 'status-' . $order['status'];
+                                        $statusText = [
+                                            'pending' => 'Chờ xử lý',
+                                            'confirmed' => 'Đã xác nhận',
+                                            'completed' => 'Hoàn thành',
+                                            'cancelled' => 'Đã hủy'
+                                        ];
+                                        ?>
+                                        <span class="order-status <?= $statusClass ?>">
+                                            <?= $statusText[$order['status']] ?? $order['status'] ?>
+                                        </span>
+                                    </td>
+                                    <td><?= date('d/m/Y', strtotime($order['created_at'])) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </div>
+
+            <!-- Security Tab -->
+            <div id="info-tab" class="tab-content">
+                <h2 class="section-title">
+                    <i class="fas fa-user-edit"></i>
+                    Thông tin cá nhân
+                </h2>
+
+                <form method="POST" action="/profile/update">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Họ và tên *</label>
+                            <input type="text" name="full_name" value="<?= htmlspecialchars($user['full_name']) ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" value="<?= htmlspecialchars($user['email']) ?>" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Số điện thoại</label>
+                            <input type="tel" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" pattern="[0-9]{10}">
+                        </div>
+                        <div class="form-group">
+                            <label>Ngày sinh</label>
+                            <input type="date" name="birth_date" value="<?= htmlspecialchars($user['birth_date'] ?? '') ?>">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Địa chỉ</label>
+                            <input type="text" name="address" value="<?= htmlspecialchars($user['address'] ?? '') ?>">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="location.reload()">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Security Tab -->
+            <div id="security-tab" class="tab-content">
+                <h2 class="section-title">
+                    <i class="fas fa-lock"></i>
+                    Đổi mật khẩu
+                </h2>
+
+                <form method="POST" action="/profile/change-password">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Mật khẩu hiện tại *</label>
+                            <input type="password" name="current_password" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mật khẩu mới *</label>
+                            <input type="password" name="new_password" required minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label>Xác nhận mật khẩu *</label>
+                            <input type="password" name="confirm_password" required minlength="6">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="this.form.reset()">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    // Tab switching
+    document.querySelectorAll('[data-tab]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const tabId = this.getAttribute('data-tab');
+            
+            // Update active menu
+            document.querySelectorAll('.profile-menu a').forEach(a => a.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update active tab content
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-tab').classList.add('active');
+        });
+    });
+    
+    // Quick link menu items
+    document.querySelectorAll('.quick-link.menu-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const tabId = this.getAttribute('data-tab');
+            
+            // Update active menu
+            document.querySelectorAll('.profile-menu a').forEach(a => a.classList.remove('active'));
+            document.querySelector(`.profile-menu a[data-tab="${tabId}"]`).classList.add('active');
+            
+            // Update active tab content
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-tab').classList.add('active');
+        });
+    });
+</script>
+
+<?php require_once __DIR__ . '/../layouts/footer.php'; ?>
 
         .avatar-edit:hover i {
             color: #000;

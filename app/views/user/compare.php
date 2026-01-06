@@ -38,23 +38,589 @@ function formatPrice($price) {
 include __DIR__ . '/../layouts/header.php';
 ?>
 
-<!-- Compare Page Styles -->
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/compare.css">
+<style>
+/* Banner */
+.compare-banner {
+    position: relative;
+    height: 280px;
+    background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 100%), 
+                url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=1920&q=80') center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: -60px;
+}
+
+.compare-banner-content {
+    text-align: center;
+    color: #fff;
+    position: relative;
+    z-index: 1;
+}
+
+.compare-banner h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.compare-banner h1 span {
+    color: #D4AF37;
+}
+
+.compare-banner p {
+    font-size: 18px;
+    color: rgba(255,255,255,0.9);
+    text-shadow: 0 1px 5px rgba(0,0,0,0.3);
+}
+
+.compare-page {
+    background: linear-gradient(135deg, #f9f7f3 0%, #f5f2ed 100%);
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 30px;
+    position: relative;
+    z-index: 2;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    padding: 25px 30px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+}
+
+.page-title svg {
+    color: #D4AF37;
+}
+
+.item-count {
+    font-size: 16px;
+    color: #666;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+}
+
+.btn-clear {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 24px;
+    background: transparent;
+    border: 2px solid #ef4444;
+    color: #ef4444;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.btn-clear:hover {
+    background: #ef4444;
+    color: #fff;
+}
+
+/* Empty State */
+.empty-compare {
+    text-align: center;
+    padding: 100px 40px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.empty-icon svg {
+    color: rgba(212, 175, 55, 0.3);
+    margin-bottom: 30px;
+}
+
+.empty-compare h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+}
+
+.empty-compare p {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 35px;
+}
+
+.btn-explore {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+    color: #000;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.btn-explore:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+}
+
+/* Need More Cars */
+.need-more {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    padding: 50px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.current-car {
+    flex: 1;
+}
+
+.add-more-prompt {
+    flex: 1;
+    text-align: center;
+    padding: 40px;
+    border: 3px dashed rgba(212, 175, 55, 0.3);
+    border-radius: 12px;
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.add-more-prompt svg {
+    color: #D4AF37;
+    margin-bottom: 20px;
+}
+
+.add-more-prompt h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+}
+
+.add-more-prompt p {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.btn-add {
+    display: inline-block;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+    color: #000;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.btn-add:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+}
+
+/* Compare Cards */
+.compare-card {
+    position: relative;
+    background: #fff;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.compare-card:hover {
+    border-color: #D4AF37;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
+}
+
+.btn-remove-card {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    background: rgba(239, 68, 68, 0.95);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.btn-remove-card:hover {
+    background: #ef4444;
+    transform: scale(1.1);
+}
+
+.card-image {
+    height: 200px;
+    overflow: hidden;
+    background: #f0f0f0;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+}
+
+.compare-card:hover .card-image img {
+    transform: scale(1.05);
+}
+
+.card-info {
+    padding: 20px;
+    text-align: center;
+}
+
+.brand-logo {
+    width: 50px;
+    height: auto;
+    margin: 0 auto 10px;
+    display: block;
+}
+
+.card-brand {
+    font-size: 12px;
+    color: #D4AF37;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: #1a1a1a;
+    margin: 0;
+    font-weight: 700;
+}
+
+.card-name a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.card-name a:hover {
+    color: #D4AF37;
+}
+
+/* Compare Table */
+.compare-wrapper {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+}
+
+.compare-table {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.compare-row {
+    display: flex;
+    border-bottom: 2px solid #f0f0f0;
+    transition: background 0.2s;
+}
+
+.compare-row:last-child {
+    border-bottom: none;
+}
+
+.compare-row:hover {
+    background: rgba(212, 175, 55, 0.02);
+}
+
+.compare-label {
+    flex: 0 0 220px;
+    padding: 20px 25px;
+    background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+    border-right: 2px solid #e5e5e5;
+    font-weight: 700;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.compare-label svg {
+    color: #D4AF37;
+    flex-shrink: 0;
+}
+
+.compare-cell {
+    flex: 1;
+    padding: 20px 25px;
+    border-right: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #333;
+    font-size: 15px;
+}
+
+.compare-cell:last-child {
+    border-right: none;
+}
+
+/* Images Row */
+.images-row {
+    background: #fff;
+    border-bottom: 3px solid #D4AF37;
+}
+
+.images-row .compare-label {
+    background: transparent;
+}
+
+.images-row .compare-cell {
+    padding: 0;
+}
+
+.images-row .compare-card {
+    width: 100%;
+    border: none;
+    border-radius: 0;
+}
+
+/* Price Row */
+.highlight-row {
+    background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(212,175,55,0.05) 100%);
+}
+
+.highlight-row .compare-label {
+    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+    color: #000;
+    font-size: 15px;
+}
+
+.price-cell {
+    flex-direction: column;
+    gap: 5px;
+}
+
+.price-value {
+    font-weight: 700;
+    font-size: 24px;
+    color: #D4AF37;
+    font-family: 'Playfair Display', serif;
+}
+
+.price-unit {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Add Cell */
+.add-cell {
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.add-car-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 40px 20px;
+    color: #D4AF37;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    transition: all 0.3s;
+    font-weight: 600;
+}
+
+.add-car-btn:hover {
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.add-car-btn svg {
+    transition: transform 0.3s;
+}
+
+.add-car-btn:hover svg {
+    transform: scale(1.1);
+}
+
+/* Status Badge */
+.status-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.available {
+    background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.1));
+    color: #16a34a;
+    border: 1px solid rgba(34,197,94,0.3);
+}
+
+.status-badge.sold {
+    background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.1));
+    color: #dc2626;
+    border: 1px solid rgba(239,68,68,0.3);
+}
+
+/* Actions Row */
+.actions-row {
+    background: #fafafa;
+}
+
+.actions-row .compare-cell {
+    flex-direction: column;
+    gap: 12px;
+    padding: 25px;
+}
+
+.btn-add-cart,
+.btn-view-detail {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.3s;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-add-cart {
+    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+    color: #000;
+}
+
+.btn-add-cart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+}
+
+.btn-view-detail {
+    background: #fff;
+    color: #1a1a1a;
+    border: 2px solid #D4AF37;
+}
+
+.btn-view-detail:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: #B8860B;
+}
+
+/* Alternating Row Colors */
+.compare-row:nth-child(even) {
+    background: #fafafa;
+}
+
+.compare-row:nth-child(even):hover {
+    background: rgba(212, 175, 55, 0.05);
+}
+
+@media (max-width: 1024px) {
+    .compare-label {
+        flex: 0 0 150px;
+        font-size: 13px;
+        padding: 15px;
+    }
+    
+    .compare-cell {
+        padding: 15px;
+        font-size: 14px;
+    }
+    
+    .compare-table {
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .need-more {
+        flex-direction: column;
+    }
+    
+    .compare-label {
+        flex: 0 0 120px;
+        font-size: 12px;
+        padding: 12px;
+    }
+    
+    .compare-cell {
+        font-size: 13px;
+        padding: 12px;
+    }
+    
+    .price-value {
+        font-size: 20px;
+    }
+}
+</style>
+
+<!-- Banner -->
+<div class="compare-banner">
+    <div class="compare-banner-content">
+        <h1>So sánh <span>chi tiết</span></h1>
+        <p>Đưa ra quyết định tốt nhất cho chiếc xe của bạn</p>
+    </div>
+</div>
 
 <main class="compare-page">
     <div class="container">
-        <!-- Breadcrumb -->
-        <nav class="breadcrumb">
-            <a href="/">Trang chủ</a>
-            <span class="separator">/</span>
-            <a href="/cars">Danh sách xe</a>
-            <span class="separator">/</span>
-            <span class="current">So sánh xe</span>
-        </nav>
-
         <div class="page-header">
             <h1 class="page-title">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="17 1 21 5 17 9"></polyline>
                     <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
                     <polyline points="7 23 3 19 7 15"></polyline>
@@ -129,11 +695,6 @@ include __DIR__ . '/../layouts/header.php';
         </div>
 
         <?php else: ?>
-        <!-- Compare Table -->
-        <div class="compare-wrapper">
-            <div class="compare-table">
-                <!-- Car Images Row -->
-                <div class="compare-row images-row">
                     <div class="compare-label"></div>
                     <?php foreach ($compareItems as $item): ?>
                     <div class="compare-cell">

@@ -165,5 +165,69 @@
     </footer>
 
     <script src="/assets/js/main.js"></script>
+    
+    <!-- Global Lazy Loading Animation Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Lazy loading cho tất cả các phần tử có class 'fade-in-section'
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px 0px -50px 0px',
+            threshold: 0.15
+        };
+
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    fadeInObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Tự động thêm class cho các phần tử cần animation
+        const elementsToAnimate = document.querySelectorAll(`
+            .car-card,
+            .feature-card,
+            .service-card,
+            .brand-card,
+            .testimonial-card,
+            .blog-card,
+            .product-card,
+            .category-card,
+            .team-member,
+            .stats-item,
+            .pricing-card,
+            .footer-col,
+            section > .container > *:not(.no-animation)
+        `);
+
+        elementsToAnimate.forEach((el, index) => {
+            // Thêm delay nhỏ cho mỗi phần tử để tạo hiệu ứng stagger
+            el.style.transitionDelay = `${index * 0.05}s`;
+            el.classList.add('fade-in-section');
+            fadeInObserver.observe(el);
+        });
+
+        // Lazy loading cho images
+        const imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                    img.classList.add('loaded');
+                    imageObserver.unobserve(img);
+                }
+            });
+        }, { rootMargin: '50px' });
+
+        document.querySelectorAll('img[loading="lazy"], img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+        });
+    });
+    </script>
 </body>
 </html>

@@ -70,6 +70,14 @@ class UserModel extends BaseModel
         return false;
     }
 
+    // Lấy user theo ID
+    public function getUserById($id)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
     // Lấy danh sách user theo role
     public function getUsersByRole($role)
     {
