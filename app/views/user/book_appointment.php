@@ -37,244 +37,244 @@ include __DIR__ . '/../layouts/header.php';
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/cart.css">
 
 <style>
-.appointment-page {
-    padding: 150px 0 80px;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f9f7f3 0%, #ffffff 100%);
-}
+    .appointment-page {
+        padding: 150px 0 80px;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f9f7f3 0%, #ffffff 100%);
+    }
 
-.appointment-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
+    .appointment-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
 
-.appointment-content {
-    display: grid;
-    grid-template-columns: 500px 1fr;
-    gap: 30px;
-    margin-top: 30px;
-}
-
-.car-preview {
-    background: #fff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 5px 30px rgba(0,0,0,0.1);
-    height: fit-content;
-    position: sticky;
-    top: 120px;
-}
-
-.car-preview-image {
-    width: 100%;
-    aspect-ratio: 16/10;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 20px;
-}
-
-.car-preview-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.car-preview-info h3 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.car-preview-brand {
-    color: #D4AF37;
-    font-size: 14px;
-    margin-bottom: 15px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.car-preview-price {
-    font-size: 28px;
-    font-weight: 700;
-    color: #D4AF37;
-    margin-bottom: 15px;
-}
-
-.car-preview-specs {
-    display: grid;
-    gap: 10px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
-}
-
-.car-preview-spec {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 14px;
-}
-
-.car-preview-spec span:first-child {
-    color: #666;
-}
-
-.car-preview-spec span:last-child {
-    color: #333;
-    font-weight: 500;
-}
-
-.appointment-form {
-    background: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 5px 30px rgba(0,0,0,0.1);
-}
-
-.form-section {
-    margin-bottom: 30px;
-}
-
-.form-section h3 {
-    font-size: 18px;
-    color: #333;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #D4AF37;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group.full-width {
-    grid-column: 1 / -1;
-}
-
-.form-group label {
-    display: block;
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-
-.form-group label span.required {
-    color: #dc3545;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: #D4AF37;
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-}
-
-.time-slots {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.time-slot {
-    padding: 12px;
-    text-align: center;
-    border: 2px solid #ddd;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-}
-
-.time-slot input[type="radio"] {
-    display: none;
-}
-
-.time-slot:hover {
-    border-color: #D4AF37;
-    background: rgba(212, 175, 55, 0.1);
-}
-
-.time-slot input[type="radio"]:checked + label {
-    border-color: #D4AF37;
-    background: #D4AF37;
-    color: #fff;
-}
-
-.time-slot label {
-    cursor: pointer;
-    margin: 0;
-    padding: 0;
-}
-
-.btn-submit-appointment {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.btn-submit-appointment:hover {
-    background: linear-gradient(135deg, #F4CF57 0%, #D4AF37 100%);
-    box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
-    transform: translateY(-2px);
-}
-
-.info-note {
-    padding: 15px;
-    background: #f8f9fa;
-    border-left: 4px solid #D4AF37;
-    border-radius: 4px;
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 20px;
-}
-
-@media (max-width: 968px) {
     .appointment-content {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 500px 1fr;
+        gap: 30px;
+        margin-top: 30px;
     }
-    
+
     .car-preview {
-        position: relative;
-        top: 0;
+        background: #fff;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+        position: sticky;
+        top: 120px;
     }
-    
+
+    .car-preview-image {
+        width: 100%;
+        aspect-ratio: 16/10;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .car-preview-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .car-preview-info h3 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .car-preview-brand {
+        color: #D4AF37;
+        font-size: 14px;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .car-preview-price {
+        font-size: 28px;
+        font-weight: 700;
+        color: #D4AF37;
+        margin-bottom: 15px;
+    }
+
+    .car-preview-specs {
+        display: grid;
+        gap: 10px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+    }
+
+    .car-preview-spec {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+    }
+
+    .car-preview-spec span:first-child {
+        color: #666;
+    }
+
+    .car-preview-spec span:last-child {
+        color: #333;
+        font-weight: 500;
+    }
+
+    .appointment-form {
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-section {
+        margin-bottom: 30px;
+    }
+
+    .form-section h3 {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #D4AF37;
+    }
+
     .form-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .time-slots {
+        display: grid;
         grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
     }
-}
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    .form-group label span.required {
+        color: #dc3545;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #D4AF37;
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    }
+
+    .time-slots {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .time-slot {
+        padding: 12px;
+        text-align: center;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+    .time-slot input[type="radio"] {
+        display: none;
+    }
+
+    .time-slot:hover {
+        border-color: #D4AF37;
+        background: rgba(212, 175, 55, 0.1);
+    }
+
+    .time-slot input[type="radio"]:checked+label {
+        border-color: #D4AF37;
+        background: #D4AF37;
+        color: #fff;
+    }
+
+    .time-slot label {
+        cursor: pointer;
+        margin: 0;
+        padding: 0;
+    }
+
+    .btn-submit-appointment {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+        color: #000;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-submit-appointment:hover {
+        background: linear-gradient(135deg, #F4CF57 0%, #D4AF37 100%);
+        box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+        transform: translateY(-2px);
+    }
+
+    .info-note {
+        padding: 15px;
+        background: #f8f9fa;
+        border-left: 4px solid #D4AF37;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 968px) {
+        .appointment-content {
+            grid-template-columns: 1fr;
+        }
+
+        .car-preview {
+            position: relative;
+            top: 0;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .time-slots {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
 </style>
 
 <main class="appointment-page">
@@ -392,26 +392,26 @@ include __DIR__ . '/../layouts/header.php';
 </main>
 
 <script>
-function updateTimeSlots() {
-    const dateInput = document.querySelector('input[name="appointment_date"]');
-    const timeSelect = document.querySelector('select[name="appointment_time"]');
-    
-    if (dateInput.value) {
-        timeSelect.disabled = false;
-    }
-}
+    function updateTimeSlots() {
+        const dateInput = document.querySelector('input[name="appointment_date"]');
+        const timeSelect = document.querySelector('select[name="appointment_time"]');
 
-// Validation
-document.getElementById('appointmentForm').addEventListener('submit', function(e) {
-    const phone = document.querySelector('input[name="phone"]').value;
-    const phoneRegex = /^[0-9]{10,11}$/;
-    
-    if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
-        e.preventDefault();
-        alert('Số điện thoại không hợp lệ. Vui lòng nhập 10-11 số');
-        return false;
+        if (dateInput.value) {
+            timeSelect.disabled = false;
+        }
     }
-});
+
+    // Validation
+    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+        const phone = document.querySelector('input[name="phone"]').value;
+        const phoneRegex = /^[0-9]{10,11}$/;
+
+        if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
+            e.preventDefault();
+            alert('Số điện thoại không hợp lệ. Vui lòng nhập 10-11 số');
+            return false;
+        }
+    });
 </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

@@ -21,7 +21,7 @@ class FavoriteModel extends BaseModel
                 WHERE f.user_id = ? 
                 GROUP BY f.id 
                 ORDER BY f.created_at DESC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$userId]);
         return $stmt->fetchAll();
@@ -49,7 +49,7 @@ class FavoriteModel extends BaseModel
         if ($this->isFavorite($userId, $carId)) {
             return false;
         }
-        
+
         return $this->create([
             'user_id' => $userId,
             'car_id' => $carId
@@ -79,7 +79,7 @@ class FavoriteModel extends BaseModel
                 FROM users u 
                 INNER JOIN {$this->table} f ON u.id = f.user_id 
                 WHERE f.car_id = ?";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$carId]);
         return $stmt->fetchAll();

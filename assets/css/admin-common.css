@@ -3,10 +3,10 @@
    =================================== */
 
 /* Reset & Base */
-* { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 :root {
@@ -42,8 +42,8 @@
     --radius-xl: 24px;
 }
 
-body { 
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif; 
+body {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
     background: #f8f9fc;
     min-height: 100vh;
     color: var(--gray-700);
@@ -74,14 +74,14 @@ body {
    Sidebar
    =================================== */
 .admin-sidebar {
-    position: fixed; 
-    left: 0; 
-    top: 0; 
-    width: 280px; 
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 280px;
     height: 100vh;
     background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
     padding: 0;
-    z-index: 100; 
+    z-index: 100;
     overflow-y: auto;
     overflow-x: hidden;
     box-shadow: 4px 0 30px rgba(0, 0, 0, 0.5);
@@ -100,65 +100,65 @@ body {
 }
 
 .sidebar-logo {
-    display: flex; 
-    align-items: center; 
-    gap: 15px; 
+    display: flex;
+    align-items: center;
+    gap: 15px;
     padding: 25px 25px 25px;
-    border-bottom: 1px solid rgba(255,255,255,0.08); 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     text-decoration: none;
     position: relative;
     background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, transparent 100%);
 }
 
-.sidebar-logo img { 
+.sidebar-logo img {
     height: 50px;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
-.sidebar-logo-text { 
-    display: flex; 
-    flex-direction: column; 
+.sidebar-logo-text {
+    display: flex;
+    flex-direction: column;
 }
 
-.sidebar-logo-text .brand { 
-    font-family: 'Playfair Display', serif; 
-    font-size: 22px; 
-    font-weight: 700; 
+.sidebar-logo-text .brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
     color: #D4AF37;
     letter-spacing: 0.5px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.sidebar-logo-text .role { 
-    font-size: 10px; 
-    color: rgba(255,255,255,0.4); 
-    text-transform: uppercase; 
+.sidebar-logo-text .role {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
     letter-spacing: 3px;
     margin-top: 4px;
 }
 
 /* Sidebar Menu */
-.sidebar-menu { 
-    list-style: none; 
+.sidebar-menu {
+    list-style: none;
     padding: 20px 15px;
 }
 
-.sidebar-menu-title { 
-    font-size: 10px; 
-    color: rgba(255,255,255,0.35); 
-    text-transform: uppercase; 
-    letter-spacing: 2px; 
+.sidebar-menu-title {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    letter-spacing: 2px;
     padding: 20px 15px 12px;
     font-weight: 600;
 }
 
 .sidebar-menu li a {
-    display: flex; 
-    align-items: center; 
-    gap: 14px; 
+    display: flex;
+    align-items: center;
+    gap: 14px;
     padding: 14px 18px;
-    color: rgba(255,255,255,0.6); 
-    text-decoration: none; 
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
     border-radius: var(--radius);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-size: 14px;
@@ -180,8 +180,8 @@ body {
     transition: height 0.3s ease;
 }
 
-.sidebar-menu li a:hover { 
-    background: rgba(255,255,255,0.05);
+.sidebar-menu li a:hover {
+    background: rgba(255, 255, 255, 0.05);
     color: #fff;
     transform: translateX(5px);
 }
@@ -190,7 +190,7 @@ body {
     height: 60%;
 }
 
-.sidebar-menu li a.active { 
+.sidebar-menu li a.active {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: #fff;
     box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
@@ -200,9 +200,9 @@ body {
     display: none;
 }
 
-.sidebar-menu li a i { 
-    width: 22px; 
-    text-align: center; 
+.sidebar-menu li a i {
+    width: 22px;
+    text-align: center;
     font-size: 16px;
     transition: transform 0.3s ease;
 }
@@ -211,12 +211,12 @@ body {
     transform: scale(1.1);
 }
 
-.sidebar-menu li a .badge { 
-    margin-left: auto; 
+.sidebar-menu li a .badge {
+    margin-left: auto;
     background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    color: #fff; 
-    font-size: 10px; 
-    padding: 4px 10px; 
+    color: #fff;
+    font-size: 10px;
+    padding: 4px 10px;
     border-radius: 20px;
     font-weight: 600;
     box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
@@ -225,8 +225,8 @@ body {
 /* ===================================
    Main Layout
    =================================== */
-.admin-main { 
-    margin-left: 280px; 
+.admin-main {
+    margin-left: 280px;
     min-height: 100vh;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
@@ -235,20 +235,20 @@ body {
 .admin-header {
     background: linear-gradient(135deg, #fff 0%, #fafbfc 100%);
     padding: 20px 40px;
-    display: flex; 
+    display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    position: sticky; 
-    top: 0; 
+    position: sticky;
+    top: 0;
     z-index: 50;
     border-bottom: 1px solid var(--gray-200);
     backdrop-filter: blur(10px);
 }
 
-.admin-header h1 { 
-    font-family: 'Playfair Display', serif; 
-    font-size: 26px; 
+.admin-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
     color: var(--gray-800);
     font-weight: 600;
 }
@@ -363,9 +363,9 @@ body {
     cursor: pointer;
 }
 
-.header-profile img { 
-    width: 44px; 
-    height: 44px; 
+.header-profile img {
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid var(--gray-200);
@@ -380,21 +380,21 @@ body {
 /* ===================================
    Content Area
    =================================== */
-.admin-content { 
+.admin-content {
     padding: 35px;
 }
 
 /* Page Header */
-.page-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 30px;
 }
 
-.page-header h2 { 
-    font-family: 'Playfair Display', serif; 
-    font-size: 32px; 
+.page-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
     color: var(--gray-800);
     font-weight: 600;
     position: relative;
@@ -474,24 +474,24 @@ body {
     padding: 24px;
 }
 
-.card > .form-group,
-.card > .form-row,
-.card > .specs-grid,
-.card > .status-options,
-.card > .image-upload,
-.card > .image-preview {
+.card>.form-group,
+.card>.form-row,
+.card>.specs-grid,
+.card>.status-options,
+.card>.image-upload,
+.card>.image-preview {
     padding: 0 24px;
 }
 
-.card > .form-group:first-of-type,
-.card > .form-row:first-of-type {
+.card>.form-group:first-of-type,
+.card>.form-row:first-of-type {
     padding-top: 24px;
 }
 
-.card > .form-group:last-child,
-.card > .form-row:last-child,
-.card > .status-options,
-.card > .image-preview {
+.card>.form-group:last-child,
+.card>.form-row:last-child,
+.card>.status-options,
+.card>.image-preview {
     padding-bottom: 24px;
 }
 
@@ -523,7 +523,7 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     transition: left 0.5s ease;
 }
 
@@ -838,9 +838,17 @@ textarea.form-control {
     color: var(--gray-600);
 }
 
-.status-option.available i { color: var(--success); }
-.status-option.reserved i { color: var(--warning); }
-.status-option.sold i { color: var(--danger); }
+.status-option.available i {
+    color: var(--success);
+}
+
+.status-option.reserved i {
+    color: var(--warning);
+}
+
+.status-option.sold i {
+    color: var(--danger);
+}
 
 .status-option:hover {
     border-color: var(--gray-300);
@@ -958,10 +966,21 @@ textarea.form-control {
     box-shadow: var(--shadow-xl);
 }
 
-.stat-card.success::before { background: var(--success); }
-.stat-card.warning::before { background: var(--warning); }
-.stat-card.danger::before { background: var(--danger); }
-.stat-card.info::before { background: var(--info); }
+.stat-card.success::before {
+    background: var(--success);
+}
+
+.stat-card.warning::before {
+    background: var(--warning);
+}
+
+.stat-card.danger::before {
+    background: var(--danger);
+}
+
+.stat-card.info::before {
+    background: var(--info);
+}
 
 .stat-icon {
     width: 60px;
@@ -1161,6 +1180,7 @@ textarea.form-control {
         opacity: 0;
         transform: translateY(-30px) scale(0.95);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -1618,7 +1638,7 @@ textarea.form-control {
 .filter-search i {
     position: absolute;
     left: 14px;
-    top: 50%;
+    top: 65%;
     transform: translateY(-50%);
     color: var(--gray-400);
     font-size: 14px;
@@ -1732,19 +1752,19 @@ textarea.form-control {
         transform: translateX(-100%);
         transition: transform 0.3s ease;
     }
-    
+
     .admin-sidebar.active {
         transform: translateX(0);
     }
-    
+
     .admin-main {
         margin-left: 0;
     }
-    
+
     .admin-header {
         padding: 15px 20px;
     }
-    
+
     .admin-content {
         padding: 20px;
     }
@@ -1756,35 +1776,35 @@ textarea.form-control {
         gap: 15px;
         align-items: flex-start;
     }
-    
+
     .page-header h2 {
         font-size: 26px;
     }
-    
+
     .form-row {
         grid-template-columns: 1fr;
     }
-    
+
     .specs-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .status-options {
         flex-direction: column;
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .filters-row {
         flex-direction: column;
     }
-    
+
     .filter-group {
         width: 100%;
     }
-    
+
     .header-search {
         display: none;
     }
@@ -1794,12 +1814,12 @@ textarea.form-control {
     .admin-content {
         padding: 15px;
     }
-    
+
     .card-header,
     .card-body {
         padding: 16px;
     }
-    
+
     .modal-content {
         margin: 10px;
         border-radius: var(--radius-lg);

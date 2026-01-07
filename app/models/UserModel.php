@@ -45,11 +45,11 @@ class UserModel extends BaseModel
     public function authenticate($username, $password)
     {
         $user = $this->findByUsername($username);
-        
+
         if ($user && password_verify($password, $user['password'])) {
             return $user;
         }
-        
+
         return false;
     }
 
@@ -57,16 +57,16 @@ class UserModel extends BaseModel
     public function authenticateByEmail($email, $password)
     {
         $user = $this->findByEmail($email);
-        
+
         // Nếu không tìm thấy bằng email, thử tìm bằng username
         if (!$user) {
             $user = $this->findByUsername($email);
         }
-        
+
         if ($user && password_verify($password, $user['password'])) {
             return $user;
         }
-        
+
         return false;
     }
 
@@ -96,7 +96,7 @@ class UserModel extends BaseModel
             $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM {$this->table} WHERE username = ?");
             $stmt->execute([$username]);
         }
-        
+
         $result = $stmt->fetch();
         return $result['total'] > 0;
     }
@@ -111,7 +111,7 @@ class UserModel extends BaseModel
             $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM {$this->table} WHERE email = ?");
             $stmt->execute([$email]);
         }
-        
+
         $result = $stmt->fetch();
         return $result['total'] > 0;
     }

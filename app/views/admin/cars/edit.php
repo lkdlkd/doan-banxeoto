@@ -1,5 +1,7 @@
-<?php 
-if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.php'; }
+<?php
+if (!defined('BASE_URL')) {
+    require_once __DIR__ . '/../../../../config/config.php';
+}
 
 // Dữ liệu được truyền từ controller:
 // $car, $brands, $categories, $carImages
@@ -11,6 +13,7 @@ unset($_SESSION['success'], $_SESSION['error']);
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -441,8 +444,10 @@ unset($_SESSION['success'], $_SESSION['error']);
         }
     </style>
 </head>
+
 <body>
-    <?php $activePage = 'cars'; include __DIR__ . '/../layouts/sidebar.php'; ?>
+    <?php $activePage = 'cars';
+    include __DIR__ . '/../layouts/sidebar.php'; ?>
 
     <main class="admin-main">
         <header class="admin-header">
@@ -461,16 +466,16 @@ unset($_SESSION['success'], $_SESSION['error']);
             </div>
 
             <?php if ($message): ?>
-            <div class="alert alert-<?= $messageType ?>">
-                <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
-                <?= htmlspecialchars($message) ?>
-            </div>
+                <div class="alert alert-<?= $messageType ?>">
+                    <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
+                    <?= htmlspecialchars($message) ?>
+                </div>
             <?php endif; ?>
 
             <form action="<?= BASE_URL ?>/admin/cars/edit" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="id" value="<?= $car['id'] ?? 0 ?>">
                 <input type="hidden" name="deleted_image_ids" id="deletedImageIds" value="">
-                
+
                 <div class="form-grid">
                     <!-- Left Column -->
                     <div>
@@ -524,17 +529,17 @@ unset($_SESSION['success'], $_SESSION['error']);
                             <div class="card-header">
                                 <h3><i class="fas fa-cogs" style="color: #f59e0b;"></i>Thông số kỹ thuật</h3>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label>Số lượng tồn kho <span class="required">*</span></label>
                                 <input type="number" name="stock" class="form-control" value="<?= $car['stock'] ?? 1 ?>" required placeholder="Số lượng xe" min="0">
                             </div>
-                            
+
                             <div class="form-group">
                                 <label><i class="fas fa-engine"></i> Loại động cơ</label>
                                 <input type="text" name="engine" class="form-control" value="<?= htmlspecialchars($car['engine'] ?? '') ?>" placeholder="VD: V8 4.0L Twin-Turbo">
                             </div>
-                            
+
                             <div class="form-row">
                                 <div class="form-group">
                                     <label><i class="fas fa-bolt"></i> Công suất (HP)</label>
@@ -545,7 +550,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                                     <input type="number" name="torque" class="form-control" value="<?= $car['torque'] ?? '' ?>" placeholder="500" min="0">
                                 </div>
                             </div>
-                            
+
                             <div class="form-row">
                                 <div class="form-group">
                                     <label><i class="fas fa-tachometer-alt"></i> Tăng tốc 0-100 km/h (s)</label>
@@ -562,7 +567,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <div class="form-row">
                                 <div class="form-group">
                                     <label><i class="fas fa-user-friends"></i> Số chỗ ngồi</label>
@@ -585,7 +590,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <div class="specs-grid">
                                 <div class="spec-input">
                                     <i class="fas fa-tachometer-alt"></i>
@@ -657,7 +662,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                             <div class="card-header">
                                 <h3><i class="fas fa-cloud-upload-alt" style="color: #06b6d4;"></i>Thêm ảnh mới</h3>
                             </div>
-                            
+
                             <div class="upload-tabs">
                                 <button type="button" class="upload-tab active" onclick="switchUploadTab(this, 'file')">
                                     <i class="fas fa-upload"></i> Tải từ máy
@@ -735,7 +740,7 @@ unset($_SESSION['success'], $_SESSION['error']);
         function switchUploadTab(btn, type) {
             document.querySelectorAll('.upload-tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
-            
+
             document.getElementById('fileUpload').style.display = type === 'file' ? 'block' : 'none';
             document.getElementById('urlUpload').style.display = type === 'url' ? 'block' : 'none';
         }
@@ -745,9 +750,12 @@ unset($_SESSION['success'], $_SESSION['error']);
         const newImageInput = document.getElementById('newImageInput');
 
         newDropArea.addEventListener('click', () => newImageInput.click());
-        
+
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            newDropArea.addEventListener(eventName, e => {e.preventDefault(); e.stopPropagation();}, false);
+            newDropArea.addEventListener(eventName, e => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, false);
         });
 
         ['dragenter', 'dragover'].forEach(eventName => {
@@ -764,10 +772,10 @@ unset($_SESSION['success'], $_SESSION['error']);
         function handleNewFiles(files) {
             const previewContainer = document.getElementById('newImagesPreview');
             const previewList = document.getElementById('newPreviewList');
-            
+
             [...files].forEach(file => {
                 if (!file.type.startsWith('image/')) return;
-                
+
                 const reader = new FileReader();
                 reader.onload = e => {
                     previewContainer.style.display = 'block';
@@ -788,7 +796,7 @@ unset($_SESSION['success'], $_SESSION['error']);
         function addImageFromUrl() {
             const urlInput = document.getElementById('newImageUrl');
             const url = urlInput.value.trim();
-            
+
             if (!url) {
                 showToast('Vui lòng nhập URL ảnh!', 'error');
                 return;
@@ -796,7 +804,7 @@ unset($_SESSION['success'], $_SESSION['error']);
 
             const previewContainer = document.getElementById('newImagesPreview');
             const previewList = document.getElementById('newPreviewList');
-            
+
             previewContainer.style.display = 'block';
             const div = document.createElement('div');
             div.className = 'preview-item';
@@ -808,7 +816,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                 <input type="hidden" name="new_image_urls[]" value="${url}">
             `;
             previewList.appendChild(div);
-            
+
             urlInput.value = '';
             showToast('Đã thêm ảnh từ URL!');
         }
@@ -826,14 +834,14 @@ unset($_SESSION['success'], $_SESSION['error']);
                 const currentIds = deletedIdsInput.value ? deletedIdsInput.value.split(',') : [];
                 currentIds.push(imageId);
                 deletedIdsInput.value = currentIds.join(',');
-                
+
                 btn.parentElement.remove();
-                
+
                 const currentImagesDiv = document.getElementById('currentImages');
                 if (currentImagesDiv.querySelectorAll('.preview-item').length === 0) {
                     currentImagesDiv.innerHTML = '<p style="text-align: center; color: #9ca3af; padding: 20px; grid-column: 1/-1;">Chưa có hình ảnh nào</p>';
                 }
-                
+
                 showToast('Ảnh sẽ bị xóa khi bạn lưu thay đổi', 'warning');
             }
         }
@@ -853,12 +861,13 @@ unset($_SESSION['success'], $_SESSION['error']);
         }
 
         <?php if (isset($_GET['success'])): ?>
-        showToast('<?= htmlspecialchars($_GET['success']) ?>');
+            showToast('<?= htmlspecialchars($_GET['success']) ?>');
         <?php endif; ?>
 
         <?php if (isset($_GET['error'])): ?>
-        showToast('<?= htmlspecialchars($_GET['error']) ?>', 'error');
+            showToast('<?= htmlspecialchars($_GET['error']) ?>', 'error');
         <?php endif; ?>
     </script>
 </body>
+
 </html>

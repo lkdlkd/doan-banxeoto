@@ -13,7 +13,7 @@ class BrandController
     {
         $this->brandModel = new BrandModel();
         $this->carModel = new CarModel();
-        
+
         // Khởi động session nếu chưa có
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -25,7 +25,7 @@ class BrandController
     {
         // Kiểm tra quyền admin
         $this->checkAdmin();
-        
+
         $brands = $this->brandModel->getAll();
         $totalBrands = count($brands);
 
@@ -43,7 +43,7 @@ class BrandController
     {
         // Kiểm tra quyền admin
         $this->checkAdmin();
-        
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/admin/brands');
         }
@@ -92,7 +92,7 @@ class BrandController
     {
         // Kiểm tra quyền admin
         $this->checkAdmin();
-        
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/admin/brands');
         }
@@ -145,7 +145,7 @@ class BrandController
     {
         // Kiểm tra quyền admin
         $this->checkAdmin();
-        
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/admin/brands');
         }

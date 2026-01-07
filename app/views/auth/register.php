@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,7 +42,7 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            background: linear-gradient(135deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.75) 100%);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.55) 50%, rgba(0, 0, 0, 0.75) 100%);
         }
 
         .register-container {
@@ -272,8 +273,13 @@
             background: #fffbf0;
         }
 
-        .btn-social.google i { color: #ea4335; }
-        .btn-social.facebook i { color: #1877f2; }
+        .btn-social.google i {
+            color: #ea4335;
+        }
+
+        .btn-social.facebook i {
+            color: #1877f2;
+        }
 
         .login-link {
             text-align: center;
@@ -399,24 +405,44 @@
                 gap: 25px;
                 padding: 35px 30px;
             }
+
             .register-info {
                 padding-right: 0;
                 border-right: none;
                 border-bottom: 2px solid #f0f0f0;
                 padding-bottom: 25px;
             }
-            .register-form-wrapper { padding-left: 0; }
-            .why-choose { display: none; }
-            .register-logo, .register-title { text-align: center; }
+
+            .register-form-wrapper {
+                padding-left: 0;
+            }
+
+            .why-choose {
+                display: none;
+            }
+
+            .register-logo,
+            .register-title {
+                text-align: center;
+            }
         }
 
         @media (max-width: 520px) {
-            .register-card { padding: 30px 20px; }
-            .form-row { grid-template-columns: 1fr; }
-            .social-register { flex-direction: column; }
+            .register-card {
+                padding: 30px 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .social-register {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="bg-image"></div>
     <div class="bg-overlay"></div>
@@ -490,14 +516,14 @@
 
             <div class="register-form-wrapper">
                 <?php if (!empty($errors)): ?>
-                <div class="error-message">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <div>
-                        <?php foreach ($errors as $error): ?>
-                            <p><?= htmlspecialchars($error) ?></p>
-                        <?php endforeach; ?>
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <div>
+                            <?php foreach ($errors as $error): ?>
+                                <p><?= htmlspecialchars($error) ?></p>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
-                </div>
                 <?php endif; ?>
 
                 <form class="register-form" method="POST" action="/register">
@@ -577,4 +603,5 @@
         </div>
     </div>
 </body>
+
 </html>

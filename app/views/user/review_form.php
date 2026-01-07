@@ -1,5 +1,7 @@
-<?php 
-if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../config/config.php'; }
+<?php
+if (!defined('BASE_URL')) {
+    require_once __DIR__ . '/../../../config/config.php';
+}
 
 $pageTitle = 'Đánh giá xe';
 include __DIR__ . '/../layouts/header.php';
@@ -99,12 +101,12 @@ include __DIR__ . '/../layouts/header.php';
     }
 
     .star-rating label:hover,
-    .star-rating label:hover ~ label {
+    .star-rating label:hover~label {
         color: #D4AF37;
         transform: scale(1.1);
     }
 
-    .star-rating input[type="radio"]:checked ~ label {
+    .star-rating input[type="radio"]:checked~label {
         color: #D4AF37;
     }
 
@@ -231,16 +233,16 @@ include __DIR__ . '/../layouts/header.php';
                 <div class="star-rating">
                     <input type="radio" id="star5" name="rating" value="5" required>
                     <label for="star5" title="5 sao">★</label>
-                    
+
                     <input type="radio" id="star4" name="rating" value="4">
                     <label for="star4" title="4 sao">★</label>
-                    
+
                     <input type="radio" id="star3" name="rating" value="3">
                     <label for="star3" title="3 sao">★</label>
-                    
+
                     <input type="radio" id="star2" name="rating" value="2">
                     <label for="star2" title="2 sao">★</label>
-                    
+
                     <input type="radio" id="star1" name="rating" value="1">
                     <label for="star1" title="1 sao">★</label>
                 </div>

@@ -60,14 +60,69 @@
     background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: #fff;
 }
+
 .status-badge.completed {
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     color: #fff;
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.8; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* Payment Badge */
+.payment-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.payment-badge i {
+    font-size: 11px;
+}
+
+.payment-badge.bank_transfer {
+    background: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.payment-badge.cash {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.payment-badge.deposit {
+    background: rgba(212, 175, 55, 0.1);
+    color: #B8860B;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+/* Action btn variants */
+.action-btn.success:hover {
+    background: rgba(16, 185, 129, 0.15);
+    color: #059669;
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.action-btn.danger:hover {
+    background: rgba(239, 68, 68, 0.15);
+    color: #dc2626;
+    border-color: rgba(239, 68, 68, 0.4);
 }
 
 /* Action Buttons - Grayscale */
@@ -119,7 +174,7 @@
     padding: 80px 20px;
     background: #fff;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .empty-icon {
@@ -167,15 +222,15 @@
     .order-stats {
         grid-template-columns: 1fr;
     }
-    
+
     .orders-table-container {
         overflow-x: auto;
     }
-    
+
     .orders-table {
         min-width: 900px;
     }
-    
+
     .order-actions {
         flex-direction: column;
     }

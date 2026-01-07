@@ -16,7 +16,7 @@ class CarController
         $this->carModel = new CarModel();
         $this->brandModel = new BrandModel();
         $this->categoryModel = new CategoryModel();
-        
+
         // Khởi động session nếu chưa có
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -28,7 +28,7 @@ class CarController
     {
         // Kiểm tra quyền admin
         $this->checkAdmin();
-        
+
         $cars = $this->carModel->getAllWithDetails();
         $brands = $this->brandModel->getAll();
         $categories = $this->categoryModel->getAll();
@@ -46,7 +46,7 @@ class CarController
     {
         // Kiểm tra quyền admin
         $this->checkAdmin();
-        
+
         $brands = $this->brandModel->getAll();
         $categories = $this->categoryModel->getAll();
 
@@ -59,7 +59,7 @@ class CarController
     {
         // Kiểm tra quyền admin
         $this->checkAdmin();
-        
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/admin/cars/add');
         }
@@ -75,7 +75,7 @@ class CarController
         $color = trim($_POST['color'] ?? '');
         $description = trim($_POST['description'] ?? '');
         $status = trim($_POST['status'] ?? 'available');
-        
+
         // Thông số kỹ thuật
         $stock = intval($_POST['stock'] ?? 1);
         $engine = trim($_POST['engine'] ?? '');
@@ -131,7 +131,7 @@ class CarController
         if ($carId) {
             // Xử lý ảnh gallery
             $galleryImages = [];
-            
+
             // Upload từ file
             if (!empty($_FILES['gallery_images']['name'][0])) {
                 foreach ($_FILES['gallery_images']['tmp_name'] as $key => $tmpName) {
@@ -150,18 +150,18 @@ class CarController
                     }
                 }
             }
-            
+
             // URLs từ input
             if (!empty($_POST['gallery_urls'])) {
                 $urls = array_filter(array_map('trim', explode("\n", $_POST['gallery_urls'])));
                 $galleryImages = array_merge($galleryImages, $urls);
             }
-            
+
             // Lưu gallery images vào car_images
             foreach ($galleryImages as $imageUrl) {
                 $this->carModel->addImage($carId, $imageUrl);
             }
-            
+
             // Nếu có main image, thêm vào gallery
             if (!empty($mainImage)) {
                 $this->carModel->addImage($carId, $mainImage);
@@ -180,13 +180,13 @@ class CarController
     {
         // Kiểm tra quyền admin
         $this->checkAdmin();
-        
+
         // Kiểm tra ID hợp lệ
         if ($id <= 0) {
             $_SESSION['error'] = 'ID xe không hợp lệ';
             $this->redirect('/admin/cars');
         }
-        
+
         $car = $this->carModel->findWithDetails($id);
         if (!$car) {
             $_SESSION['error'] = 'Không tìm thấy xe';
@@ -206,7 +206,7 @@ class CarController
     {
         // Kiểm tra quyền admin
         $this->checkAdmin();
-        
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/admin/cars');
         }
@@ -223,7 +223,7 @@ class CarController
         $color = trim($_POST['color'] ?? '');
         $description = trim($_POST['description'] ?? '');
         $status = trim($_POST['status'] ?? 'available');
-        
+
         // Thông số kỹ thuật
         $stock = intval($_POST['stock'] ?? 1);
         $engine = trim($_POST['engine'] ?? '');
@@ -284,10 +284,10 @@ class CarController
                     }
                 }
             }
-            
+
             // Xử lý ảnh mới nếu có
             $newImages = [];
-            
+
             // Upload từ file
             if (!empty($_FILES['new_images']['name'][0])) {
                 foreach ($_FILES['new_images']['tmp_name'] as $key => $tmpName) {
@@ -306,7 +306,7 @@ class CarController
                     }
                 }
             }
-            
+
             // URLs từ input
             if (!empty($_POST['new_image_urls'])) {
                 foreach ($_POST['new_image_urls'] as $url) {
@@ -330,7 +330,7 @@ class CarController
     {
         // Kiểm tra quyền admin
         $this->checkAdmin();
-        
+
         $id = intval($id);
         if ($id <= 0) {
             $_SESSION['error'] = 'ID xe không hợp lệ';
@@ -354,7 +354,7 @@ class CarController
     {
         // Kiểm tra quyền admin
         $this->checkAdmin();
-        
+
         $imageId = intval($imageId);
         if ($imageId <= 0) {
             echo json_encode(['success' => false, 'message' => 'ID ảnh không hợp lệ']);

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th1 04, 2026 lúc 06:57 AM
+-- Thời gian đã tạo: Th1 07, 2026 lúc 09:50 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -46,10 +46,7 @@ CREATE TABLE `appointments` (
 --
 
 INSERT INTO `appointments` (`id`, `user_id`, `car_id`, `appointment_date`, `appointment_time`, `full_name`, `phone`, `email`, `notes`, `status`, `created_at`) VALUES
-(1, 2, 13, '2026-01-10', '10:00:00', 'Nguyễn Văn A', '0901234567', 'nguyenvana@gmail.com', 'Muốn xem và lái thử Ferrari F8 Tributo', 'pending', '2026-01-05 08:30:00'),
-(2, 2, 16, '2026-01-12', '14:00:00', 'Nguyễn Văn A', '0901234567', 'nguyenvana@gmail.com', 'Quan tâm đến Lamborghini Huracán EVO', 'confirmed', '2026-01-05 09:15:00'),
-(3, 2, 24, '2026-01-08', '09:00:00', 'Nguyễn Văn A', '0901234567', 'nguyenvana@gmail.com', 'Xem Rolls-Royce Phantom', 'completed', '2026-01-03 10:00:00'),
-(4, 2, 10, '2026-01-15', '15:30:00', 'Nguyễn Văn A', '0901234567', 'nguyenvana@gmail.com', 'Lái thử Porsche 911 Turbo S', 'pending', '2026-01-05 11:20:00');
+(6, 1, 1, '2026-01-08', '11:00:00', 'Lê Khánh Đăng', '0868065672', 'khanhdang2440@gmail.com', '', 'confirmed', '2026-01-07 07:31:44');
 
 -- --------------------------------------------------------
 
@@ -102,6 +99,14 @@ CREATE TABLE `cars` (
   `color` varchar(50) DEFAULT NULL,
   `description` text DEFAULT NULL,
   `status` enum('available','sold') DEFAULT 'available',
+  `stock` int(11) DEFAULT 1,
+  `engine` varchar(100) DEFAULT NULL,
+  `horsepower` int(11) DEFAULT NULL,
+  `torque` int(11) DEFAULT NULL,
+  `acceleration` decimal(4,1) DEFAULT NULL,
+  `drivetrain` varchar(20) DEFAULT NULL,
+  `seats` int(11) DEFAULT NULL,
+  `doors` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -109,40 +114,40 @@ CREATE TABLE `cars` (
 -- Đang đổ dữ liệu cho bảng `cars`
 --
 
-INSERT INTO `cars` (`id`, `name`, `brand_id`, `category_id`, `price`, `year`, `mileage`, `fuel`, `transmission`, `color`, `description`, `status`, `created_at`) VALUES
-(1, 'AMG GT 63 S', 1, 3, 12500000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen', 'Mercedes-AMG GT 63 S 4MATIC+ với động cơ V8 4.0L twin-turbo 639 mã lực', 'sold', '2026-01-02 07:00:58'),
-(2, 'S-Class S450', 1, 1, 5200000000.00, 2024, 0, 'gasoline', 'automatic', 'Trắng', 'Mercedes-Benz S450 4MATIC Luxury sedan flagship', 'sold', '2026-01-02 07:00:58'),
-(3, 'GLE 450 AMG', 1, 2, 4800000000.00, 2024, 5000, 'gasoline', 'automatic', 'Xám', 'Mercedes GLE 450 4MATIC Coupe AMG Line', 'sold', '2026-01-02 07:00:58'),
-(4, 'M8 Competition', 2, 3, 13200000000.00, 2024, 0, 'gasoline', 'automatic', 'Xanh San Marino', 'BMW M8 Competition Coupe với động cơ V8 4.4L 617 mã lực', 'sold', '2026-01-02 07:00:58'),
-(5, 'X7 xDrive40i', 2, 2, 6800000000.00, 2024, 3000, 'gasoline', 'automatic', 'Đen Sapphire', 'BMW X7 xDrive40i M Sport 7 chỗ luxury SUV', 'available', '2026-01-02 07:00:58'),
-(6, '7 Series 740i', 2, 1, 5900000000.00, 2025, 0, 'gasoline', 'automatic', 'Trắng Alpine', 'BMW 740i M Sport flagship sedan', 'available', '2026-01-02 07:00:58'),
-(7, 'RS7 Sportback', 3, 1, 8900000000.00, 2024, 0, 'gasoline', 'automatic', 'Xám Nardo', 'Audi RS7 Sportback với động cơ V8 4.0L TFSI 621 mã lực', 'available', '2026-01-02 07:00:58'),
-(8, 'Q8 55 TFSI', 3, 2, 5500000000.00, 2024, 8000, 'gasoline', 'automatic', 'Đen', 'Audi Q8 55 TFSI quattro S line coupe SUV', 'available', '2026-01-02 07:00:58'),
-(9, 'e-tron GT', 3, 1, 6500000000.00, 2024, 2000, 'electric', 'automatic', 'Xanh Kemora', 'Audi e-tron GT quattro điện cao cấp', 'available', '2026-01-02 07:00:58'),
-(10, '911 Turbo S', 4, 5, 15800000000.00, 2025, 0, 'gasoline', 'automatic', 'Vàng Racing', 'Porsche 911 Turbo S với động cơ flat-6 3.8L 640 mã lực', 'available', '2026-01-02 07:00:58'),
-(11, 'Cayenne Turbo GT', 4, 2, 12500000000.00, 2024, 0, 'gasoline', 'automatic', 'Xanh Gentian', 'Porsche Cayenne Turbo GT với 640 mã lực', 'available', '2026-01-02 07:00:58'),
-(12, 'Panamera 4S E-Hybrid', 4, 1, 8200000000.00, 2024, 5000, 'gasoline', 'automatic', 'Đen Jet', 'Porsche Panamera 4S E-Hybrid Sport Turismo', 'available', '2026-01-02 07:00:58'),
-(13, 'F8 Tributo', 5, 5, 21500000000.00, 2024, 0, 'gasoline', 'automatic', 'Đỏ Rosso Corsa', 'Ferrari F8 Tributo với động cơ V8 3.9L twin-turbo 720 mã lực', 'available', '2026-01-02 07:00:58'),
-(14, 'SF90 Stradale', 5, 5, 35000000000.00, 2024, 0, 'gasoline', 'automatic', 'Đỏ Rosso Scuderia', 'Ferrari SF90 Stradale hybrid 1000 mã lực', 'available', '2026-01-02 07:00:58'),
-(15, 'Roma', 5, 3, 18500000000.00, 2024, 3000, 'gasoline', 'automatic', 'Trắng Bianco', 'Ferrari Roma grand touring coupe', 'available', '2026-01-02 07:00:58'),
-(16, 'Huracán EVO', 6, 5, 19800000000.00, 2024, 0, 'gasoline', 'automatic', 'Xanh Verde Mantis', 'Lamborghini Huracán EVO với động cơ V10 5.2L 640 mã lực', 'available', '2026-01-02 07:00:58'),
-(17, 'Urus S', 6, 2, 16500000000.00, 2024, 5000, 'gasoline', 'automatic', 'Vàng Giallo', 'Lamborghini Urus S Super SUV 666 mã lực', 'available', '2026-01-02 07:00:58'),
-(18, 'Revuelto', 6, 5, 45000000000.00, 2025, 0, 'gasoline', 'automatic', 'Cam Arancio', 'Lamborghini Revuelto V12 hybrid mới nhất', 'available', '2026-01-02 07:00:58'),
-(19, '720S Spider', 7, 5, 23500000000.00, 2024, 0, 'gasoline', 'automatic', 'Cam McLaren', 'McLaren 720S Spider với động cơ V8 4.0L twin-turbo 720 mã lực', 'available', '2026-01-02 07:00:58'),
-(20, 'Artura', 7, 5, 16800000000.00, 2024, 2000, 'gasoline', 'automatic', 'Xanh Ludus', 'McLaren Artura hybrid supercar', 'available', '2026-01-02 07:00:58'),
-(21, 'Continental GT', 8, 3, 18900000000.00, 2025, 0, 'gasoline', 'automatic', 'Xanh Verdant', 'Bentley Continental GT Speed với động cơ W12 659 mã lực', 'available', '2026-01-02 07:00:58'),
-(22, 'Flying Spur', 8, 1, 16500000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen Onyx', 'Bentley Flying Spur V8 luxury sedan', 'available', '2026-01-02 07:00:58'),
-(23, 'Bentayga', 8, 2, 15200000000.00, 2024, 8000, 'gasoline', 'automatic', 'Trắng Ghost', 'Bentley Bentayga S luxury SUV', 'available', '2026-01-02 07:00:58'),
-(24, 'Phantom', 9, 1, 55000000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen Diamond', 'Rolls-Royce Phantom Extended flagship sedan', 'available', '2026-01-02 07:00:58'),
-(25, 'Cullinan', 9, 2, 42000000000.00, 2024, 0, 'gasoline', 'automatic', 'Xanh Peacock', 'Rolls-Royce Cullinan Black Badge SUV', 'available', '2026-01-02 07:00:58'),
-(26, 'Ghost', 9, 1, 35000000000.00, 2024, 5000, 'gasoline', 'automatic', 'Bạc Silver', 'Rolls-Royce Ghost luxury sedan', 'available', '2026-01-02 07:00:58'),
-(27, 'MC20', 10, 5, 15800000000.00, 2024, 0, 'gasoline', 'automatic', 'Xanh Blu Infinito', 'Maserati MC20 siêu xe với động cơ V6 Nettuno 630 mã lực', 'available', '2026-01-02 07:00:58'),
-(28, 'GranTurismo', 10, 3, 12500000000.00, 2025, 0, 'gasoline', 'automatic', 'Đỏ Rosso', 'Maserati GranTurismo Trofeo grand touring', 'available', '2026-01-02 07:00:58'),
-(29, 'LC 500', 11, 3, 8500000000.00, 2024, 0, 'gasoline', 'automatic', 'Vàng Flare', 'Lexus LC 500 coupe với động cơ V8 5.0L 471 mã lực', 'available', '2026-01-02 07:00:58'),
-(30, 'LX 600', 11, 2, 9200000000.00, 2024, 10000, 'gasoline', 'automatic', 'Trắng Sonic', 'Lexus LX 600 F Sport flagship SUV', 'available', '2026-01-02 07:00:58'),
-(31, 'Camry 2.5Q', 12, 1, 1420000000.00, 2024, 0, 'gasoline', 'automatic', 'Trắng Ngọc Trai', 'Toyota Camry 2.5Q sedan cao cấp', 'available', '2026-01-02 07:00:58'),
-(32, 'Land Cruiser', 12, 2, 4090000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen', 'Toyota Land Cruiser 300 VXR flagship SUV', 'available', '2026-01-02 07:00:58'),
-(33, 'Corolla Cross HEV', 12, 7, 920000000.00, 2024, 5000, 'gasoline', 'automatic', 'Xám', 'Toyota Corolla Cross Hybrid crossover', 'available', '2026-01-02 07:00:58');
+INSERT INTO `cars` (`id`, `name`, `brand_id`, `category_id`, `price`, `year`, `mileage`, `fuel`, `transmission`, `color`, `description`, `status`, `stock`, `engine`, `horsepower`, `torque`, `acceleration`, `drivetrain`, `seats`, `doors`, `created_at`) VALUES
+(1, 'AMG GT 63 S', 1, 3, 12500000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen', 'Mercedes-AMG GT 63 S 4MATIC+ với động cơ V8 4.0L twin-turbo 639 mã lực', 'available', 2, 'V8 4.0L Twin-Turbo', 639, 900, 3.2, 'AWD', 4, 2, '2026-01-02 07:00:58'),
+(2, 'S-Class S450', 1, 1, 5200000000.00, 2024, 0, 'gasoline', 'automatic', 'Trắng', 'Mercedes-Benz S450 4MATIC Luxury sedan flagship', 'sold', 1, NULL, NULL, NULL, NULL, NULL, 5, 4, '2026-01-02 07:00:58'),
+(3, 'GLE 450 AMG', 1, 2, 4800000000.00, 2024, 5000, 'gasoline', 'automatic', 'Xám', 'Mercedes GLE 450 4MATIC Coupe AMG Line', 'sold', 1, NULL, NULL, NULL, NULL, NULL, 5, 4, '2026-01-02 07:00:58'),
+(4, 'M8 Competition', 2, 3, 13200000000.00, 2024, 0, 'gasoline', 'automatic', 'Xanh San Marino', 'BMW M8 Competition Coupe với động cơ V8 4.4L 617 mã lực', 'sold', 1, 'V8 4.4L Twin-Turbo', 617, 750, 3.2, 'AWD', 4, 2, '2026-01-02 07:00:58'),
+(5, 'X7 xDrive40i', 2, 2, 6800000000.00, 2024, 3000, 'gasoline', 'automatic', 'Đen Sapphire', 'BMW X7 xDrive40i M Sport 7 chỗ luxury SUV', 'sold', 0, NULL, NULL, NULL, NULL, NULL, 5, 4, '2026-01-02 07:00:58'),
+(6, '7 Series 740i', 2, 1, 5900000000.00, 2025, 0, 'gasoline', 'automatic', 'Trắng Alpine', 'BMW 740i M Sport flagship sedan', 'sold', 0, NULL, NULL, NULL, NULL, NULL, 5, 4, '2026-01-02 07:00:58'),
+(7, 'RS7 Sportback', 3, 1, 8900000000.00, 2024, 0, 'gasoline', 'automatic', 'Xám Nardo', 'Audi RS7 Sportback với động cơ V8 4.0L TFSI 621 mã lực', 'available', 1, NULL, NULL, NULL, NULL, NULL, 5, 4, '2026-01-02 07:00:58'),
+(8, 'Q8 55 TFSI', 3, 2, 5500000000.00, 2024, 8000, 'gasoline', 'automatic', 'Đen', 'Audi Q8 55 TFSI quattro S line coupe SUV', 'available', 1, NULL, NULL, NULL, NULL, NULL, 5, 4, '2026-01-02 07:00:58'),
+(9, 'e-tron GT', 3, 1, 6500000000.00, 2024, 2000, 'electric', 'automatic', 'Xanh Kemora', 'Audi e-tron GT quattro điện cao cấp', 'available', 1, NULL, NULL, NULL, NULL, NULL, 5, 4, '2026-01-02 07:00:58'),
+(10, '911 Turbo S', 4, 5, 15800000000.00, 2025, 0, 'gasoline', 'automatic', 'Vàng Racing', 'Porsche 911 Turbo S với động cơ flat-6 3.8L 640 mã lực', 'available', 1, 'Flat-6 3.8L Twin-Turbo', 640, 800, 2.7, 'AWD', 2, 2, '2026-01-02 07:00:58'),
+(11, 'Cayenne Turbo GT', 4, 2, 12500000000.00, 2024, 0, 'gasoline', 'automatic', 'Xanh Gentian', 'Porsche Cayenne Turbo GT với 640 mã lực', 'available', 1, NULL, NULL, NULL, NULL, NULL, 5, 4, '2026-01-02 07:00:58'),
+(12, 'Panamera 4S E-Hybrid', 4, 1, 8200000000.00, 2024, 5000, 'gasoline', 'automatic', 'Đen Jet', 'Porsche Panamera 4S E-Hybrid Sport Turismo', 'available', 1, 'V8 4.0L Twin-Turbo', 3, 800, 676.0, '', 5, 4, '2026-01-02 07:00:58'),
+(13, 'F8 Tributo', 5, 5, 21500000000.00, 2024, 0, 'gasoline', 'automatic', 'Đỏ Rosso Corsa', 'Ferrari F8 Tributo với động cơ V8 3.9L twin-turbo 720 mã lực', 'available', 1, 'V8 3.9L Twin-Turbo', 720, 770, 2.9, 'RWD', 2, 2, '2026-01-02 07:00:58'),
+(14, 'SF90 Stradale', 5, 5, 35000000000.00, 2024, 0, 'gasoline', 'automatic', 'Đỏ Rosso Scuderia', 'Ferrari SF90 Stradale hybrid 1000 mã lực', 'available', 1, 'V8 4.0L Hybrid', 1000, 800, 2.5, 'AWD', 2, 2, '2026-01-02 07:00:58'),
+(15, 'Roma', 5, 3, 18500000000.00, 2024, 3000, 'gasoline', 'automatic', 'Trắng Bianco', 'Ferrari Roma grand touring coupe', 'available', 1, NULL, NULL, NULL, NULL, NULL, 4, 2, '2026-01-02 07:00:58'),
+(16, 'Huracán EVO', 6, 5, 19800000000.00, 2024, 0, 'gasoline', 'automatic', 'Xanh Verde Mantis', 'Lamborghini Huracán EVO với động cơ V10 5.2L 640 mã lực', 'available', 1, 'V10 5.2L', 640, 600, 2.9, 'AWD', 2, 2, '2026-01-02 07:00:58'),
+(17, 'Urus S', 6, 2, 16500000000.00, 2024, 5000, 'gasoline', 'automatic', 'Vàng Giallo', 'Lamborghini Urus S Super SUV 666 mã lực', 'available', 1, 'V8 4.0L Twin-Turbo', 666, 850, 3.3, 'AWD', 5, 4, '2026-01-02 07:00:58'),
+(18, 'Revuelto', 6, 5, 45000000000.00, 2025, 0, 'gasoline', 'automatic', 'Cam Arancio', 'Lamborghini Revuelto V12 hybrid mới nhất', 'available', 1, 'V12 6.5L Hybrid', 1015, 807, 2.5, 'AWD', 2, 2, '2026-01-02 07:00:58'),
+(19, '720S Spider', 7, 5, 23500000000.00, 2024, 0, 'gasoline', 'automatic', 'Cam McLaren', 'McLaren 720S Spider với động cơ V8 4.0L twin-turbo 720 mã lực', 'available', 1, 'V8 4.0L Twin-Turbo', 720, 770, 2.8, 'RWD', 2, 2, '2026-01-02 07:00:58'),
+(20, 'Artura', 7, 5, 16800000000.00, 2024, 2000, 'gasoline', 'automatic', 'Xanh Ludus', 'McLaren Artura hybrid supercar', 'available', 1, NULL, NULL, NULL, NULL, NULL, 2, 2, '2026-01-02 07:00:58'),
+(21, 'Continental GT', 8, 3, 18900000000.00, 2025, 0, 'gasoline', 'automatic', 'Xanh Verdant', 'Bentley Continental GT Speed với động cơ W12 659 mã lực', 'available', 1, 'W12 6.0L Twin-Turbo', 659, 900, 3.6, 'AWD', 4, 2, '2026-01-02 07:00:58'),
+(22, 'Flying Spur', 8, 1, 16500000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen Onyx', 'Bentley Flying Spur V8 luxury sedan', 'available', 1, NULL, NULL, NULL, NULL, NULL, 5, 4, '2026-01-02 07:00:58'),
+(23, 'Bentayga', 8, 2, 15200000000.00, 2024, 8000, 'gasoline', 'automatic', 'Trắng Ghost', 'Bentley Bentayga S luxury SUV', 'available', 1, NULL, NULL, NULL, NULL, NULL, 5, 4, '2026-01-02 07:00:58'),
+(24, 'Phantom', 9, 1, 55000000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen Diamond', 'Rolls-Royce Phantom Extended flagship sedan', 'available', 1, 'V12 6.75L Twin-Turbo', 571, 900, 5.4, 'RWD', 5, 4, '2026-01-02 07:00:58'),
+(25, 'Cullinan', 9, 2, 42000000000.00, 2024, 0, 'gasoline', 'automatic', 'Xanh Peacock', 'Rolls-Royce Cullinan Black Badge SUV', 'available', 1, 'V12 6.75L Twin-Turbo', 600, 900, 4.8, 'AWD', 5, 4, '2026-01-02 07:00:58'),
+(26, 'Ghost', 9, 1, 35000000000.00, 2024, 5000, 'gasoline', 'automatic', 'Bạc Silver', 'Rolls-Royce Ghost luxury sedan', 'available', 1, NULL, NULL, NULL, NULL, NULL, 5, 4, '2026-01-02 07:00:58'),
+(27, 'MC20', 10, 5, 15800000000.00, 2024, 0, 'gasoline', 'automatic', 'Xanh Blu Infinito', 'Maserati MC20 siêu xe với động cơ V6 Nettuno 630 mã lực', 'available', 1, 'V6 3.0L Twin-Turbo', 630, 730, 2.9, 'RWD', 2, 2, '2026-01-02 07:00:58'),
+(28, 'GranTurismo', 10, 3, 12500000000.00, 2025, 0, 'gasoline', 'automatic', 'Đỏ Rosso', 'Maserati GranTurismo Trofeo grand touring', 'available', 1, NULL, NULL, NULL, NULL, NULL, 4, 2, '2026-01-02 07:00:58'),
+(29, 'LC 500', 11, 3, 8500000000.00, 2024, 0, 'gasoline', 'automatic', 'Vàng Flare', 'Lexus LC 500 coupe với động cơ V8 5.0L 471 mã lực', 'available', 1, 'V8 5.0L', 471, 540, 4.7, 'RWD', 4, 2, '2026-01-02 07:00:58'),
+(30, 'LX 600', 11, 2, 9200000000.00, 2024, 10000, 'gasoline', 'automatic', 'Trắng Sonic', 'Lexus LX 600 F Sport flagship SUV', 'available', 1, NULL, NULL, NULL, NULL, NULL, 5, 4, '2026-01-02 07:00:58'),
+(31, 'Camry 2.5Q', 12, 1, 1420000000.00, 2024, 0, 'gasoline', 'automatic', 'Trắng Ngọc Trai', 'Toyota Camry 2.5Q sedan cao cấp', 'available', 1, 'I4 2.5L', 209, 250, 8.5, 'FWD', 5, 4, '2026-01-02 07:00:58'),
+(32, 'Land Cruiser', 12, 2, 4090000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen', 'Toyota Land Cruiser 300 VXR flagship SUV', 'available', 1, 'V6 3.5L Twin-Turbo', 409, 650, 6.7, '4WD', 7, 4, '2026-01-02 07:00:58'),
+(33, 'Corolla Cross HEV', 12, 7, 920000000.00, 2024, 5000, 'gasoline', 'automatic', 'Xám', 'Toyota Corolla Cross Hybrid crossover', 'available', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-02 07:00:58');
 
 -- --------------------------------------------------------
 
@@ -242,7 +247,7 @@ CREATE TABLE `contacts` (
 --
 
 INSERT INTO `contacts` (`id`, `name`, `email`, `phone`, `subject`, `message`, `status`, `created_at`) VALUES
-(2, 'Le Khanh Dang', 'khanhdang2440@gmail.com', '0868065672', 'baogia', 'fdsf', 'replied', '2026-01-04 05:49:43'),
+(2, 'Le Khanh Dang', 'khanhdang2440@gmail.com', '0868065672', 'baogia', 'fdsf', 'read', '2026-01-04 05:49:43'),
 (3, 'Chùa Âng', 'khanhdang@gmail.com', '0868065672', 'baoduong', 'fsfd', 'read', '2026-01-04 05:49:53');
 
 -- --------------------------------------------------------
@@ -263,7 +268,7 @@ CREATE TABLE `favorites` (
 --
 
 INSERT INTO `favorites` (`id`, `user_id`, `car_id`, `created_at`) VALUES
-(1, 1, 1, '2026-01-04 04:52:26');
+(13, 1, 2, '2026-01-07 07:44:32');
 
 -- --------------------------------------------------------
 
@@ -290,9 +295,11 @@ CREATE TABLE `orders` (
 
 INSERT INTO `orders` (`id`, `user_id`, `car_id`, `price`, `deposit_percentage`, `deposit_amount`, `payment_method`, `status`, `notes`, `created_at`) VALUES
 (1, 1, 1, 12500000000.00, 30, 3750000000.00, 'deposit', 'completed', '', '2026-01-04 04:52:43'),
-(2, 1, 2, 5200000000.00, 0, NULL, 'cash', 'confirmed', '', '2026-01-04 05:47:35'),
+(2, 1, 2, 5200000000.00, 0, NULL, 'cash', 'completed', '', '2026-01-04 05:47:35'),
 (3, 1, 4, 13200000000.00, 50, 6600000000.00, 'deposit', 'confirmed', '', '2026-01-04 05:47:49'),
-(4, 1, 3, 4800000000.00, 0, NULL, 'bank_transfer', 'confirmed', '', '2026-01-04 05:47:59');
+(4, 1, 3, 4800000000.00, 0, NULL, 'bank_transfer', 'confirmed', '', '2026-01-04 05:47:59'),
+(5, 1, 6, 5900000000.00, 10, 590000000.00, 'deposit', 'confirmed', '', '2026-01-07 06:03:56'),
+(6, 1, 5, 6800000000.00, 0, NULL, 'bank_transfer', 'confirmed', '', '2026-01-07 06:47:16');
 
 -- --------------------------------------------------------
 
@@ -306,6 +313,8 @@ CREATE TABLE `reviews` (
   `car_id` int(11) NOT NULL,
   `rating` int(11) DEFAULT NULL CHECK (`rating` between 1 and 5),
   `comment` text DEFAULT NULL,
+  `admin_reply` text DEFAULT NULL,
+  `replied_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -313,9 +322,10 @@ CREATE TABLE `reviews` (
 -- Đang đổ dữ liệu cho bảng `reviews`
 --
 
-INSERT INTO `reviews` (`id`, `user_id`, `car_id`, `rating`, `comment`, `created_at`) VALUES
-(1, 1, 1, 3, 'ffđgg', '2026-01-04 04:56:30'),
-(2, 1, 3, 5, 'fdfd', '2026-01-04 05:49:31');
+INSERT INTO `reviews` (`id`, `user_id`, `car_id`, `rating`, `comment`, `admin_reply`, `replied_at`, `created_at`) VALUES
+(1, 1, 1, 3, 'ffđgg', NULL, NULL, '2026-01-04 04:56:30'),
+(2, 1, 3, 5, 'fdfd', NULL, NULL, '2026-01-04 05:49:31'),
+(3, 1, 5, 4, 'ok', 'dsđ', '2026-01-07 08:20:18', '2026-01-07 07:35:34');
 
 -- --------------------------------------------------------
 
@@ -343,7 +353,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `full_name`, `phone`, `address`, `avatar`, `remember_token`, `role`, `status`, `created_at`) VALUES
-(1, 'khanhdang', 'khanhdang2440@gmail.com', '$2y$10$G8IdZF3lcO0fpEjTjLxRSOpMxySQGNMgQTgPUxMJUYl5zhp9wrUgq', 'Lê Khánh Đăng', '0868065672', NULL, NULL, NULL, 'admin', 1, '2025-12-30 07:21:32');
+(1, 'khanhdang', 'khanhdang2440@gmail.com', '$2y$10$SzFXIlqlISyBJEq.ReXYs.zp3DgTjSlcDh1hvCotF.IHbmra9DXE.', 'Lê Khánh Đăng', '0868065672', NULL, NULL, NULL, 'admin', 1, '2025-12-30 07:21:32');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -432,7 +442,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `appointments`
 --
 ALTER TABLE `appointments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `brands`
@@ -462,42 +472,35 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT cho bảng `contacts`
 --
 ALTER TABLE `contacts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `favorites`
 --
 ALTER TABLE `favorites`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT cho bảng `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
 --
-
---
--- Các ràng buộc cho bảng `appointments`
---
-ALTER TABLE `appointments`
-  ADD CONSTRAINT `appointments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `appointments_ibfk_2` FOREIGN KEY (`car_id`) REFERENCES `cars` (`id`) ON DELETE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `cars`
@@ -518,20 +521,6 @@ ALTER TABLE `car_images`
 ALTER TABLE `favorites`
   ADD CONSTRAINT `favorites_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `favorites_ibfk_2` FOREIGN KEY (`car_id`) REFERENCES `cars` (`id`) ON DELETE CASCADE;
-
---
--- Các ràng buộc cho bảng `orders`
---
-ALTER TABLE `orders`
-  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`car_id`) REFERENCES `cars` (`id`);
-
---
--- Các ràng buộc cho bảng `reviews`
---
-ALTER TABLE `reviews`
-  ADD CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`car_id`) REFERENCES `cars` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -10,30 +10,30 @@ $resetToken = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_once __DIR__ . '/../../models/UserModel.php';
     $userModel = new UserModel();
-    
+
     if (isset($_POST['action'])) {
         if ($_POST['action'] === 'request_reset') {
             // Yêu cầu reset mật khẩu
             $email = trim($_POST['email'] ?? '');
-            
+
             if (empty($email)) {
                 $message = 'Vui lòng nhập địa chỉ email';
                 $messageType = 'error';
             } else {
                 $user = $userModel->findByEmail($email);
-                
+
                 if ($user) {
                     // Tạo token reset
                     $token = bin2hex(random_bytes(32));
                     $expiry = date('Y-m-d H:i:s', strtotime('+1 hour'));
-                    
+
                     // Lưu token vào database (trong thực tế)
                     // $userModel->saveResetToken($user['id'], $token, $expiry);
-                    
+
                     // Hiển thị token (trong production sẽ gửi email)
                     $message = 'Link đặt lại mật khẩu đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư.';
                     $messageType = 'success';
-                    
+
                     // Demo: Hiển thị form reset ngay
                     $showResetForm = true;
                     $resetToken = $token;
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $newPassword = $_POST['new_password'] ?? '';
             $confirmPassword = $_POST['confirm_password'] ?? '';
             $token = $_POST['token'] ?? '';
-            
+
             if (empty($newPassword) || empty($confirmPassword)) {
                 $message = 'Vui lòng điền đầy đủ thông tin';
                 $messageType = 'error';
@@ -71,11 +71,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Cập nhật mật khẩu
                     $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                     $userModel->update($_SESSION['reset_user_id'], ['password' => $hashedPassword]);
-                    
+
                     // Xóa session
                     unset($_SESSION['reset_token']);
                     unset($_SESSION['reset_user_id']);
-                    
+
                     $message = 'Đặt lại mật khẩu thành công! Bạn có thể đăng nhập với mật khẩu mới.';
                     $messageType = 'success';
                 } else {
@@ -95,6 +95,7 @@ if (isset($_GET['token']) && isset($_SESSION['reset_token']) && $_SESSION['reset
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -135,7 +136,7 @@ if (isset($_GET['token']) && isset($_SESSION['reset_token']) && $_SESSION['reset
             width: 100%;
             height: 100%;
             z-index: -1;
-            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.8) 100%);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0.8) 100%);
         }
 
         .container {
@@ -261,8 +262,8 @@ if (isset($_GET['token']) && isset($_SESSION['reset_token']) && $_SESSION['reset
             border-color: #D4AF37;
         }
 
-        .input-wrapper input:focus + i,
-        .input-wrapper input:focus ~ i {
+        .input-wrapper input:focus+i,
+        .input-wrapper input:focus~i {
             color: #D4AF37;
         }
 
@@ -316,13 +317,14 @@ if (isset($_GET['token']) && isset($_SESSION['reset_token']) && $_SESSION['reset
             .card {
                 padding: 40px 25px;
             }
-            
+
             .title h1 {
                 font-size: 1.5rem;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="bg-image"></div>
     <div class="bg-overlay"></div>
@@ -337,77 +339,77 @@ if (isset($_GET['token']) && isset($_SESSION['reset_token']) && $_SESSION['reset
             </div>
 
             <?php if (!$showResetForm): ?>
-            <!-- Form yêu cầu reset mật khẩu -->
-            <div class="title">
-                <h1>Quên Mật Khẩu?</h1>
-                <p>Nhập địa chỉ email bạn đã đăng ký, chúng tôi sẽ gửi link đặt lại mật khẩu</p>
-            </div>
-
-            <?php if ($message): ?>
-            <div class="alert alert-<?= $messageType ?>">
-                <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
-                <?= htmlspecialchars($message) ?>
-            </div>
-            <?php endif; ?>
-
-            <form method="POST" action="/forgot-password">
-                <input type="hidden" name="action" value="request_reset">
-                
-                <div class="form-group">
-                    <label>Địa chỉ Email</label>
-                    <div class="input-wrapper">
-                        <input type="email" name="email" placeholder="Nhập email của bạn" required>
-                        <i class="fas fa-envelope"></i>
-                    </div>
+                <!-- Form yêu cầu reset mật khẩu -->
+                <div class="title">
+                    <h1>Quên Mật Khẩu?</h1>
+                    <p>Nhập địa chỉ email bạn đã đăng ký, chúng tôi sẽ gửi link đặt lại mật khẩu</p>
                 </div>
 
-                <button type="submit" class="btn-submit">
-                    <i class="fas fa-paper-plane"></i>
-                    Gửi Link Đặt Lại
-                </button>
-            </form>
+                <?php if ($message): ?>
+                    <div class="alert alert-<?= $messageType ?>">
+                        <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
+                        <?= htmlspecialchars($message) ?>
+                    </div>
+                <?php endif; ?>
+
+                <form method="POST" action="/forgot-password">
+                    <input type="hidden" name="action" value="request_reset">
+
+                    <div class="form-group">
+                        <label>Địa chỉ Email</label>
+                        <div class="input-wrapper">
+                            <input type="email" name="email" placeholder="Nhập email của bạn" required>
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-paper-plane"></i>
+                        Gửi Link Đặt Lại
+                    </button>
+                </form>
 
             <?php else: ?>
-            <!-- Form đặt lại mật khẩu -->
-            <div class="title">
-                <h1>Đặt Lại Mật Khẩu</h1>
-                <p>Nhập mật khẩu mới cho tài khoản của bạn</p>
-            </div>
-
-            <?php if ($message): ?>
-            <div class="alert alert-<?= $messageType ?>">
-                <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
-                <?= htmlspecialchars($message) ?>
-            </div>
-            <?php endif; ?>
-
-            <?php if ($messageType !== 'success'): ?>
-            <form method="POST" action="/forgot-password">
-                <input type="hidden" name="action" value="reset_password">
-                <input type="hidden" name="token" value="<?= htmlspecialchars($resetToken) ?>">
-                
-                <div class="form-group">
-                    <label>Mật khẩu mới</label>
-                    <div class="input-wrapper">
-                        <input type="password" name="new_password" placeholder="Tối thiểu 6 ký tự" required minlength="6">
-                        <i class="fas fa-lock"></i>
-                    </div>
+                <!-- Form đặt lại mật khẩu -->
+                <div class="title">
+                    <h1>Đặt Lại Mật Khẩu</h1>
+                    <p>Nhập mật khẩu mới cho tài khoản của bạn</p>
                 </div>
 
-                <div class="form-group">
-                    <label>Xác nhận mật khẩu</label>
-                    <div class="input-wrapper">
-                        <input type="password" name="confirm_password" placeholder="Nhập lại mật khẩu mới" required>
-                        <i class="fas fa-lock"></i>
+                <?php if ($message): ?>
+                    <div class="alert alert-<?= $messageType ?>">
+                        <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
+                        <?= htmlspecialchars($message) ?>
                     </div>
-                </div>
+                <?php endif; ?>
 
-                <button type="submit" class="btn-submit">
-                    <i class="fas fa-key"></i>
-                    Đặt Lại Mật Khẩu
-                </button>
-            </form>
-            <?php endif; ?>
+                <?php if ($messageType !== 'success'): ?>
+                    <form method="POST" action="/forgot-password">
+                        <input type="hidden" name="action" value="reset_password">
+                        <input type="hidden" name="token" value="<?= htmlspecialchars($resetToken) ?>">
+
+                        <div class="form-group">
+                            <label>Mật khẩu mới</label>
+                            <div class="input-wrapper">
+                                <input type="password" name="new_password" placeholder="Tối thiểu 6 ký tự" required minlength="6">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Xác nhận mật khẩu</label>
+                            <div class="input-wrapper">
+                                <input type="password" name="confirm_password" placeholder="Nhập lại mật khẩu mới" required>
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-key"></i>
+                            Đặt Lại Mật Khẩu
+                        </button>
+                    </form>
+                <?php endif; ?>
             <?php endif; ?>
 
             <div class="links">
@@ -420,4 +422,5 @@ if (isset($_GET['token']) && isset($_SESSION['reset_token']) && $_SESSION['reset
         </div>
     </div>
 </body>
+
 </html>

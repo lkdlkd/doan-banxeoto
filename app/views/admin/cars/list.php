@@ -1,8 +1,11 @@
-<?php 
-if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.php'; }
+<?php
+if (!defined('BASE_URL')) {
+    require_once __DIR__ . '/../../../../config/config.php';
+}
 
 // Hàm rút gọn giá tiền
-function formatPriceShort($price) {
+function formatPriceShort($price)
+{
     if ($price >= 1000000000) {
         return number_format($price / 1000000000, 1, ',', '.') . ' tỷ';
     } elseif ($price >= 1000000) {
@@ -16,6 +19,7 @@ function formatPriceShort($price) {
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,8 +29,10 @@ function formatPriceShort($price) {
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-common.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-cars.css">
 </head>
+
 <body>
-    <?php $activePage = 'cars'; include __DIR__ . '/../layouts/sidebar.php'; ?>
+    <?php $activePage = 'cars';
+    include __DIR__ . '/../layouts/sidebar.php'; ?>
 
     <main class="admin-main">
         <header class="admin-header">
@@ -114,109 +120,108 @@ function formatPriceShort($price) {
             </div>
 
             <?php if ($totalCars === 0): ?>
-            <!-- Empty State -->
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <i class="fas fa-car-side"></i>
+                <!-- Empty State -->
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-car-side"></i>
+                    </div>
+                    <h3>Chưa có xe nào</h3>
+                    <p>Bắt đầu thêm xe mới vào hệ thống để quản lý và bán hàng.</p>
+                    <a href="<?= BASE_URL ?>/admin/cars/add" class="btn-primary">
+                        <i class="fas fa-plus"></i> Thêm xe đầu tiên
+                    </a>
                 </div>
-                <h3>Chưa có xe nào</h3>
-                <p>Bắt đầu thêm xe mới vào hệ thống để quản lý và bán hàng.</p>
-                <a href="<?= BASE_URL ?>/admin/cars/add" class="btn-primary">
-                    <i class="fas fa-plus"></i> Thêm xe đầu tiên
-                </a>
-            </div>
             <?php else: ?>
-            <!-- Cars Table -->
-            <div class="table-container">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 60px;">ID</th>
-                            <th style="width: 45px;"></th>
-                            <th style="width: 280px;">Thông tin xe</th>
-                            <th style="width: 160px;">Giá bán</th>
-                            <th style="width: 240px;">Thông số kỹ thuật</th>
-                            <th style="width: 100px;">Trạng thái</th>
-                            <th style="width: 120px;">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($cars as $car): ?>
-                        <tr data-brand="<?= $car['brand_id'] ?>" data-category="<?= $car['category_id'] ?>" data-status="<?= $car['status'] ?>">
-                            <td>
-                                <span class="table-id">#<?= str_pad($car['id'], 3, '0', STR_PAD_LEFT) ?></span>
-                            </td>
-                            <td>
-                                <img src="<?= $car['image_url'] ?? 'https://via.placeholder.com/50x38' ?>" alt="" class="table-thumb">
-                            </td>
-                            <td>
-                                <div class="table-info">
-                                    <div class="table-name"><?= htmlspecialchars($car['name']) ?></div>
-                                    <div class="table-meta">
-                                        <span class="meta-badge brand"><?= htmlspecialchars($car['brand_name'] ?? 'N/A') ?></span>
-                                        <span class="meta-badge"><?= $car['year'] ?? 'N/A' ?></span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="table-price-main"><?= formatPriceShort($car['price']) ?></div>
-                                <?php if (!empty($car['acceleration'])): ?>
-                                <div class="table-price-badge"><i class="fas fa-rocket"></i><?= $car['acceleration'] ?>s</div>
-                                <?php endif; ?>
-                                <div class="stock-badge"><i class="fas fa-box"></i> Tồn: <?= $car['stock'] ?? 1 ?></div>
-                            </td>
-                            <td>
-                                <div class="table-specs-compact">
-                                    <?php if (!empty($car['horsepower'])): ?>
-                                    <div class="spec-row">
-                                        <span class="spec-value power-value"><?= $car['horsepower'] ?> HP</span>
-                                        <?php if (!empty($car['engine'])): ?>
-                                        <span class="spec-value"> • <?= htmlspecialchars($car['engine']) ?></span>
+                <!-- Cars Table -->
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">ID</th>
+                                <th style="width: 45px;"></th>
+                                <th style="width: 280px;">Thông tin xe</th>
+                                <th style="width: 160px;">Giá bán</th>
+                                <th style="width: 240px;">Thông số kỹ thuật</th>
+                                <th style="width: 100px;">Trạng thái</th>
+                                <th style="width: 120px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($cars as $car): ?>
+                                <tr data-brand="<?= $car['brand_id'] ?>" data-category="<?= $car['category_id'] ?>" data-status="<?= $car['status'] ?>">
+                                    <td>
+                                        <span class="table-id">#<?= str_pad($car['id'], 3, '0', STR_PAD_LEFT) ?></span>
+                                    </td>
+                                    <td>
+                                        <img src="<?= $car['image_url'] ?? 'https://via.placeholder.com/50x38' ?>" alt="" class="table-thumb">
+                                    </td>
+                                    <td>
+                                        <div class="table-info">
+                                            <div class="table-name"><?= htmlspecialchars($car['name']) ?></div>
+                                            <div class="table-meta">
+                                                <span class="meta-badge brand"><?= htmlspecialchars($car['brand_name'] ?? 'N/A') ?></span>
+                                                <span class="meta-badge"><?= $car['year'] ?? 'N/A' ?></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="table-price-main"><?= formatPriceShort($car['price']) ?></div>
+                                        <?php if (!empty($car['acceleration'])): ?>
+                                            <div class="table-price-badge"><i class="fas fa-rocket"></i><?= $car['acceleration'] ?>s</div>
                                         <?php endif; ?>
-                                    </div>
-                                    <?php endif; ?>
-                                    <?php if (!empty($car['seats']) || !empty($car['drivetrain'])): ?>
-                                    <div class="spec-row">
-                                        <?php if (!empty($car['seats'])): ?><span class="spec-value"><?= $car['seats'] ?> chỗ</span><?php endif; ?>
-                                        <?php if (!empty($car['drivetrain'])): ?><span class="spec-value"> • <?= $car['drivetrain'] ?></span><?php endif; ?>
-                                    </div>
-                                    <?php endif; ?>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="status-badge-wrapper">
-                                    <span class="status-badge status-<?= $car['status'] ?>">
-                                        <i class="fas fa-<?= $car['status'] === 'available' ? 'check-circle' : ($car['status'] === 'sold' ? 'times-circle' : 'clock') ?>"></i>
-                                        <span class="status-text">
-                                            <?php 
-                                                echo $car['status'] === 'available' ? 'Còn hàng' : 
-                                                     ($car['status'] === 'sold' ? 'Đã bán' : 'Đã đặt');
-                                            ?>
-                                        </span>
-                                    </span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="action-buttons">
-                                    <a href="<?= BASE_URL ?>/car/<?= $car['id'] ?>" class="action-btn action-view" title="Xem chi tiết" target="_blank">
-                                        <i class="fas fa-eye"></i>
-                                        <span class="action-label">Xem</span>
-                                    </a>
-                                    <a href="<?= BASE_URL ?>/admin/cars/edit?id=<?= $car['id'] ?>" class="action-btn action-edit" title="Chỉnh sửa">
-                                        <i class="fas fa-edit"></i>
-                                        <span class="action-label">Sửa</span>
-                                    </a>
-                                    <button class="action-btn action-delete" title="Xóa xe" onclick="deleteCar(<?= $car['id'] ?>)">
-                                        <i class="fas fa-trash-alt"></i>
-                                        <span class="action-label">Xóa</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+                                        <div class="stock-badge"><i class="fas fa-box"></i> Tồn: <?= $car['stock'] ?? 1 ?></div>
+                                    </td>
+                                    <td>
+                                        <div class="table-specs-compact">
+                                            <?php if (!empty($car['horsepower'])): ?>
+                                                <div class="spec-row">
+                                                    <span class="spec-value power-value"><?= $car['horsepower'] ?> HP</span>
+                                                    <?php if (!empty($car['engine'])): ?>
+                                                        <span class="spec-value"> • <?= htmlspecialchars($car['engine']) ?></span>
+                                                    <?php endif; ?>
+                                                </div>
+                                            <?php endif; ?>
+                                            <?php if (!empty($car['seats']) || !empty($car['drivetrain'])): ?>
+                                                <div class="spec-row">
+                                                    <?php if (!empty($car['seats'])): ?><span class="spec-value"><?= $car['seats'] ?> chỗ</span><?php endif; ?>
+                                                    <?php if (!empty($car['drivetrain'])): ?><span class="spec-value"> • <?= $car['drivetrain'] ?></span><?php endif; ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="status-badge-wrapper">
+                                            <span class="status-badge status-<?= $car['status'] ?>">
+                                                <i class="fas fa-<?= $car['status'] === 'available' ? 'check-circle' : ($car['status'] === 'sold' ? 'times-circle' : 'clock') ?>"></i>
+                                                <span class="status-text">
+                                                    <?php
+                                                    echo $car['status'] === 'available' ? 'Còn hàng' : ($car['status'] === 'sold' ? 'Đã bán' : 'Đã đặt');
+                                                    ?>
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a href="<?= BASE_URL ?>/car/<?= $car['id'] ?>" class="action-btn action-view" title="Xem chi tiết" target="_blank">
+                                                <i class="fas fa-eye"></i>
+                                                <span class="action-label">Xem</span>
+                                            </a>
+                                            <a href="<?= BASE_URL ?>/admin/cars/edit?id=<?= $car['id'] ?>" class="action-btn action-edit" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                                <span class="action-label">Sửa</span>
+                                            </a>
+                                            <button class="action-btn action-delete" title="Xóa xe" onclick="deleteCar(<?= $car['id'] ?>)">
+                                                <i class="fas fa-trash-alt"></i>
+                                                <span class="action-label">Xóa</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             <?php endif; ?>
         </div>
     </main>
@@ -239,16 +244,16 @@ function formatPriceShort($price) {
             const category = document.getElementById('filterCategory').value;
             const status = document.getElementById('filterStatus').value;
             const search = document.getElementById('searchCar').value.toLowerCase();
-            
+
             const rows = document.querySelectorAll('.data-table tbody tr');
             let visibleCount = 0;
-            
+
             rows.forEach(row => {
                 const matchBrand = !brand || row.dataset.brand === brand;
                 const matchCategory = !category || row.dataset.category === category;
                 const matchStatus = !status || row.dataset.status === status;
                 const matchSearch = !search || row.textContent.toLowerCase().includes(search);
-                
+
                 if (matchBrand && matchCategory && matchStatus && matchSearch) {
                     row.style.display = '';
                     visibleCount++;
@@ -259,4 +264,5 @@ function formatPriceShort($price) {
         }
     </script>
 </body>
+
 </html>

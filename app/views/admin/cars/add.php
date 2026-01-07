@@ -1,5 +1,7 @@
-<?php 
-if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.php'; }
+<?php
+if (!defined('BASE_URL')) {
+    require_once __DIR__ . '/../../../../config/config.php';
+}
 
 // Dữ liệu được truyền từ controller:
 // $brands, $categories
@@ -11,6 +13,7 @@ unset($_SESSION['success'], $_SESSION['error']);
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,8 +24,10 @@ unset($_SESSION['success'], $_SESSION['error']);
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-cars.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-modal.css">
 </head>
+
 <body>
-    <?php $activePage = 'cars'; include __DIR__ . '/../layouts/sidebar.php'; ?>
+    <?php $activePage = 'cars';
+    include __DIR__ . '/../layouts/sidebar.php'; ?>
 
     <main class="admin-main">
         <header class="admin-header">
@@ -50,13 +55,13 @@ unset($_SESSION['success'], $_SESSION['error']);
             </div>
 
             <?php if ($message): ?>
-            <div class="alert alert-<?= $messageType ?>">
-                <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
-                <?= htmlspecialchars($message) ?>
-                <?php if ($messageType === 'success'): ?>
-                <a href="/admin/cars" style="margin-left: 20px; color: inherit; font-weight: 600;">← Quay lại danh sách</a>
-                <?php endif; ?>
-            </div>
+                <div class="alert alert-<?= $messageType ?>">
+                    <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
+                    <?= htmlspecialchars($message) ?>
+                    <?php if ($messageType === 'success'): ?>
+                        <a href="/admin/cars" style="margin-left: 20px; color: inherit; font-weight: 600;">← Quay lại danh sách</a>
+                    <?php endif; ?>
+                </div>
             <?php endif; ?>
 
             <form method="POST" action="/admin/cars/add" enctype="multipart/form-data">
@@ -73,14 +78,14 @@ unset($_SESSION['success'], $_SESSION['error']);
                                     <label>Tên xe <span class="required">*</span></label>
                                     <input type="text" name="name" required placeholder="VD: Mercedes-Benz S-Class 2024">
                                 </div>
-                                
+
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label>Thương hiệu <span class="required">*</span></label>
                                         <select name="brand_id" required>
                                             <option value="">Chọn thương hiệu</option>
                                             <?php foreach ($brands as $brand): ?>
-                                            <option value="<?= $brand['id'] ?>"><?= htmlspecialchars($brand['name']) ?></option>
+                                                <option value="<?= $brand['id'] ?>"><?= htmlspecialchars($brand['name']) ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -89,12 +94,12 @@ unset($_SESSION['success'], $_SESSION['error']);
                                         <select name="category_id" required>
                                             <option value="">Chọn danh mục</option>
                                             <?php foreach ($categories as $cat): ?>
-                                            <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['name']) ?></option>
+                                                <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['name']) ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
                                 </div>
-                                
+
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label>Giá bán (VNĐ) <span class="required">*</span></label>
@@ -105,14 +110,14 @@ unset($_SESSION['success'], $_SESSION['error']);
                                         <input type="number" name="stock" required placeholder="Số lượng xe" min="0" value="1">
                                     </div>
                                 </div>
-                                
+
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label>Năm sản xuất</label>
                                         <input type="number" name="year" value="<?= date('Y') ?>" min="1990" max="<?= date('Y') + 1 ?>">
                                     </div>
                                 </div>
-                                
+
                                 <div class="form-group">
                                     <label>Mô tả ngắn</label>
                                     <textarea name="description" rows="4" placeholder="Mô tả ngắn về xe..."></textarea>
@@ -131,7 +136,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                                     <input type="text" name="engine" placeholder="VD: V8 4.0L Twin-Turbo">
                                     <small class="form-hint">Loại động cơ và dung tích</small>
                                 </div>
-                                
+
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label><i class="fas fa-bolt"></i> Công suất (HP)</label>
@@ -142,7 +147,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                                         <input type="number" name="torque" placeholder="500" min="0">
                                     </div>
                                 </div>
-                                
+
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label><i class="fas fa-tachometer-alt"></i> Tăng tốc 0-100 km/h (s)</label>
@@ -159,7 +164,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                                         </select>
                                     </div>
                                 </div>
-                                
+
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label><i class="fas fa-user-friends"></i> Số chỗ ngồi</label>
@@ -182,7 +187,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                                         </select>
                                     </div>
                                 </div>
-                                
+
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label><i class="fas fa-road"></i> Số km đã đi</label>
@@ -193,7 +198,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                                         <input type="text" name="color" placeholder="VD: Đen, Trắng, Bạc...">
                                     </div>
                                 </div>
-                                
+
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label><i class="fas fa-gas-pump"></i> Nhiên liệu</label>
@@ -236,7 +241,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                                             <i class="fas fa-link"></i> Dùng link
                                         </button>
                                     </div>
-                                    
+
                                     <div class="upload-panel active" id="mainFilePanel">
                                         <div class="file-upload-area" id="mainDropZone">
                                             <input type="file" name="main_image" id="mainImageFile" accept="image/*">
@@ -248,14 +253,14 @@ unset($_SESSION['success'], $_SESSION['error']);
                                             <span class="browse-btn">Chọn ảnh</span>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="upload-panel" id="mainUrlPanel">
                                         <div class="url-input-wrapper">
                                             <input type="url" name="main_image_url" id="mainImageUrl" placeholder="https://example.com/car.jpg">
                                             <i class="fas fa-link"></i>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="image-preview-container" id="mainImagePreview" style="display: none;">
                                         <div class="image-preview-wrapper">
                                             <img id="mainPreviewImg" src="" alt="Preview">
@@ -285,7 +290,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                                             <i class="fas fa-link"></i> Dùng link
                                         </button>
                                     </div>
-                                    
+
                                     <div class="upload-panel active" id="galleryFilePanel">
                                         <div class="file-upload-area" id="galleryDropZone">
                                             <input type="file" name="gallery_images[]" id="galleryFiles" accept="image/*" multiple>
@@ -297,11 +302,11 @@ unset($_SESSION['success'], $_SESSION['error']);
                                             <span class="browse-btn">Chọn ảnh</span>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="upload-panel" id="galleryUrlPanel">
                                         <textarea name="gallery_urls" id="galleryUrls" rows="4" placeholder="Nhập mỗi URL trên một dòng:&#10;https://example.com/image1.jpg&#10;https://example.com/image2.jpg" style="width: 100%; padding: 14px 18px; border: 2px solid #e8e8e8; border-radius: 12px; font-size: 0.95rem; background: #fafafa; resize: vertical;"></textarea>
                                     </div>
-                                    
+
                                     <div class="gallery-preview" id="galleryPreview"></div>
                                 </div>
                             </div>
@@ -324,17 +329,17 @@ unset($_SESSION['success'], $_SESSION['error']);
 
     <!-- Toast Notification -->
     <?php if ($message): ?>
-    <div class="toast <?= $messageType ?>" id="toast">
-        <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
-        <span><?= htmlspecialchars($message) ?></span>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toast = document.getElementById('toast');
-            setTimeout(() => toast.classList.add('show'), 100);
-            setTimeout(() => toast.classList.remove('show'), 4000);
-        });
-    </script>
+        <div class="toast <?= $messageType ?>" id="toast">
+            <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
+            <span><?= htmlspecialchars($message) ?></span>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const toast = document.getElementById('toast');
+                setTimeout(() => toast.classList.add('show'), 100);
+                setTimeout(() => toast.classList.remove('show'), 4000);
+            });
+        </script>
     <?php endif; ?>
 
     <script>
@@ -343,11 +348,11 @@ unset($_SESSION['success'], $_SESSION['error']);
             const filePanel = document.getElementById(section + 'FilePanel');
             const urlPanel = document.getElementById(section + 'UrlPanel');
             const tabs = filePanel.closest('.image-upload-section').querySelectorAll('.upload-tab');
-            
+
             tabs.forEach((tab, index) => {
                 tab.classList.toggle('active', (type === 'file' && index === 0) || (type === 'url' && index === 1));
             });
-            
+
             filePanel.classList.toggle('active', type === 'file');
             urlPanel.classList.toggle('active', type === 'url');
         }
@@ -355,15 +360,21 @@ unset($_SESSION['success'], $_SESSION['error']);
         // Main image upload
         const mainImageFile = document.getElementById('mainImageFile');
         const mainDropZone = document.getElementById('mainDropZone');
-        
+
         mainImageFile.addEventListener('change', function(e) {
             if (e.target.files[0]) {
                 previewMainImage(e.target.files[0]);
             }
         });
 
-        mainDropZone.addEventListener('dragover', e => { e.preventDefault(); mainDropZone.classList.add('dragover'); });
-        mainDropZone.addEventListener('dragleave', e => { e.preventDefault(); mainDropZone.classList.remove('dragover'); });
+        mainDropZone.addEventListener('dragover', e => {
+            e.preventDefault();
+            mainDropZone.classList.add('dragover');
+        });
+        mainDropZone.addEventListener('dragleave', e => {
+            e.preventDefault();
+            mainDropZone.classList.remove('dragover');
+        });
         mainDropZone.addEventListener('drop', function(e) {
             e.preventDefault();
             this.classList.remove('dragover');
@@ -406,8 +417,14 @@ unset($_SESSION['success'], $_SESSION['error']);
             previewGalleryImages(e.target.files);
         });
 
-        galleryDropZone.addEventListener('dragover', e => { e.preventDefault(); galleryDropZone.classList.add('dragover'); });
-        galleryDropZone.addEventListener('dragleave', e => { e.preventDefault(); galleryDropZone.classList.remove('dragover'); });
+        galleryDropZone.addEventListener('dragover', e => {
+            e.preventDefault();
+            galleryDropZone.classList.add('dragover');
+        });
+        galleryDropZone.addEventListener('dragleave', e => {
+            e.preventDefault();
+            galleryDropZone.classList.remove('dragover');
+        });
         galleryDropZone.addEventListener('drop', function(e) {
             e.preventDefault();
             this.classList.remove('dragover');
@@ -446,4 +463,5 @@ unset($_SESSION['success'], $_SESSION['error']);
         });
     </script>
 </body>
+
 </html>

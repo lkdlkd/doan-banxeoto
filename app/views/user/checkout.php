@@ -30,215 +30,215 @@ include __DIR__ . '/../layouts/header.php';
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/cart.css">
 
 <style>
-.checkout-page {
-    padding: 150px 0 80px;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f9f7f3 0%, #ffffff 100%);
-}
+    .checkout-page {
+        padding: 150px 0 80px;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f9f7f3 0%, #ffffff 100%);
+    }
 
-.checkout-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
+    .checkout-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
 
-.checkout-content {
-    display: grid;
-    grid-template-columns: 1fr 400px;
-    gap: 30px;
-    margin-top: 30px;
-}
-
-.order-form {
-    background: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 5px 30px rgba(0,0,0,0.1);
-}
-
-.form-section {
-    margin-bottom: 30px;
-}
-
-.form-section h3 {
-    font-size: 18px;
-    color: #333;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #D4AF37;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: #D4AF37;
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-}
-
-.payment-options {
-    display: grid;
-    gap: 15px;
-}
-
-.payment-option {
-    position: relative;
-    padding: 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.payment-option:hover {
-    border-color: #D4AF37;
-    background: rgba(212, 175, 55, 0.05);
-}
-
-.payment-option input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-}
-
-.payment-option input[type="radio"]:checked + .payment-label {
-    color: #D4AF37;
-    font-weight: 600;
-}
-
-.payment-option input[type="radio"]:checked ~ .payment-option {
-    border-color: #D4AF37;
-    background: rgba(212, 175, 55, 0.1);
-}
-
-.payment-label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 15px;
-    color: #333;
-    cursor: pointer;
-}
-
-.payment-description {
-    font-size: 13px;
-    color: #666;
-    margin-top: 8px;
-    padding-left: 30px;
-}
-
-.deposit-options {
-    display: none;
-    margin-top: 15px;
-    padding: 15px;
-    background: rgba(212, 175, 55, 0.05);
-    border-radius: 6px;
-}
-
-.deposit-options.active {
-    display: block;
-}
-
-.deposit-presets {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.deposit-preset {
-    padding: 10px;
-    text-align: center;
-    border: 2px solid #ddd;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-}
-
-.deposit-preset:hover {
-    border-color: #D4AF37;
-    background: rgba(212, 175, 55, 0.1);
-}
-
-.deposit-preset.active {
-    border-color: #D4AF37;
-    background: #D4AF37;
-    color: #fff;
-}
-
-.deposit-amount {
-    margin-top: 15px;
-    padding: 15px;
-    background: #f8f8f8;
-    border-radius: 6px;
-    text-align: center;
-}
-
-.deposit-amount-label {
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 5px;
-}
-
-.deposit-amount-value {
-    font-size: 24px;
-    font-weight: 700;
-    color: #D4AF37;
-}
-
-.btn-submit-order {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.btn-submit-order:hover {
-    background: linear-gradient(135deg, #F4CF57 0%, #D4AF37 100%);
-    box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
-    transform: translateY(-2px);
-}
-
-@media (max-width: 968px) {
     .checkout-content {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 30px;
+        margin-top: 30px;
     }
-    
+
+    .order-form {
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-section {
+        margin-bottom: 30px;
+    }
+
+    .form-section h3 {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #D4AF37;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #D4AF37;
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    }
+
+    .payment-options {
+        display: grid;
+        gap: 15px;
+    }
+
+    .payment-option {
+        position: relative;
+        padding: 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .payment-option:hover {
+        border-color: #D4AF37;
+        background: rgba(212, 175, 55, 0.05);
+    }
+
+    .payment-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+    }
+
+    .payment-option input[type="radio"]:checked+.payment-label {
+        color: #D4AF37;
+        font-weight: 600;
+    }
+
+    .payment-option input[type="radio"]:checked~.payment-option {
+        border-color: #D4AF37;
+        background: rgba(212, 175, 55, 0.1);
+    }
+
+    .payment-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 15px;
+        color: #333;
+        cursor: pointer;
+    }
+
+    .payment-description {
+        font-size: 13px;
+        color: #666;
+        margin-top: 8px;
+        padding-left: 30px;
+    }
+
+    .deposit-options {
+        display: none;
+        margin-top: 15px;
+        padding: 15px;
+        background: rgba(212, 175, 55, 0.05);
+        border-radius: 6px;
+    }
+
+    .deposit-options.active {
+        display: block;
+    }
+
     .deposit-presets {
-        grid-template-columns: repeat(3, 1fr);
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        margin-top: 10px;
     }
-}
+
+    .deposit-preset {
+        padding: 10px;
+        text-align: center;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+    .deposit-preset:hover {
+        border-color: #D4AF37;
+        background: rgba(212, 175, 55, 0.1);
+    }
+
+    .deposit-preset.active {
+        border-color: #D4AF37;
+        background: #D4AF37;
+        color: #fff;
+    }
+
+    .deposit-amount {
+        margin-top: 15px;
+        padding: 15px;
+        background: #f8f8f8;
+        border-radius: 6px;
+        text-align: center;
+    }
+
+    .deposit-amount-label {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 5px;
+    }
+
+    .deposit-amount-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #D4AF37;
+    }
+
+    .btn-submit-order {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+        color: #000;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-submit-order:hover {
+        background: linear-gradient(135deg, #F4CF57 0%, #D4AF37 100%);
+        box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 968px) {
+        .checkout-content {
+            grid-template-columns: 1fr;
+        }
+
+        .deposit-presets {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
 </style>
 
 <main class="checkout-page">
@@ -262,9 +262,9 @@ include __DIR__ . '/../layouts/header.php';
                             <select name="car_id" id="carSelect" required onchange="updateTotal()">
                                 <option value="">-- Chọn xe --</option>
                                 <?php foreach ($cartItems as $item): ?>
-                                <option value="<?= $item['id'] ?>" data-price="<?= $item['price'] ?>">
-                                    <?= htmlspecialchars($item['brand_name'] . ' ' . $item['name'] . ' - ' . number_format($item['price'], 0, ',', '.')) ?> ₫
-                                </option>
+                                    <option value="<?= $item['id'] ?>" data-price="<?= $item['price'] ?>">
+                                        <?= htmlspecialchars($item['brand_name'] . ' ' . $item['name'] . ' - ' . number_format($item['price'], 0, ',', '.')) ?> ₫
+                                    </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -284,7 +284,7 @@ include __DIR__ . '/../layouts/header.php';
                                     Đặt Cọc (10% - 50%)
                                 </label>
                                 <div class="payment-description">Đặt cọc để giữ xe, thanh toán phần còn lại khi nhận xe</div>
-                                
+
                                 <div class="deposit-options" id="depositOptions">
                                     <label>Chọn phần trăm đặt cọc:</label>
                                     <div class="deposit-presets">
@@ -346,28 +346,28 @@ include __DIR__ . '/../layouts/header.php';
             <div class="cart-summary">
                 <div class="summary-card">
                     <h3 class="summary-title">Thông Tin Đơn Hàng</h3>
-                    
+
                     <div class="summary-row">
                         <span>Người đặt:</span>
                         <span class="value"><?= htmlspecialchars($_SESSION['full_name'] ?? $_SESSION['username']) ?></span>
                     </div>
-                    
+
                     <div class="summary-row">
                         <span>Email:</span>
                         <span class="value"><?= htmlspecialchars($_SESSION['email'] ?? 'N/A') ?></span>
                     </div>
-                    
+
                     <div class="summary-divider"></div>
-                    
+
                     <div class="summary-row total">
                         <span>Tổng tiền xe:</span>
                         <span class="value" id="totalPrice">0 ₫</span>
                     </div>
-                    
+
                     <p class="note">
                         * Chúng tôi sẽ liên hệ xác nhận đơn hàng trong vòng 24h
                     </p>
-                    
+
                     <!-- Contact Box -->
                     <div class="contact-box">
                         <h4>Cần hỗ trợ?</h4>
@@ -386,71 +386,80 @@ include __DIR__ . '/../layouts/header.php';
 </main>
 
 <script>
-function updateTotal() {
-    const select = document.getElementById('carSelect');
-    const selectedOption = select.options[select.selectedIndex];
-    const price = selectedOption.getAttribute('data-price') || 0;
-    
-    document.getElementById('totalPrice').textContent = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
-    
-    // Update deposit if active
-    const depositPercentage = document.getElementById('depositPercentage').value;
-    if (depositPercentage) {
-        const depositAmount = (price * depositPercentage) / 100;
-        document.getElementById('depositAmount').textContent = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(depositAmount);
-    }
-}
+    function updateTotal() {
+        const select = document.getElementById('carSelect');
+        const selectedOption = select.options[select.selectedIndex];
+        const price = selectedOption.getAttribute('data-price') || 0;
 
-function toggleDeposit() {
-    const depositRadio = document.getElementById('payment_deposit');
-    const depositOptions = document.getElementById('depositOptions');
-    
-    if (depositRadio.checked) {
-        depositOptions.classList.add('active');
-    } else {
-        depositOptions.classList.remove('active');
-        document.getElementById('depositPercentage').value = '';
-        document.querySelectorAll('.deposit-preset').forEach(preset => preset.classList.remove('active'));
-    }
-}
+        document.getElementById('totalPrice').textContent = new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(price);
 
-function selectDeposit(percent) {
-    document.getElementById('depositPercentage').value = percent;
-    
-    // Update UI
-    document.querySelectorAll('.deposit-preset').forEach(preset => {
-        if (parseInt(preset.getAttribute('data-percent')) === percent) {
-            preset.classList.add('active');
+        // Update deposit if active
+        const depositPercentage = document.getElementById('depositPercentage').value;
+        if (depositPercentage) {
+            const depositAmount = (price * depositPercentage) / 100;
+            document.getElementById('depositAmount').textContent = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(depositAmount);
+        }
+    }
+
+    function toggleDeposit() {
+        const depositRadio = document.getElementById('payment_deposit');
+        const depositOptions = document.getElementById('depositOptions');
+
+        if (depositRadio.checked) {
+            depositOptions.classList.add('active');
         } else {
-            preset.classList.remove('active');
+            depositOptions.classList.remove('active');
+            document.getElementById('depositPercentage').value = '';
+            document.querySelectorAll('.deposit-preset').forEach(preset => preset.classList.remove('active'));
+        }
+    }
+
+    function selectDeposit(percent) {
+        document.getElementById('depositPercentage').value = percent;
+
+        // Update UI
+        document.querySelectorAll('.deposit-preset').forEach(preset => {
+            if (parseInt(preset.getAttribute('data-percent')) === percent) {
+                preset.classList.add('active');
+            } else {
+                preset.classList.remove('active');
+            }
+        });
+
+        // Calculate deposit amount
+        const select = document.getElementById('carSelect');
+        const selectedOption = select.options[select.selectedIndex];
+        const price = selectedOption.getAttribute('data-price') || 0;
+        const depositAmount = (price * percent) / 100;
+
+        document.getElementById('depositAmount').textContent = new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(depositAmount);
+    }
+
+    // Validation
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+        const depositRadio = document.getElementById('payment_deposit');
+        const depositPercentage = document.getElementById('depositPercentage').value;
+
+        if (depositRadio.checked && !depositPercentage) {
+            e.preventDefault();
+            alert('Vui lòng chọn phần trăm đặt cọc');
+            return false;
         }
     });
-    
-    // Calculate deposit amount
-    const select = document.getElementById('carSelect');
-    const selectedOption = select.options[select.selectedIndex];
-    const price = selectedOption.getAttribute('data-price') || 0;
-    const depositAmount = (price * percent) / 100;
-    
-    document.getElementById('depositAmount').textContent = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(depositAmount);
-}
 
-// Validation
-document.getElementById('checkoutForm').addEventListener('submit', function(e) {
-    const depositRadio = document.getElementById('payment_deposit');
-    const depositPercentage = document.getElementById('depositPercentage').value;
-    
-    if (depositRadio.checked && !depositPercentage) {
-        e.preventDefault();
-        alert('Vui lòng chọn phần trăm đặt cọc');
-        return false;
-    }
-});
-
-// Initialize
-document.addEventListener('DOMContentLoaded', function() {
-    updateTotal();
-});
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        updateTotal();
+    });
 </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

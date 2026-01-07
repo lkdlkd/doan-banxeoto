@@ -23,16 +23,16 @@ class OrderController
     public function showCheckout()
     {
         SessionHelper::requireLogin();
-        
+
         $userId = $_SESSION['user_id'];
         $cartItems = $this->cartModel->getCartItems();
-        
+
         if (empty($cartItems)) {
             $_SESSION['error'] = 'Giỏ hàng trống';
             header('Location: /cart');
             exit;
         }
-        
+
         include __DIR__ . '/../views/user/checkout.php';
     }
 
@@ -40,25 +40,25 @@ class OrderController
     public function placeOrder()
     {
         SessionHelper::requireLogin();
-        
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: /cart');
             exit;
         }
-        
+
         $userId = $_SESSION['user_id'];
         $carId = $_POST['car_id'] ?? null;
         $paymentMethod = $_POST['payment_method'] ?? null;
         $depositPercentage = isset($_POST['deposit_percentage']) ? intval($_POST['deposit_percentage']) : null;
         $notes = $_POST['notes'] ?? '';
-        
+
         // Validate
         if (!$carId || !$paymentMethod) {
             $_SESSION['error'] = 'Vui lòng điền đầy đủ thông tin';
             header('Location: /checkout');
             exit;
         }
-        
+
         // Lấy thông tin xe
         $car = $this->carModel->getById($carId);
         if (!$car) {
@@ -66,7 +66,7 @@ class OrderController
             header('Location: /cart');
             exit;
         }
-        
+
         // Kiểm tra xe còn hàng hay không
         $currentStock = $car['stock'] ?? 0;
         if ($car['status'] !== 'available' || $currentStock <= 0) {
@@ -74,7 +74,7 @@ class OrderController
             header('Location: /cart');
             exit;
         }
-        
+
         // Tính deposit nếu có
         $depositAmount = null;
         if ($paymentMethod === 'deposit' && $depositPercentage) {
@@ -85,7 +85,7 @@ class OrderController
             }
             $depositAmount = ($car['price'] * $depositPercentage) / 100;
         }
-        
+
         // Tạo đơn hàng
         $orderData = [
             'user_id' => $userId,
@@ -97,13 +97,13 @@ class OrderController
             'status' => 'pending',
             'notes' => $notes
         ];
-        
+
         $orderId = $this->orderModel->create($orderData);
-        
+
         if ($orderId) {
             // Xóa xe khỏi giỏ hàng
             $this->cartModel->removeFromCart($carId);
-            
+
             $_SESSION['success'] = 'Đặt hàng thành công! Chúng tôi sẽ liên hệ với bạn sớm.';
             header('Location: /order/' . $orderId);
         } else {
@@ -117,22 +117,22 @@ class OrderController
     public function showOrder($orderId)
     {
         SessionHelper::requireLogin();
-        
+
         $order = $this->orderModel->getOrderWithDetails($orderId);
-        
+
         if (!$order) {
             $_SESSION['error'] = 'Đơn hàng không tồn tại';
             header('Location: /orders');
             exit;
         }
-        
+
         // Kiểm tra quyền xem đơn hàng
         if ($order['user_id'] != $_SESSION['user_id'] && $_SESSION['role'] !== 'admin') {
             $_SESSION['error'] = 'Bạn không có quyền xem đơn hàng này';
             header('Location: /orders');
             exit;
         }
-        
+
         include __DIR__ . '/../views/user/order_detail.php';
     }
 
@@ -140,10 +140,10 @@ class OrderController
     public function showMyOrders()
     {
         SessionHelper::requireLogin();
-        
+
         $userId = $_SESSION['user_id'];
         $orders = $this->orderModel->getByUserId($userId);
-        
+
         include __DIR__ . '/../views/user/orders.php';
     }
 
@@ -151,31 +151,31 @@ class OrderController
     public function cancelOrder($orderId)
     {
         SessionHelper::requireLogin();
-        
+
         $order = $this->orderModel->findById($orderId);
-        
+
         if (!$order) {
             $_SESSION['error'] = 'Đơn hàng không tồn tại';
             header('Location: /orders');
             exit;
         }
-        
+
         // Kiểm tra quyền hủy
         if ($order['user_id'] != $_SESSION['user_id']) {
             $_SESSION['error'] = 'Bạn không có quyền hủy đơn hàng này';
             header('Location: /orders');
             exit;
         }
-        
+
         // Chỉ cho phép hủy đơn hàng pending
         if ($order['status'] !== 'pending') {
             $_SESSION['error'] = 'Không thể hủy đơn hàng đã được xác nhận';
             header('Location: /orders');
             exit;
         }
-        
+
         $this->orderModel->updateStatus($orderId, 'cancelled');
-        
+
         $_SESSION['success'] = 'Đã hủy đơn hàng thành công';
         header('Location: /orders');
         exit;
@@ -194,21 +194,21 @@ class OrderController
     public function adminUpdateStatus($orderId, $status)
     {
         SessionHelper::requireAdmin();
-        
+
         $validStatuses = ['pending', 'confirmed', 'cancelled', 'completed'];
         if (!in_array($status, $validStatuses)) {
             $_SESSION['error'] = 'Trạng thái không hợp lệ';
             header('Location: ' . BASE_URL . '/admin/orders');
             exit;
         }
-        
+
         $order = $this->orderModel->findById($orderId);
         if (!$order) {
             $_SESSION['error'] = 'Đơn hàng không tồn tại';
             header('Location: ' . BASE_URL . '/admin/orders');
             exit;
         }
-        
+
         // Cập nhật số lượng tồn kho xe nếu đơn hàng được xác nhận
         if ($status === 'confirmed' && $order['status'] !== 'confirmed') {
             // Lấy thông tin xe hiện tại
@@ -216,19 +216,19 @@ class OrderController
             if ($car) {
                 $currentStock = $car['stock'] ?? 1;
                 $newStock = max(0, $currentStock - 1); // Trừ 1, không cho âm
-                
+
                 // Cập nhật stock
                 $updateData = ['stock' => $newStock];
-                
+
                 // Nếu hết hàng thì set status = 'sold'
                 if ($newStock <= 0) {
                     $updateData['status'] = 'sold';
                 }
-                
+
                 $this->carModel->update($order['car_id'], $updateData);
             }
         }
-        
+
         // Khôi phục số lượng tồn kho xe nếu đơn hàng bị hủy
         if ($status === 'cancelled' && $order['status'] !== 'cancelled') {
             // Lấy thông tin xe hiện tại
@@ -236,19 +236,19 @@ class OrderController
             if ($car) {
                 $currentStock = $car['stock'] ?? 0;
                 $newStock = $currentStock + 1; // Cộng lại 1
-                
+
                 // Cập nhật stock và đảm bảo status là available nếu có hàng
                 $updateData = ['stock' => $newStock];
                 if ($car['status'] === 'sold') {
                     $updateData['status'] = 'available';
                 }
-                
+
                 $this->carModel->update($order['car_id'], $updateData);
             }
         }
-        
+
         $this->orderModel->updateStatus($orderId, $status);
-        
+
         $_SESSION['success'] = 'Đã cập nhật trạng thái đơn hàng thành công';
         header('Location: ' . BASE_URL . '/admin/orders');
         exit;
@@ -258,21 +258,21 @@ class OrderController
     public function adminDelete($orderId)
     {
         SessionHelper::requireAdmin();
-        
+
         $order = $this->orderModel->findById($orderId);
         if (!$order) {
             $_SESSION['error'] = 'Đơn hàng không tồn tại';
             header('Location: ' . BASE_URL . '/admin/orders');
             exit;
         }
-        
+
         // Khôi phục trạng thái xe nếu đơn hàng đang confirmed
         if ($order['status'] === 'confirmed') {
             $this->carModel->update($order['car_id'], ['status' => 'available']);
         }
-        
+
         $this->orderModel->delete($orderId);
-        
+
         $_SESSION['success'] = 'Đã xóa đơn hàng thành công';
         header('Location: ' . BASE_URL . '/admin/orders');
         exit;
@@ -282,15 +282,15 @@ class OrderController
     public function adminDetail($orderId)
     {
         SessionHelper::requireAdmin();
-        
+
         $order = $this->orderModel->getOrderWithDetails($orderId);
-        
+
         if (!$order) {
             $_SESSION['error'] = 'Đơn hàng không tồn tại';
             header('Location: ' . BASE_URL . '/admin/orders');
             exit;
         }
-        
+
         include __DIR__ . '/../views/admin/orders/detail.php';
     }
 }

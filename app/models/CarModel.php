@@ -18,7 +18,7 @@ class CarModel extends BaseModel
                 LEFT JOIN car_images ci ON c.id = ci.car_id
                 GROUP BY c.id
                 ORDER BY c.created_at DESC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll();
@@ -33,7 +33,7 @@ class CarModel extends BaseModel
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 LEFT JOIN categories cat ON c.category_id = cat.id 
                 WHERE c.id = ?";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         return $stmt->fetch();
@@ -47,14 +47,14 @@ class CarModel extends BaseModel
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 LEFT JOIN categories cat ON c.category_id = cat.id 
                 WHERE 1=1";
-        
+
         // Chỉ lọc available nếu không yêu cầu lấy tất cả
         if (!$includeAll) {
             $sql .= " AND c.status = 'available'";
         }
-        
+
         $params = [];
-        
+
         if ($keyword) {
             $sql .= " AND (c.name LIKE ? OR c.description LIKE ? OR b.name LIKE ?)";
             $searchTerm = "%{$keyword}%";
@@ -62,7 +62,7 @@ class CarModel extends BaseModel
             $params[] = $searchTerm;
             $params[] = $searchTerm;
         }
-        
+
         if ($brandIds) {
             // Support comma-separated brand IDs
             $brandArray = is_array($brandIds) ? $brandIds : explode(',', $brandIds);
@@ -73,7 +73,7 @@ class CarModel extends BaseModel
                 $params = array_merge($params, $brandArray);
             }
         }
-        
+
         if ($categoryIds) {
             // Support comma-separated category IDs
             $categoryArray = is_array($categoryIds) ? $categoryIds : explode(',', $categoryIds);
@@ -84,19 +84,19 @@ class CarModel extends BaseModel
                 $params = array_merge($params, $categoryArray);
             }
         }
-        
+
         if ($minPrice !== null && $minPrice !== '') {
             $sql .= " AND c.price >= ?";
             $params[] = $minPrice;
         }
-        
+
         if ($maxPrice !== null && $maxPrice !== '') {
             $sql .= " AND c.price <= ?";
             $params[] = $maxPrice;
         }
-        
+
         $sql .= " ORDER BY c.created_at DESC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();
@@ -110,7 +110,7 @@ class CarModel extends BaseModel
                 LEFT JOIN categories cat ON c.category_id = cat.id 
                 WHERE c.brand_id = ? 
                 ORDER BY c.created_at DESC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$brandId]);
         return $stmt->fetchAll();
@@ -124,7 +124,7 @@ class CarModel extends BaseModel
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 WHERE c.category_id = ? 
                 ORDER BY c.created_at DESC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$categoryId]);
         return $stmt->fetchAll();
@@ -139,7 +139,7 @@ class CarModel extends BaseModel
                 LEFT JOIN categories cat ON c.category_id = cat.id 
                 WHERE c.status = ? 
                 ORDER BY c.created_at DESC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$status]);
         return $stmt->fetchAll();
@@ -154,7 +154,7 @@ class CarModel extends BaseModel
                 LEFT JOIN categories cat ON c.category_id = cat.id 
                 ORDER BY c.created_at DESC 
                 LIMIT ?";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(1, $limit, PDO::PARAM_INT);
         $stmt->execute();
@@ -174,7 +174,7 @@ class CarModel extends BaseModel
                 GROUP BY c.id 
                 ORDER BY review_count DESC, avg_rating DESC 
                 LIMIT ?";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(1, $limit, PDO::PARAM_INT);
         $stmt->execute();
@@ -235,7 +235,7 @@ class CarModel extends BaseModel
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 LEFT JOIN categories cat ON c.category_id = cat.id 
                 WHERE c.id = ?";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         return $stmt->fetch();
@@ -284,7 +284,7 @@ class CarModel extends BaseModel
                     CASE WHEN c.brand_id = ? THEN 2 ELSE 1 END DESC,
                     c.created_at DESC
                 LIMIT ?";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(1, $currentCarId, PDO::PARAM_INT);
         $stmt->bindValue(2, $brandId, PDO::PARAM_INT);

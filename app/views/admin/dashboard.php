@@ -1,5 +1,7 @@
-<?php 
-if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../config/config.php'; }
+<?php
+if (!defined('BASE_URL')) {
+    require_once __DIR__ . '/../../../config/config.php';
+}
 
 // Load models
 require_once __DIR__ . '/../../models/CarModel.php';
@@ -60,7 +62,8 @@ $soldCars = count(array_filter($cars, fn($c) => $c['status'] === 'sold'));
 $avgRating = count($reviews) > 0 ? array_sum(array_map(fn($r) => $r['rating'], $reviews)) / count($reviews) : 0;
 
 // Format doanh thu
-function formatRevenue($value) {
+function formatRevenue($value)
+{
     if ($value >= 1000000000) {
         return number_format($value / 1000000000, 1) . ' tỷ';
     } elseif ($value >= 1000000) {
@@ -118,6 +121,7 @@ $unreadContacts = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unre
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -128,8 +132,10 @@ $unreadContacts = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unre
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-stats.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-dashboard.css">
 </head>
+
 <body>
-    <?php $activePage = 'dashboard'; include __DIR__ . '/layouts/sidebar.php'; ?>
+    <?php $activePage = 'dashboard';
+    include __DIR__ . '/layouts/sidebar.php'; ?>
 
     <main class="admin-main">
         <header class="admin-header">
@@ -141,7 +147,7 @@ $unreadContacts = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unre
                 <div class="header-notifications">
                     <i class="fas fa-bell"></i>
                     <?php if ($unreadContacts > 0): ?>
-                    <span class="notif-badge"><?= $unreadContacts ?></span>
+                        <span class="notif-badge"><?= $unreadContacts ?></span>
                     <?php endif; ?>
                 </div>
                 <div class="header-profile">
@@ -247,23 +253,23 @@ $unreadContacts = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unre
                         <h3><i class="fas fa-fire"></i> Top Xe Bán Chạy</h3>
                     </div>
                     <?php if (count($topCars) === 0): ?>
-                    <div style="text-align: center; padding: 40px; color: var(--gray-400);">
-                        <i class="fas fa-car" style="font-size: 48px; margin-bottom: 16px;"></i>
-                        <p>Chưa có dữ liệu xe bán</p>
-                    </div>
-                    <?php else: ?>
-                    <div class="leaderboard">
-                        <?php foreach ($topCars as $index => $car): ?>
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-rank <?= $index === 0 ? 'top' : '' ?>"><?= $index + 1 ?></div>
-                            <div class="leaderboard-info">
-                                <h4><?= htmlspecialchars($car['name']) ?></h4>
-                                <p><?= $car['count'] ?> đơn hàng • <?= formatRevenue($car['revenue']) ?> VND</p>
-                            </div>
-                            <div class="leaderboard-value"><?= formatRevenue($car['revenue']) ?></div>
+                        <div style="text-align: center; padding: 40px; color: var(--gray-400);">
+                            <i class="fas fa-car" style="font-size: 48px; margin-bottom: 16px;"></i>
+                            <p>Chưa có dữ liệu xe bán</p>
                         </div>
-                        <?php endforeach; ?>
-                    </div>
+                    <?php else: ?>
+                        <div class="leaderboard">
+                            <?php foreach ($topCars as $index => $car): ?>
+                                <div class="leaderboard-item">
+                                    <div class="leaderboard-rank <?= $index === 0 ? 'top' : '' ?>"><?= $index + 1 ?></div>
+                                    <div class="leaderboard-info">
+                                        <h4><?= htmlspecialchars($car['name']) ?></h4>
+                                        <p><?= $car['count'] ?> đơn hàng • <?= formatRevenue($car['revenue']) ?> VND</p>
+                                    </div>
+                                    <div class="leaderboard-value"><?= formatRevenue($car['revenue']) ?></div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
                     <?php endif; ?>
                 </div>
 
@@ -273,23 +279,23 @@ $unreadContacts = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unre
                         <h3><i class="fas fa-crown"></i> Top Khách Hàng VIP</h3>
                     </div>
                     <?php if (count($topCustomers) === 0): ?>
-                    <div style="text-align: center; padding: 40px; color: var(--gray-400);">
-                        <i class="fas fa-users" style="font-size: 48px; margin-bottom: 16px;"></i>
-                        <p>Chưa có dữ liệu khách hàng</p>
-                    </div>
-                    <?php else: ?>
-                    <div class="leaderboard">
-                        <?php foreach ($topCustomers as $index => $customer): ?>
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-rank <?= $index === 0 ? 'top' : '' ?>"><?= $index + 1 ?></div>
-                            <div class="leaderboard-info">
-                                <h4><?= htmlspecialchars($customer['name']) ?></h4>
-                                <p><?= $customer['orders'] ?> đơn hàng • Chi tiêu <?= formatRevenue($customer['total']) ?></p>
-                            </div>
-                            <div class="leaderboard-value"><?= formatRevenue($customer['total']) ?></div>
+                        <div style="text-align: center; padding: 40px; color: var(--gray-400);">
+                            <i class="fas fa-users" style="font-size: 48px; margin-bottom: 16px;"></i>
+                            <p>Chưa có dữ liệu khách hàng</p>
                         </div>
-                        <?php endforeach; ?>
-                    </div>
+                    <?php else: ?>
+                        <div class="leaderboard">
+                            <?php foreach ($topCustomers as $index => $customer): ?>
+                                <div class="leaderboard-item">
+                                    <div class="leaderboard-rank <?= $index === 0 ? 'top' : '' ?>"><?= $index + 1 ?></div>
+                                    <div class="leaderboard-info">
+                                        <h4><?= htmlspecialchars($customer['name']) ?></h4>
+                                        <p><?= $customer['orders'] ?> đơn hàng • Chi tiêu <?= formatRevenue($customer['total']) ?></p>
+                                    </div>
+                                    <div class="leaderboard-value"><?= formatRevenue($customer['total']) ?></div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -303,47 +309,54 @@ $unreadContacts = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unre
                         <a href="<?= BASE_URL ?>/admin/orders">Xem tất cả →</a>
                     </div>
                     <?php if (count($recentOrders) === 0): ?>
-                    <div class="card-empty">
-                        <i class="fas fa-inbox"></i>
-                        <p>Chưa có đơn hàng nào</p>
-                    </div>
+                        <div class="card-empty">
+                            <i class="fas fa-inbox"></i>
+                            <p>Chưa có đơn hàng nào</p>
+                        </div>
                     <?php else: ?>
-                    <table class="dashboard-table">
-                        <thead>
-                            <tr>
-                                <th>Khách hàng</th>
-                                <th>Xe</th>
-                                <th>Giá trị</th>
-                                <th>Trạng thái</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($recentOrders as $order): ?>
-                            <tr>
-                                <td>
-                                    <div class="customer">
-                                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($order['user_name'] ?? 'User') ?>&background=D4AF37&color=fff" alt="">
-                                        <span><?= htmlspecialchars($order['user_name'] ?? 'Khách hàng') ?></span>
-                                    </div>
-                                </td>
-                                <td><?= htmlspecialchars($order['car_name'] ?? 'N/A') ?></td>
-                                <td class="price"><?= formatRevenue($order['price']) ?></td>
-                                <td>
-                                    <span class="status <?= $order['status'] ?>">
-                                        <?php 
-                                        switch($order['status']) {
-                                            case 'pending': echo 'Chờ duyệt'; break;
-                                            case 'confirmed': echo 'Xác nhận'; break;
-                                            case 'cancelled': echo 'Đã hủy'; break;
-                                            default: echo $order['status'];
-                                        }
-                                        ?>
-                                    </span>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                        <table class="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Khách hàng</th>
+                                    <th>Xe</th>
+                                    <th>Giá trị</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($recentOrders as $order): ?>
+                                    <tr>
+                                        <td>
+                                            <div class="customer">
+                                                <img src="https://ui-avatars.com/api/?name=<?= urlencode($order['user_name'] ?? 'User') ?>&background=D4AF37&color=fff" alt="">
+                                                <span><?= htmlspecialchars($order['user_name'] ?? 'Khách hàng') ?></span>
+                                            </div>
+                                        </td>
+                                        <td><?= htmlspecialchars($order['car_name'] ?? 'N/A') ?></td>
+                                        <td class="price"><?= formatRevenue($order['price']) ?></td>
+                                        <td>
+                                            <span class="status <?= $order['status'] ?>">
+                                                <?php
+                                                switch ($order['status']) {
+                                                    case 'pending':
+                                                        echo 'Chờ duyệt';
+                                                        break;
+                                                    case 'confirmed':
+                                                        echo 'Xác nhận';
+                                                        break;
+                                                    case 'cancelled':
+                                                        echo 'Đã hủy';
+                                                        break;
+                                                    default:
+                                                        echo $order['status'];
+                                                }
+                                                ?>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     <?php endif; ?>
                 </div>
 
@@ -354,30 +367,30 @@ $unreadContacts = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unre
                         <a href="<?= BASE_URL ?>/admin/reviews">Xem tất cả →</a>
                     </div>
                     <?php if (count($recentReviews) === 0): ?>
-                    <div class="card-empty">
-                        <i class="fas fa-comment-slash"></i>
-                        <p>Chưa có đánh giá nào</p>
-                    </div>
-                    <?php else: ?>
-                    <div class="reviews-list">
-                        <?php foreach ($recentReviews as $review): ?>
-                        <div class="review-item">
-                            <div class="review-header">
-                                <img src="https://ui-avatars.com/api/?name=<?= urlencode($review['user_name'] ?? 'User') ?>&background=D4AF37&color=fff" alt="">
-                                <div class="review-info">
-                                    <h4><?= htmlspecialchars($review['user_name'] ?? 'Khách hàng') ?></h4>
-                                    <p><?= htmlspecialchars($review['car_name'] ?? '') ?></p>
-                                </div>
-                                <div class="review-rating">
-                                    <?php for ($i = 1; $i <= 5; $i++): ?>
-                                    <i class="fas fa-star <?= $i <= $review['rating'] ? '' : 'empty' ?>"></i>
-                                    <?php endfor; ?>
-                                </div>
-                            </div>
-                            <p class="review-text"><?= htmlspecialchars(mb_substr($review['comment'], 0, 100)) ?>...</p>
+                        <div class="card-empty">
+                            <i class="fas fa-comment-slash"></i>
+                            <p>Chưa có đánh giá nào</p>
                         </div>
-                        <?php endforeach; ?>
-                    </div>
+                    <?php else: ?>
+                        <div class="reviews-list">
+                            <?php foreach ($recentReviews as $review): ?>
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($review['user_name'] ?? 'User') ?>&background=D4AF37&color=fff" alt="">
+                                        <div class="review-info">
+                                            <h4><?= htmlspecialchars($review['user_name'] ?? 'Khách hàng') ?></h4>
+                                            <p><?= htmlspecialchars($review['car_name'] ?? '') ?></p>
+                                        </div>
+                                        <div class="review-rating">
+                                            <?php for ($i = 1; $i <= 5; $i++): ?>
+                                                <i class="fas fa-star <?= $i <= $review['rating'] ? '' : 'empty' ?>"></i>
+                                            <?php endfor; ?>
+                                        </div>
+                                    </div>
+                                    <p class="review-text"><?= htmlspecialchars(mb_substr($review['comment'], 0, 100)) ?>...</p>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -403,4 +416,5 @@ $unreadContacts = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unre
         </div>
     </main>
 </body>
+
 </html>

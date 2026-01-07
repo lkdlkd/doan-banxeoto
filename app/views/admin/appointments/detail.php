@@ -1,8 +1,11 @@
-<?php 
-if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.php'; }
+<?php
+if (!defined('BASE_URL')) {
+    require_once __DIR__ . '/../../../../config/config.php';
+}
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,7 +68,7 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
             background: #fff;
             border-radius: 12px;
             padding: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .detail-card h3 {
@@ -350,8 +353,10 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
         }
     </style>
 </head>
+
 <body>
-    <?php $activePage = 'appointments'; include __DIR__ . '/../layouts/sidebar.php'; ?>
+    <?php $activePage = 'appointments';
+    include __DIR__ . '/../layouts/sidebar.php'; ?>
 
     <main class="admin-main">
         <header class="admin-header">
@@ -399,7 +404,7 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
                                     <p class="customer-email"><?= htmlspecialchars($appointment['user_email'] ?? '') ?></p>
                                 </div>
                             </div>
-                            
+
                             <div class="contact-info">
                                 <div class="contact-item">
                                     <i class="fas fa-envelope"></i>
@@ -414,12 +419,12 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
 
                         <!-- Notes -->
                         <?php if (!empty($appointment['notes'])): ?>
-                        <div class="detail-card" style="margin-top: 2rem;">
-                            <div class="notes-section">
-                                <h4><i class="fas fa-comment-dots"></i> Ghi chú của khách hàng</h4>
-                                <p><?= nl2br(htmlspecialchars($appointment['notes'])) ?></p>
+                            <div class="detail-card" style="margin-top: 2rem;">
+                                <div class="notes-section">
+                                    <h4><i class="fas fa-comment-dots"></i> Ghi chú của khách hàng</h4>
+                                    <p><?= nl2br(htmlspecialchars($appointment['notes'])) ?></p>
+                                </div>
                             </div>
-                        </div>
                         <?php endif; ?>
                     </div>
 
@@ -428,7 +433,7 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
                         <!-- Appointment Info -->
                         <div class="detail-card">
                             <h3>Thông tin lịch hẹn</h3>
-                            
+
                             <div class="appointment-datetime">
                                 <div class="datetime-box">
                                     <i class="fas fa-calendar"></i>
@@ -455,13 +460,22 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
                             <div class="status-current">
                                 <label>Trạng thái hiện tại</label>
                                 <span class="order-status <?= $appointment['status'] ?>">
-                                    <?php 
-                                    switch($appointment['status']) {
-                                        case 'pending': echo 'Chờ xác nhận'; break;
-                                        case 'confirmed': echo 'Đã xác nhận'; break;
-                                        case 'completed': echo 'Hoàn thành'; break;
-                                        case 'cancelled': echo 'Đã hủy'; break;
-                                        default: echo $appointment['status'];
+                                    <?php
+                                    switch ($appointment['status']) {
+                                        case 'pending':
+                                            echo 'Chờ xác nhận';
+                                            break;
+                                        case 'confirmed':
+                                            echo 'Đã xác nhận';
+                                            break;
+                                        case 'completed':
+                                            echo 'Hoàn thành';
+                                            break;
+                                        case 'cancelled':
+                                            echo 'Đã hủy';
+                                            break;
+                                        default:
+                                            echo $appointment['status'];
                                     }
                                     ?>
                                 </span>
@@ -470,16 +484,16 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
                             <div class="status-actions">
                                 <div class="action-buttons">
                                     <?php if ($appointment['status'] === 'pending'): ?>
-                                    <button class="btn btn-confirm" onclick="updateStatus(<?= $appointment['id'] ?>, 'confirmed')">
-                                        <i class="fas fa-check-circle"></i> Xác nhận lịch hẹn
-                                    </button>
-                                    <button class="btn btn-cancel" onclick="updateStatus(<?= $appointment['id'] ?>, 'cancelled')">
-                                        <i class="fas fa-times-circle"></i> Hủy lịch hẹn
-                                    </button>
+                                        <button class="btn btn-confirm" onclick="updateStatus(<?= $appointment['id'] ?>, 'confirmed')">
+                                            <i class="fas fa-check-circle"></i> Xác nhận lịch hẹn
+                                        </button>
+                                        <button class="btn btn-cancel" onclick="updateStatus(<?= $appointment['id'] ?>, 'cancelled')">
+                                            <i class="fas fa-times-circle"></i> Hủy lịch hẹn
+                                        </button>
                                     <?php elseif ($appointment['status'] === 'confirmed'): ?>
-                                    <button class="btn btn-complete" onclick="updateStatus(<?= $appointment['id'] ?>, 'completed')">
-                                        <i class="fas fa-check-double"></i> Đánh dấu hoàn thành
-                                    </button>
+                                        <button class="btn btn-complete" onclick="updateStatus(<?= $appointment['id'] ?>, 'completed')">
+                                            <i class="fas fa-check-double"></i> Đánh dấu hoàn thành
+                                        </button>
                                     <?php endif; ?>
                                     <button class="btn btn-delete" onclick="deleteAppointment(<?= $appointment['id'] ?>)">
                                         <i class="fas fa-trash"></i> Xóa lịch hẹn
@@ -496,12 +510,18 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
     <script>
         function updateStatus(id, status) {
             let statusText = '';
-            switch(status) {
-                case 'confirmed': statusText = 'xác nhận'; break;
-                case 'cancelled': statusText = 'hủy'; break;
-                case 'completed': statusText = 'đánh dấu hoàn thành'; break;
+            switch (status) {
+                case 'confirmed':
+                    statusText = 'xác nhận';
+                    break;
+                case 'cancelled':
+                    statusText = 'hủy';
+                    break;
+                case 'completed':
+                    statusText = 'đánh dấu hoàn thành';
+                    break;
             }
-            
+
             if (confirm(`Bạn có chắc chắn muốn ${statusText} lịch hẹn này?`)) {
                 window.location.href = `<?= BASE_URL ?>/admin/appointments/update-status/${id}/${status}`;
             }
@@ -514,4 +534,5 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
         }
     </script>
 </body>
+
 </html>

@@ -13,7 +13,7 @@ class CategoryController
     {
         $this->categoryModel = new CategoryModel();
         $this->carModel = new CarModel();
-        
+
         // Khởi động session nếu chưa có
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -25,7 +25,7 @@ class CategoryController
     {
         // Kiểm tra quyền admin
         $this->checkAdmin();
-        
+
         $categories = $this->categoryModel->getAll();
         $totalCategories = count($categories);
 
@@ -43,7 +43,7 @@ class CategoryController
     {
         // Kiểm tra quyền admin
         $this->checkAdmin();
-        
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/admin/categories');
         }
@@ -77,7 +77,7 @@ class CategoryController
     {
         // Kiểm tra quyền admin
         $this->checkAdmin();
-        
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/admin/categories');
         }
@@ -120,7 +120,7 @@ class CategoryController
     {
         // Kiểm tra quyền admin
         $this->checkAdmin();
-        
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/admin/categories');
         }

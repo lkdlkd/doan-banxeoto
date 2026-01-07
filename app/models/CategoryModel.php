@@ -23,7 +23,7 @@ class CategoryModel extends BaseModel
                 LEFT JOIN cars car ON c.id = car.category_id 
                 GROUP BY c.id 
                 ORDER BY c.name ASC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll();
@@ -48,7 +48,7 @@ class CategoryModel extends BaseModel
             $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM {$this->table} WHERE name = ?");
             $stmt->execute([$name]);
         }
-        
+
         $result = $stmt->fetch();
         return $result['total'] > 0;
     }

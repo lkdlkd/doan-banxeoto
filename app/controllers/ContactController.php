@@ -29,21 +29,21 @@ class ContactController
         try {
             // Validate dữ liệu
             $errors = [];
-            
+
             if (empty($_POST['name'])) {
                 $errors[] = 'Vui lòng nhập họ tên';
             }
-            
+
             if (empty($_POST['phone'])) {
                 $errors[] = 'Vui lòng nhập số điện thoại';
             } elseif (!preg_match('/^[0-9]{10,11}$/', str_replace(' ', '', $_POST['phone']))) {
                 $errors[] = 'Số điện thoại không hợp lệ';
             }
-            
+
             if (!empty($_POST['email']) && !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
                 $errors[] = 'Email không hợp lệ';
             }
-            
+
             if (empty($_POST['message'])) {
                 $errors[] = 'Vui lòng nhập nội dung tin nhắn';
             }
@@ -73,7 +73,6 @@ class ContactController
             } else {
                 $_SESSION['contact_error'] = 'Có lỗi xảy ra, vui lòng thử lại sau.';
             }
-
         } catch (Exception $e) {
             $_SESSION['contact_error'] = 'Có lỗi xảy ra: ' . $e->getMessage();
         }
@@ -109,7 +108,7 @@ class ContactController
 
         try {
             $result = $this->contactModel->updateStatus($id, $status);
-            
+
             if ($result) {
                 echo json_encode(['success' => true]);
             } else {
@@ -131,7 +130,7 @@ class ContactController
 
         try {
             $result = $this->contactModel->delete($id);
-            
+
             if ($result) {
                 echo json_encode(['success' => true]);
             } else {

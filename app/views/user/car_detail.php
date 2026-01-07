@@ -50,7 +50,8 @@ function formatPrice($price)
 }
 
 // Hàm chuyển đổi loại nhiên liệu sang tiếng Việt
-function getFuelText($fuel) {
+function getFuelText($fuel)
+{
     $fuelMap = [
         'gasoline' => 'Xăng',
         'diesel' => 'Dầu Diesel',
@@ -61,7 +62,8 @@ function getFuelText($fuel) {
 }
 
 // Hàm chuyển đổi hộp số sang tiếng Việt
-function getTransmissionText($transmission) {
+function getTransmissionText($transmission)
+{
     $transMap = [
         'automatic' => 'Tự động',
         'manual' => 'Số sàn',
@@ -71,7 +73,8 @@ function getTransmissionText($transmission) {
 }
 
 // Hàm chuyển đổi hệ dẫn động sang tiếng Việt
-function getDrivetrainText($drivetrain) {
+function getDrivetrainText($drivetrain)
+{
     $driveMap = [
         'FWD' => 'Cầu trước',
         'RWD' => 'Cầu sau',
@@ -131,7 +134,7 @@ include __DIR__ . '/../layouts/header.php';
         background: white;
         border-radius: 12px;
         padding: 30px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     /* Gallery */
@@ -267,7 +270,7 @@ include __DIR__ . '/../layouts/header.php';
 
     .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(212,175,55,0.3);
+        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
     }
 
     .btn-outline {
@@ -311,7 +314,7 @@ include __DIR__ . '/../layouts/header.php';
         background: white;
         border-radius: 12px;
         padding: 30px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         margin-bottom: 40px;
     }
 
@@ -485,7 +488,7 @@ include __DIR__ . '/../layouts/header.php';
         background: white;
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         transition: all 0.3s;
         text-decoration: none;
         color: inherit;
@@ -493,7 +496,7 @@ include __DIR__ . '/../layouts/header.php';
 
     .similar-car:hover {
         transform: translateY(-5px);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     }
 
     .similar-car-image {
@@ -536,9 +539,11 @@ include __DIR__ . '/../layouts/header.php';
         .detail-grid {
             grid-template-columns: 1fr;
         }
+
         .specs-grid {
             grid-template-columns: 1fr;
         }
+
         .similar-grid {
             grid-template-columns: repeat(2, 1fr);
         }
@@ -548,9 +553,11 @@ include __DIR__ . '/../layouts/header.php';
         .similar-grid {
             grid-template-columns: 1fr;
         }
+
         .highlights {
             grid-template-columns: 1fr;
         }
+
         .page-banner h1 {
             font-size: 28px;
         }
@@ -572,7 +579,7 @@ include __DIR__ . '/../layouts/header.php';
         left: 0;
         right: 0;
         bottom: 0;
-        background: 
+        background:
             radial-gradient(ellipse at 20% 50%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
             radial-gradient(ellipse at 80% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
             url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><path d="M30 0L60 30L30 60L0 30z" fill="%23D4AF37" opacity="0.02"/></svg>');
@@ -615,7 +622,7 @@ include __DIR__ . '/../layouts/header.php';
         font-weight: 700;
         color: white;
         margin: 0 0 20px 0;
-        text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
         line-height: 1.2;
     }
 
@@ -641,13 +648,13 @@ include __DIR__ . '/../layouts/header.php';
         display: flex;
         align-items: center;
         gap: 10px;
-        color: rgba(255,255,255,0.9);
+        color: rgba(255, 255, 255, 0.9);
         font-size: 15px;
         font-weight: 500;
         padding: 10px 18px;
-        background: rgba(255,255,255,0.08);
+        background: rgba(255, 255, 255, 0.08);
         border-radius: 8px;
-        border: 1px solid rgba(255,255,255,0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(10px);
         transition: all 0.3s;
     }
@@ -671,7 +678,7 @@ include __DIR__ . '/../layouts/header.php';
 
     .btn-cart:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(34,197,94,0.3);
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
     }
 </style>
 
@@ -680,7 +687,7 @@ include __DIR__ . '/../layouts/header.php';
     <div class="container">
         <div class="banner-badge">
             <i class="fas fa-star"></i>
-            <?php 
+            <?php
             $stock = $car['stock'] ?? 0;
             if ($car['status'] == 'available' && $stock > 0) {
                 echo 'Còn hàng (' . $stock . ' xe)';
@@ -737,12 +744,13 @@ include __DIR__ . '/../layouts/header.php';
                 if (!empty($carImages) && count($carImages) > 0) {
                     $mainImage = $carImages[0]['image_url'];
                 }
-                
+
                 // Hàm kiểm tra URL đầy đủ
-                function isFullUrl($url) {
+                function isFullUrl($url)
+                {
                     return strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0;
                 }
-                
+
                 $mainImageSrc = $mainImage ? (isFullUrl($mainImage) ? $mainImage : BASE_URL . '/' . $mainImage) : BASE_URL . '/assets/images/no-image.jpg';
                 ?>
                 <div class="main-image">
@@ -754,13 +762,13 @@ include __DIR__ . '/../layouts/header.php';
                         foreach ($carImages as $index => $imageData) :
                             $thumbSrc = isFullUrl($imageData['image_url']) ? $imageData['image_url'] : BASE_URL . '/' . $imageData['image_url'];
                     ?>
-                        <div class="thumbnail <?= $index === 0 ? 'active' : '' ?>" onclick="changeImage('<?= htmlspecialchars($thumbSrc) ?>', this)">
-                            <img src="<?= htmlspecialchars($thumbSrc) ?>" alt="Image <?= $index + 1 ?>">
-                        </div>
-                    <?php 
+                            <div class="thumbnail <?= $index === 0 ? 'active' : '' ?>" onclick="changeImage('<?= htmlspecialchars($thumbSrc) ?>', this)">
+                                <img src="<?= htmlspecialchars($thumbSrc) ?>" alt="Image <?= $index + 1 ?>">
+                            </div>
+                        <?php
                         endforeach;
                     else:
-                    ?>
+                        ?>
                         <div class="thumbnail active">
                             <img src="<?= BASE_URL ?>/assets/images/no-image.jpg" alt="No image">
                         </div>
@@ -773,7 +781,7 @@ include __DIR__ . '/../layouts/header.php';
             <!-- Info -->
             <div class="card">
                 <h1 class="car-name"><?= htmlspecialchars($car['name']) ?></h1>
-                
+
                 <div class="car-meta">
                     <div class="meta-item">
                         <i class="fas fa-car"></i>
@@ -810,31 +818,31 @@ include __DIR__ . '/../layouts/header.php';
                     </div>
                 </div>
 
-                <?php 
+                <?php
                 $stock = $car['stock'] ?? 0;
-                if ($car['status'] == 'available' && $stock > 0) : 
+                if ($car['status'] == 'available' && $stock > 0) :
                 ?>
-                <div class="action-buttons">
-                    <a href="<?= BASE_URL ?>/user/add_to_cart?car_id=<?= $car['id'] ?>" class="btn btn-cart" onclick="addToCart(<?= $car['id'] ?>); return false;">
-                        <i class="fas fa-shopping-cart"></i>
-                        Thêm vào giỏ hàng
-                    </a>
-                    <a href="<?= BASE_URL ?>/appointment/book/<?= $car['id'] ?>" class="btn btn-primary">
-                        <i class="fas fa-calendar-check"></i>
-                        Đặt lịch xem xe
-                    </a>
-                    <a href="#" onclick="toggleFavorite(<?= $car['id'] ?>); return false;" class="btn btn-outline">
-                        <i class="<?= $isFavorite ? 'fas' : 'far' ?> fa-heart"></i>
-                        <?= $isFavorite ? 'Đã yêu thích' : 'Yêu thích' ?>
-                    </a>
-                </div>
+                    <div class="action-buttons">
+                        <a href="<?= BASE_URL ?>/user/add_to_cart?car_id=<?= $car['id'] ?>" class="btn btn-cart" onclick="addToCart(<?= $car['id'] ?>); return false;">
+                            <i class="fas fa-shopping-cart"></i>
+                            Thêm vào giỏ hàng
+                        </a>
+                        <a href="<?= BASE_URL ?>/appointment/book/<?= $car['id'] ?>" class="btn btn-primary">
+                            <i class="fas fa-calendar-check"></i>
+                            Đặt lịch xem xe
+                        </a>
+                        <a href="#" onclick="toggleFavorite(<?= $car['id'] ?>); return false;" class="btn btn-outline">
+                            <i class="<?= $isFavorite ? 'fas' : 'far' ?> fa-heart"></i>
+                            <?= $isFavorite ? 'Đã yêu thích' : 'Yêu thích' ?>
+                        </a>
+                    </div>
                 <?php else : ?>
-                <div class="action-buttons">
-                    <button class="btn btn-primary" disabled style="opacity: 0.5;">
-                        <i class="fas fa-ban"></i>
-                        Xe đã hết hàng
-                    </button>
-                </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" disabled style="opacity: 0.5;">
+                            <i class="fas fa-ban"></i>
+                            Xe đã hết hàng
+                        </button>
+                    </div>
                 <?php endif; ?>
 
                 <div class="contact-box">
@@ -883,56 +891,56 @@ include __DIR__ . '/../layouts/header.php';
                         <span class="spec-value"><?= formatPrice($car['price']) ?> VND</span>
                     </div>
                     <?php if (!empty($car['stock'])) : ?>
-                    <div class="spec-item">
-                        <span class="spec-label">Số lượng</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['stock']) ?> xe</span>
-                    </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Số lượng</span>
+                            <span class="spec-value"><?= htmlspecialchars($car['stock']) ?> xe</span>
+                        </div>
                     <?php endif; ?>
                     <?php if (!empty($car['engine'])) : ?>
-                    <div class="spec-item">
-                        <span class="spec-label">Động cơ</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['engine']) ?></span>
-                    </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Động cơ</span>
+                            <span class="spec-value"><?= htmlspecialchars($car['engine']) ?></span>
+                        </div>
                     <?php endif; ?>
                     <?php if (!empty($car['horsepower'])) : ?>
-                    <div class="spec-item">
-                        <span class="spec-label">Công suất</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['horsepower']) ?> HP</span>
-                    </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Công suất</span>
+                            <span class="spec-value"><?= htmlspecialchars($car['horsepower']) ?> HP</span>
+                        </div>
                     <?php endif; ?>
                     <?php if (!empty($car['torque'])) : ?>
-                    <div class="spec-item">
-                        <span class="spec-label">Mô-men xoắn</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['torque']) ?> Nm</span>
-                    </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Mô-men xoắn</span>
+                            <span class="spec-value"><?= htmlspecialchars($car['torque']) ?> Nm</span>
+                        </div>
                     <?php endif; ?>
                     <?php if (!empty($car['acceleration'])) : ?>
-                    <div class="spec-item">
-                        <span class="spec-label">Tăng tốc 0-100 km/h</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['acceleration']) ?> giây</span>
-                    </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Tăng tốc 0-100 km/h</span>
+                            <span class="spec-value"><?= htmlspecialchars($car['acceleration']) ?> giây</span>
+                        </div>
                     <?php endif; ?>
                     <?php if (!empty($car['drivetrain'])) : ?>
-                    <div class="spec-item">
-                        <span class="spec-label">Hệ dẫn động</span>
-                        <span class="spec-value"><?= getDrivetrainText($car['drivetrain']) ?></span>
-                    </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Hệ dẫn động</span>
+                            <span class="spec-value"><?= getDrivetrainText($car['drivetrain']) ?></span>
+                        </div>
                     <?php endif; ?>
                     <div class="spec-item">
                         <span class="spec-label">Hộp số</span>
                         <span class="spec-value"><?= getTransmissionText($car['transmission']) ?></span>
                     </div>
                     <?php if (!empty($car['seats'])) : ?>
-                    <div class="spec-item">
-                        <span class="spec-label">Số chỗ ngồi</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['seats']) ?> chỗ</span>
-                    </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Số chỗ ngồi</span>
+                            <span class="spec-value"><?= htmlspecialchars($car['seats']) ?> chỗ</span>
+                        </div>
                     <?php endif; ?>
                     <?php if (!empty($car['doors'])) : ?>
-                    <div class="spec-item">
-                        <span class="spec-label">Số cửa</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['doors']) ?> cửa</span>
-                    </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Số cửa</span>
+                            <span class="spec-value"><?= htmlspecialchars($car['doors']) ?> cửa</span>
+                        </div>
                     <?php endif; ?>
                     <div class="spec-item">
                         <span class="spec-label">Nhiên liệu</span>
@@ -953,7 +961,7 @@ include __DIR__ . '/../layouts/header.php';
                     <div class="spec-item">
                         <span class="spec-label">Trạng thái</span>
                         <span class="spec-value">
-                            <?php 
+                            <?php
                             $stock = $car['stock'] ?? 0;
                             if ($car['status'] == 'available' && $stock > 0) {
                                 echo 'Còn hàng (' . $stock . ' xe)';
@@ -976,85 +984,99 @@ include __DIR__ . '/../layouts/header.php';
             <!-- Reviews -->
             <div id="reviews" class="tab-content">
                 <?php if (!empty($reviews)) : ?>
-                <div class="review-summary">
-                    <div class="rating-box">
-                        <div class="rating-score">
-                            <?php
-                            $totalRating = 0;
-                            foreach ($reviews as $review) {
-                                $totalRating += $review['rating'];
-                            }
-                            $avgRating = round($totalRating / count($reviews), 1);
-                            echo $avgRating;
-                            ?>
-                        </div>
-                        <div class="rating-stars">
-                            <?php
-                            for ($i = 1; $i <= 5; $i++) {
-                                echo $i <= $avgRating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
-                            }
-                            ?>
-                        </div>
-                        <div class="rating-count"><?= count($reviews) ?> đánh giá</div>
-                    </div>
-                    <div class="review-list">
-                        <?php foreach ($reviews as $review) : ?>
-                        <div class="review-item">
-                            <div class="review-header">
-                                <div>
-                                    <div class="reviewer-name"><?= htmlspecialchars($review['user_name']) ?></div>
-                                    <div class="review-date"><?= date('d/m/Y', strtotime($review['created_at'])) ?></div>
-                                </div>
-                                <div class="review-rating">
-                                    <?php
-                                    for ($i = 1; $i <= 5; $i++) {
-                                        echo $i <= $review['rating'] ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
-                                    }
-                                    ?>
-                                </div>
+                    <div class="review-summary">
+                        <div class="rating-box">
+                            <div class="rating-score">
+                                <?php
+                                $totalRating = 0;
+                                foreach ($reviews as $review) {
+                                    $totalRating += $review['rating'];
+                                }
+                                $avgRating = round($totalRating / count($reviews), 1);
+                                echo $avgRating;
+                                ?>
                             </div>
-                            <div class="review-text">
-                                <?= nl2br(htmlspecialchars($review['comment'])) ?>
+                            <div class="rating-stars">
+                                <?php
+                                for ($i = 1; $i <= 5; $i++) {
+                                    echo $i <= $avgRating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+                                }
+                                ?>
                             </div>
+                            <div class="rating-count"><?= count($reviews) ?> đánh giá</div>
                         </div>
-                        <?php endforeach; ?>
+                        <div class="review-list">
+                            <?php foreach ($reviews as $review) : ?>
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <div>
+                                            <div class="reviewer-name"><?= htmlspecialchars($review['user_name']) ?></div>
+                                            <div class="review-date"><?= date('d/m/Y', strtotime($review['created_at'])) ?></div>
+                                        </div>
+                                        <div class="review-rating">
+                                            <?php
+                                            for ($i = 1; $i <= 5; $i++) {
+                                                echo $i <= $review['rating'] ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+                                            }
+                                            ?>
+                                        </div>
+                                    </div>
+                                    <div class="review-text">
+                                        <?= nl2br(htmlspecialchars($review['comment'])) ?>
+                                    </div>
+                                    <?php if (!empty($review['admin_reply'])) : ?>
+                                        <div class="admin-reply" style="margin-top: 15px; padding: 15px; background: linear-gradient(135deg, #fef9ed 0%, #fffbf5 100%); border-radius: 8px; border-left: 3px solid #D4AF37;">
+                                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                                <i class="fas fa-reply" style="color: #D4AF37;"></i>
+                                                <span style="font-weight: 600; color: #B8860B;">Phản hồi từ AutoCar</span>
+                                                <?php if (!empty($review['replied_at'])) : ?>
+                                                    <span style="font-size: 12px; color: #999; margin-left: auto;"><?= date('d/m/Y H:i', strtotime($review['replied_at'])) ?></span>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div style="color: #555; font-size: 14px; line-height: 1.6;">
+                                                <?= nl2br(htmlspecialchars($review['admin_reply'])) ?>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
-                </div>
                 <?php else : ?>
-                <div class="no-reviews">
-                    <i class="fas fa-comment-slash" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
-                    <p>Chưa có đánh giá nào</p>
-                </div>
+                    <div class="no-reviews">
+                        <i class="fas fa-comment-slash" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
+                        <p>Chưa có đánh giá nào</p>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
 
         <!-- Similar Cars -->
         <?php if (!empty($similarCars)) : ?>
-        <div class="similar-section">
-            <h2 class="section-title">Xe tương tự</h2>
-            <div class="similar-grid">
-                <?php foreach ($similarCars as $similarCar) : 
-                    // Lấy ảnh đầu tiên của xe tương tự từ image_url
-                    $similarImage = !empty($similarCar['image_url']) ? $similarCar['image_url'] : '';
-                    $similarImgSrc = $similarImage ? (isFullUrl($similarImage) ? $similarImage : BASE_URL . '/' . $similarImage) : BASE_URL . '/assets/images/no-image.jpg';
-                ?>
-                <a href="<?= BASE_URL ?>/car/<?= $similarCar['id'] ?>" class="similar-car">
-                    <div class="similar-car-image">
-                        <img src="<?= htmlspecialchars($similarImgSrc) ?>" alt="<?= htmlspecialchars($similarCar['name']) ?>">
-                    </div>
-                    <div class="similar-car-info">
-                        <div class="similar-car-name"><?= htmlspecialchars($similarCar['name']) ?></div>
-                        <div class="similar-car-price"><?= formatPrice($similarCar['price']) ?> VND</div>
-                        <div class="similar-car-meta">
-                            <span><i class="fas fa-calendar-alt"></i> <?= htmlspecialchars($similarCar['year']) ?></span>
-                            <span><i class="fas fa-tachometer-alt"></i> <?= number_format($similarCar['mileage'] / 1000) ?>K km</span>
-                        </div>
-                    </div>
-                </a>
-                <?php endforeach; ?>
+            <div class="similar-section">
+                <h2 class="section-title">Xe tương tự</h2>
+                <div class="similar-grid">
+                    <?php foreach ($similarCars as $similarCar) :
+                        // Lấy ảnh đầu tiên của xe tương tự từ image_url
+                        $similarImage = !empty($similarCar['image_url']) ? $similarCar['image_url'] : '';
+                        $similarImgSrc = $similarImage ? (isFullUrl($similarImage) ? $similarImage : BASE_URL . '/' . $similarImage) : BASE_URL . '/assets/images/no-image.jpg';
+                    ?>
+                        <a href="<?= BASE_URL ?>/car/<?= $similarCar['id'] ?>" class="similar-car">
+                            <div class="similar-car-image">
+                                <img src="<?= htmlspecialchars($similarImgSrc) ?>" alt="<?= htmlspecialchars($similarCar['name']) ?>">
+                            </div>
+                            <div class="similar-car-info">
+                                <div class="similar-car-name"><?= htmlspecialchars($similarCar['name']) ?></div>
+                                <div class="similar-car-price"><?= formatPrice($similarCar['price']) ?> VND</div>
+                                <div class="similar-car-meta">
+                                    <span><i class="fas fa-calendar-alt"></i> <?= htmlspecialchars($similarCar['year']) ?></span>
+                                    <span><i class="fas fa-tachometer-alt"></i> <?= number_format($similarCar['mileage'] / 1000) ?>K km</span>
+                                </div>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
             </div>
-        </div>
         <?php endif; ?>
     </div>
 </div>
@@ -1071,7 +1093,7 @@ include __DIR__ . '/../layouts/header.php';
     function switchTab(event, tabName) {
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        
+
         document.getElementById(tabName).classList.add('active');
         event.currentTarget.classList.add('active');
     }
@@ -1085,29 +1107,29 @@ include __DIR__ . '/../layouts/header.php';
         <?php endif; ?>
 
         fetch('<?= BASE_URL ?>/user/add_to_cart', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'car_id=' + carId
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Đã thêm xe vào giỏ hàng!');
-                // Cập nhật số lượng giỏ hàng trên header nếu có
-                const cartCount = document.querySelector('.cart-count');
-                if (cartCount && data.cart_count) {
-                    cartCount.textContent = data.cart_count;
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'car_id=' + carId
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Đã thêm xe vào giỏ hàng!');
+                    // Cập nhật số lượng giỏ hàng trên header nếu có
+                    const cartCount = document.querySelector('.cart-count');
+                    if (cartCount && data.cart_count) {
+                        cartCount.textContent = data.cart_count;
+                    }
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra!');
                 }
-            } else {
-                alert(data.message || 'Có lỗi xảy ra!');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Có lỗi xảy ra khi thêm vào giỏ hàng!');
-        });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi thêm vào giỏ hàng!');
+            });
     }
 
     // Toggle favorite
@@ -1123,24 +1145,26 @@ include __DIR__ . '/../layouts/header.php';
         const url = isFavorite ? '<?= BASE_URL ?>/favorites/remove' : '<?= BASE_URL ?>/favorites/add';
 
         fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ car_id: carId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert(data.message || 'Có lỗi xảy ra!');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Có lỗi xảy ra!');
-        });
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    car_id: carId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra!');
+            });
     }
 </script>
 

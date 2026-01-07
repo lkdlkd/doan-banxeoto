@@ -18,13 +18,15 @@ class BaseModel
     public function all()
     {
         $stmt = $this->db->prepare("SELECT * FROM {$this->table}");
-        
+
         try {
             $stmt->execute();
         } catch (PDOException $e) {
             // Nếu lỗi "server has gone away", thử reconnect và execute lại
-            if (strpos($e->getMessage(), 'server has gone away') !== false || 
-                strpos($e->getMessage(), 'MySQL server has gone away') !== false) {
+            if (
+                strpos($e->getMessage(), 'server has gone away') !== false ||
+                strpos($e->getMessage(), 'MySQL server has gone away') !== false
+            ) {
                 $this->db = Database::getInstance()->refreshConnection();
                 $stmt = $this->db->prepare("SELECT * FROM {$this->table}");
                 $stmt->execute();
@@ -32,7 +34,7 @@ class BaseModel
                 throw $e;
             }
         }
-        
+
         return $stmt->fetchAll();
     }
 
@@ -46,12 +48,14 @@ class BaseModel
     public function find($id)
     {
         $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE {$this->primaryKey} = ?");
-        
+
         try {
             $stmt->execute([$id]);
         } catch (PDOException $e) {
-            if (strpos($e->getMessage(), 'server has gone away') !== false || 
-                strpos($e->getMessage(), 'MySQL server has gone away') !== false) {
+            if (
+                strpos($e->getMessage(), 'server has gone away') !== false ||
+                strpos($e->getMessage(), 'MySQL server has gone away') !== false
+            ) {
                 $this->db = Database::getInstance()->refreshConnection();
                 $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE {$this->primaryKey} = ?");
                 $stmt->execute([$id]);
@@ -59,7 +63,7 @@ class BaseModel
                 throw $e;
             }
         }
-        
+
         return $stmt->fetch();
     }
 
@@ -68,13 +72,13 @@ class BaseModel
     {
         $fields = array_keys($data);
         $values = array_values($data);
-        
+
         $fieldString = implode(', ', $fields);
         $placeholders = implode(', ', array_fill(0, count($fields), '?'));
-        
+
         $sql = "INSERT INTO {$this->table} ({$fieldString}) VALUES ({$placeholders})";
         $stmt = $this->db->prepare($sql);
-        
+
         if ($stmt->execute($values)) {
             return $this->db->lastInsertId();
         }
@@ -86,18 +90,18 @@ class BaseModel
     {
         $fields = [];
         $values = [];
-        
+
         foreach ($data as $key => $value) {
             $fields[] = "{$key} = ?";
             $values[] = $value;
         }
-        
+
         $values[] = $id;
         $fieldString = implode(', ', $fields);
-        
+
         $sql = "UPDATE {$this->table} SET {$fieldString} WHERE {$this->primaryKey} = ?";
         $stmt = $this->db->prepare($sql);
-        
+
         return $stmt->execute($values);
     }
 
@@ -113,18 +117,18 @@ class BaseModel
     {
         $whereClauses = [];
         $values = [];
-        
+
         foreach ($conditions as $key => $value) {
             $whereClauses[] = "{$key} = ?";
             $values[] = $value;
         }
-        
+
         $whereString = implode(' AND ', $whereClauses);
         $sql = "SELECT * FROM {$this->table} WHERE {$whereString}";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute($values);
-        
+
         return $stmt->fetchAll();
     }
 
@@ -137,19 +141,19 @@ class BaseModel
         } else {
             $whereClauses = [];
             $values = [];
-            
+
             foreach ($conditions as $key => $value) {
                 $whereClauses[] = "{$key} = ?";
                 $values[] = $value;
             }
-            
+
             $whereString = implode(' AND ', $whereClauses);
             $sql = "SELECT COUNT(*) as total FROM {$this->table} WHERE {$whereString}";
-            
+
             $stmt = $this->db->prepare($sql);
             $stmt->execute($values);
         }
-        
+
         $result = $stmt->fetch();
         return $result['total'];
     }
@@ -158,12 +162,12 @@ class BaseModel
     public function paginate($page = 1, $perPage = 10)
     {
         $offset = ($page - 1) * $perPage;
-        
+
         $stmt = $this->db->prepare("SELECT * FROM {$this->table} LIMIT ? OFFSET ?");
         $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
         $stmt->bindValue(2, $offset, PDO::PARAM_INT);
         $stmt->execute();
-        
+
         return $stmt->fetchAll();
     }
 
@@ -171,13 +175,15 @@ class BaseModel
     public function query($sql, $params = [])
     {
         $stmt = $this->db->prepare($sql);
-        
+
         try {
             $stmt->execute($params);
         } catch (PDOException $e) {
             // Nếu lỗi "server has gone away", thử reconnect và execute lại
-            if (strpos($e->getMessage(), 'server has gone away') !== false || 
-                strpos($e->getMessage(), 'MySQL server has gone away') !== false) {
+            if (
+                strpos($e->getMessage(), 'server has gone away') !== false ||
+                strpos($e->getMessage(), 'MySQL server has gone away') !== false
+            ) {
                 $this->db = Database::getInstance()->refreshConnection();
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute($params);
@@ -185,7 +191,7 @@ class BaseModel
                 throw $e;
             }
         }
-        
+
         return $stmt->fetchAll();
     }
 }

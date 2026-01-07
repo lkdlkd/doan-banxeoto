@@ -19,7 +19,7 @@ class AppointmentModel extends BaseModel
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 LEFT JOIN users u ON a.user_id = u.id 
                 ORDER BY a.appointment_date DESC, a.appointment_time DESC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll();
@@ -37,7 +37,7 @@ class AppointmentModel extends BaseModel
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 LEFT JOIN users u ON a.user_id = u.id 
                 WHERE a.id = ?";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         return $stmt->fetch();
@@ -65,11 +65,11 @@ class AppointmentModel extends BaseModel
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 WHERE a.user_id = ? 
                 ORDER BY a.appointment_date DESC, a.appointment_time DESC";
-        
+
         if ($limit !== null) {
             $sql .= " LIMIT " . (int)$limit;
         }
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$userId]);
         return $stmt->fetchAll();
@@ -86,7 +86,7 @@ class AppointmentModel extends BaseModel
                 LEFT JOIN users u ON a.user_id = u.id 
                 WHERE a.status = ? 
                 ORDER BY a.appointment_date DESC, a.appointment_time DESC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$status]);
         return $stmt->fetchAll();
@@ -120,11 +120,11 @@ class AppointmentModel extends BaseModel
                 WHERE appointment_date = ? 
                 AND appointment_time = ? 
                 AND status != 'cancelled'";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$date, $time]);
         $result = $stmt->fetch();
-        
+
         // Giới hạn tối đa 3 lịch hẹn cùng thời điểm
         return $result['total'] < 3;
     }
@@ -141,7 +141,7 @@ class AppointmentModel extends BaseModel
                 WHERE a.appointment_date = ? 
                 AND a.status != 'cancelled'
                 ORDER BY a.appointment_time ASC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$date]);
         return $stmt->fetchAll();

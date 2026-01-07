@@ -1,12 +1,14 @@
 <?php
 require_once __DIR__ . '/BaseModel.php';
 
-class StatisticsModel extends BaseModel {
-    
+class StatisticsModel extends BaseModel
+{
+
     /**
      * Lấy thống kê doanh thu theo ngày trong khoảng thời gian
      */
-    public function getRevenueByDay($startDate, $endDate) {
+    public function getRevenueByDay($startDate, $endDate)
+    {
         $query = "SELECT 
                     DATE(o.created_at) as date,
                     SUM(o.price) as revenue,
@@ -16,14 +18,15 @@ class StatisticsModel extends BaseModel {
                     AND DATE(o.created_at) BETWEEN ? AND ?
                   GROUP BY DATE(o.created_at)
                   ORDER BY date ASC";
-        
+
         return $this->query($query, [$startDate, $endDate]);
     }
-    
+
     /**
      * Lấy thống kê doanh thu theo tháng trong năm
      */
-    public function getRevenueByMonth($year) {
+    public function getRevenueByMonth($year)
+    {
         $query = "SELECT 
                     MONTH(o.created_at) as month,
                     SUM(o.price) as revenue,
@@ -33,14 +36,15 @@ class StatisticsModel extends BaseModel {
                     AND YEAR(o.created_at) = ?
                   GROUP BY MONTH(o.created_at)
                   ORDER BY month ASC";
-        
+
         return $this->query($query, [$year]);
     }
-    
+
     /**
      * Lấy thống kê doanh thu theo năm
      */
-    public function getRevenueByYear($startYear, $endYear) {
+    public function getRevenueByYear($startYear, $endYear)
+    {
         $query = "SELECT 
                     YEAR(o.created_at) as year,
                     SUM(o.price) as revenue,
@@ -50,14 +54,15 @@ class StatisticsModel extends BaseModel {
                     AND YEAR(o.created_at) BETWEEN ? AND ?
                   GROUP BY YEAR(o.created_at)
                   ORDER BY year ASC";
-        
+
         return $this->query($query, [$startYear, $endYear]);
     }
-    
+
     /**
      * Lấy top xe bán chạy nhất
      */
-    public function getTopSellingCars($limit = 10) {
+    public function getTopSellingCars($limit = 10)
+    {
         $limit = intval($limit); // Đảm bảo là số nguyên
         $query = "SELECT 
                     c.id,
@@ -73,29 +78,30 @@ class StatisticsModel extends BaseModel {
                   HAVING total_sold > 0
                   ORDER BY total_sold DESC
                   LIMIT {$limit}";
-        
+
         return $this->query($query);
     }
-    
+
     /**
      * Lấy thống kê tổng quan
      */
-    public function getOverviewStats() {
+    public function getOverviewStats()
+    {
         // Tổng doanh thu
         $totalRevenue = $this->query(
             "SELECT SUM(price) as total FROM orders WHERE status = 'completed'"
         )[0]['total'] ?? 0;
-        
+
         // Tổng đơn hàng hoàn thành
         $totalOrders = $this->query(
             "SELECT COUNT(*) as total FROM orders WHERE status = 'completed'"
         )[0]['total'] ?? 0;
-        
+
         // Tổng khách hàng
         $totalCustomers = $this->query(
             "SELECT COUNT(*) as total FROM users WHERE role = 'user'"
         )[0]['total'] ?? 0;
-        
+
         // Doanh thu tháng này
         $monthRevenue = $this->query(
             "SELECT SUM(price) as total FROM orders 
@@ -103,7 +109,7 @@ class StatisticsModel extends BaseModel {
              AND MONTH(created_at) = MONTH(CURRENT_DATE())
              AND YEAR(created_at) = YEAR(CURRENT_DATE())"
         )[0]['total'] ?? 0;
-        
+
         return [
             'total_revenue' => $totalRevenue,
             'total_orders' => $totalOrders,
@@ -111,11 +117,12 @@ class StatisticsModel extends BaseModel {
             'month_revenue' => $monthRevenue
         ];
     }
-    
+
     /**
      * So sánh doanh thu với tháng/năm trước
      */
-    public function getRevenueComparison($type = 'month') {
+    public function getRevenueComparison($type = 'month')
+    {
         if ($type === 'month') {
             // So sánh với tháng trước
             $currentMonth = $this->query(
@@ -124,14 +131,14 @@ class StatisticsModel extends BaseModel {
                  AND MONTH(created_at) = MONTH(CURRENT_DATE())
                  AND YEAR(created_at) = YEAR(CURRENT_DATE())"
             )[0]['total'] ?? 0;
-            
+
             $lastMonth = $this->query(
                 "SELECT SUM(price) as total FROM orders 
                  WHERE status = 'completed' 
                  AND MONTH(created_at) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
                  AND YEAR(created_at) = YEAR(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))"
             )[0]['total'] ?? 0;
-            
+
             return [
                 'current' => $currentMonth,
                 'previous' => $lastMonth,
@@ -144,13 +151,13 @@ class StatisticsModel extends BaseModel {
                  WHERE status = 'completed' 
                  AND YEAR(created_at) = YEAR(CURRENT_DATE())"
             )[0]['total'] ?? 0;
-            
+
             $lastYear = $this->query(
                 "SELECT SUM(price) as total FROM orders 
                  WHERE status = 'completed' 
                  AND YEAR(created_at) = YEAR(DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR))"
             )[0]['total'] ?? 0;
-            
+
             return [
                 'current' => $currentYear,
                 'previous' => $lastYear,
@@ -158,11 +165,12 @@ class StatisticsModel extends BaseModel {
             ];
         }
     }
-    
+
     /**
      * Thống kê doanh thu theo thương hiệu
      */
-    public function getRevenueByBrand() {
+    public function getRevenueByBrand()
+    {
         $query = "SELECT 
                     b.id,
                     b.name,
@@ -174,14 +182,15 @@ class StatisticsModel extends BaseModel {
                   GROUP BY b.id, b.name
                   HAVING total_revenue > 0
                   ORDER BY total_revenue DESC";
-        
+
         return $this->query($query);
     }
-    
+
     /**
      * Thống kê đơn hàng theo trạng thái
      */
-    public function getOrdersByStatus() {
+    public function getOrdersByStatus()
+    {
         $query = "SELECT 
                     status,
                     COUNT(*) as count,
@@ -189,14 +198,15 @@ class StatisticsModel extends BaseModel {
                   FROM orders
                   GROUP BY status
                   ORDER BY count DESC";
-        
+
         return $this->query($query);
     }
-    
+
     /**
      * Thống kê theo phương thức thanh toán
      */
-    public function getPaymentMethodStats() {
+    public function getPaymentMethodStats()
+    {
         $query = "SELECT 
                     payment_method,
                     COUNT(*) as count,
@@ -205,28 +215,30 @@ class StatisticsModel extends BaseModel {
                   WHERE status = 'completed'
                   GROUP BY payment_method
                   ORDER BY count DESC";
-        
+
         return $this->query($query);
     }
-    
+
     /**
      * Doanh thu trung bình
      */
-    public function getAverageRevenue() {
+    public function getAverageRevenue()
+    {
         $query = "SELECT 
                     AVG(price) as avg_order,
                     MAX(price) as max_order,
                     MIN(price) as min_order
                   FROM orders
                   WHERE status = 'completed'";
-        
+
         return $this->query($query)[0] ?? ['avg_order' => 0, 'max_order' => 0, 'min_order' => 0];
     }
-    
+
     /**
      * Thống kê khách hàng mua nhiều nhất
      */
-    public function getTopCustomers($limit = 5) {
+    public function getTopCustomers($limit = 5)
+    {
         $limit = intval($limit);
         $query = "SELECT 
                     u.id,
@@ -241,7 +253,7 @@ class StatisticsModel extends BaseModel {
                   HAVING total_orders > 0
                   ORDER BY total_spent DESC
                   LIMIT {$limit}";
-        
+
         return $this->query($query);
     }
 }

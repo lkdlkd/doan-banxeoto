@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,7 +41,7 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.7) 100%);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.7) 100%);
         }
 
         .login-container {
@@ -275,8 +276,13 @@
             background: #fffbf0;
         }
 
-        .btn-social.google i { color: #ea4335; }
-        .btn-social.facebook i { color: #1877f2; }
+        .btn-social.google i {
+            color: #ea4335;
+        }
+
+        .btn-social.facebook i {
+            color: #1877f2;
+        }
 
         .register-link {
             text-align: center;
@@ -353,20 +359,37 @@
                 gap: 25px;
                 padding: 35px 30px;
             }
+
             .login-branding {
                 padding-right: 0;
                 border-right: none;
                 border-bottom: 2px solid #f0f0f0;
                 padding-bottom: 25px;
             }
-            .login-form-wrapper { padding-left: 0; }
-            .login-features { display: none; }
-            .login-logo, .login-title { text-align: center; }
+
+            .login-form-wrapper {
+                padding-left: 0;
+            }
+
+            .login-features {
+                display: none;
+            }
+
+            .login-logo,
+            .login-title {
+                text-align: center;
+            }
         }
 
         @media (max-width: 480px) {
-            .login-card { padding: 30px 20px; }
-            .social-login { flex-direction: column; }
+            .login-card {
+                padding: 30px 20px;
+            }
+
+            .social-login {
+                flex-direction: column;
+            }
+
             .form-options {
                 flex-direction: column;
                 gap: 12px;
@@ -375,6 +398,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="bg-image"></div>
     <div class="bg-overlay"></div>
@@ -417,14 +441,14 @@
 
             <div class="login-form-wrapper">
                 <?php if (!empty($errors)): ?>
-                <div class="error-message">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <div>
-                        <?php foreach ($errors as $error): ?>
-                            <p><?= htmlspecialchars($error) ?></p>
-                        <?php endforeach; ?>
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <div>
+                            <?php foreach ($errors as $error): ?>
+                                <p><?= htmlspecialchars($error) ?></p>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
-                </div>
                 <?php endif; ?>
 
                 <form class="login-form" method="POST" action="/login">
@@ -479,4 +503,5 @@
         </div>
     </div>
 </body>
+
 </html>

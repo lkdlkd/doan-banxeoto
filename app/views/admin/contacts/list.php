@@ -12,8 +12,8 @@ $totalContacts = count($contacts);
 // Tính số lượng theo trạng thái
 $newCount = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'new') === 'new'));
 $unreadCount = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unread') === 'unread'));
-$readCount = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unread') === 'read'));
-$repliedCount = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unread') === 'replied'));
+$readCount = count(array_filter($contacts, fn($c) => isset($c['status']) && $c['status'] === 'read'));
+$repliedCount = count(array_filter($contacts, fn($c) => isset($c['status']) && $c['status'] === 'replied'));
 ?>
 <!DOCTYPE html>
 <html lang="vi">

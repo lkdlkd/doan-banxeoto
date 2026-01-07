@@ -20,12 +20,12 @@ class AppointmentController
     public function createAppointment()
     {
         SessionHelper::requireLogin();
-        
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: /cars');
             exit;
         }
-        
+
         $userId = $_SESSION['user_id'];
         $carId = $_POST['car_id'] ?? null;
         $appointmentDate = $_POST['appointment_date'] ?? null;
@@ -34,14 +34,14 @@ class AppointmentController
         $phone = $_POST['phone'] ?? '';
         $email = $_POST['email'] ?? '';
         $notes = $_POST['notes'] ?? '';
-        
+
         // Validate
         if (!$carId || !$appointmentDate || !$appointmentTime || !$fullName || !$phone) {
             $_SESSION['error'] = 'Vui lòng điền đầy đủ thông tin';
             header('Location: /appointment/book/' . $carId);
             exit;
         }
-        
+
         // Validate date (must be future)
         $today = date('Y-m-d');
         if ($appointmentDate < $today) {
@@ -49,14 +49,14 @@ class AppointmentController
             header('Location: /appointment/book/' . $carId);
             exit;
         }
-        
+
         // Check availability
         if (!$this->appointmentModel->checkAvailability($appointmentDate, $appointmentTime)) {
             $_SESSION['error'] = 'Khung giờ này đã đầy. Vui lòng chọn giờ khác';
             header('Location: /appointment/book/' . $carId);
             exit;
         }
-        
+
         // Lấy thông tin xe
         $car = $this->carModel->getById($carId);
         if (!$car) {
@@ -64,7 +64,7 @@ class AppointmentController
             header('Location: /cars');
             exit;
         }
-        
+
         // Tạo lịch hẹn
         $appointmentData = [
             'user_id' => $userId,
@@ -77,9 +77,9 @@ class AppointmentController
             'notes' => $notes,
             'status' => 'pending'
         ];
-        
+
         $appointmentId = $this->appointmentModel->create($appointmentData);
-        
+
         if ($appointmentId) {
             $_SESSION['success'] = 'Đặt lịch xem xe thành công! Chúng tôi sẽ liên hệ xác nhận với bạn sớm.';
             header('Location: /appointments');
@@ -94,31 +94,31 @@ class AppointmentController
     public function cancelAppointment($appointmentId)
     {
         SessionHelper::requireLogin();
-        
+
         $appointment = $this->appointmentModel->findById($appointmentId);
-        
+
         if (!$appointment) {
             $_SESSION['error'] = 'Lịch hẹn không tồn tại';
             header('Location: /appointments');
             exit;
         }
-        
+
         // Kiểm tra quyền hủy
         if ($appointment['user_id'] != $_SESSION['user_id']) {
             $_SESSION['error'] = 'Bạn không có quyền hủy lịch hẹn này';
             header('Location: /appointments');
             exit;
         }
-        
+
         // Chỉ cho phép hủy lịch hẹn pending
         if ($appointment['status'] !== 'pending') {
             $_SESSION['error'] = 'Không thể hủy lịch hẹn đã được xác nhận hoặc hoàn thành';
             header('Location: /appointments');
             exit;
         }
-        
+
         $this->appointmentModel->updateStatus($appointmentId, 'cancelled');
-        
+
         $_SESSION['success'] = 'Đã hủy lịch hẹn thành công';
         header('Location: /appointments');
         exit;
@@ -128,10 +128,10 @@ class AppointmentController
     public function showMyAppointments()
     {
         SessionHelper::requireLogin();
-        
+
         $userId = $_SESSION['user_id'];
         $appointments = $this->appointmentModel->getAppointmentsByUser($userId);
-        
+
         include __DIR__ . '/../views/user/appointments.php';
     }
 
@@ -148,23 +148,23 @@ class AppointmentController
     public function adminUpdateStatus($appointmentId, $status)
     {
         SessionHelper::requireAdmin();
-        
+
         $validStatuses = ['pending', 'confirmed', 'completed', 'cancelled'];
         if (!in_array($status, $validStatuses)) {
             $_SESSION['error'] = 'Trạng thái không hợp lệ';
             header('Location: ' . BASE_URL . '/admin/appointments');
             exit;
         }
-        
+
         $appointment = $this->appointmentModel->findById($appointmentId);
         if (!$appointment) {
             $_SESSION['error'] = 'Lịch hẹn không tồn tại';
             header('Location: ' . BASE_URL . '/admin/appointments');
             exit;
         }
-        
+
         $this->appointmentModel->updateStatus($appointmentId, $status);
-        
+
         $_SESSION['success'] = 'Đã cập nhật trạng thái lịch hẹn thành công';
         header('Location: ' . BASE_URL . '/admin/appointments');
         exit;
@@ -174,16 +174,16 @@ class AppointmentController
     public function adminDelete($appointmentId)
     {
         SessionHelper::requireAdmin();
-        
+
         $appointment = $this->appointmentModel->findById($appointmentId);
         if (!$appointment) {
             $_SESSION['error'] = 'Lịch hẹn không tồn tại';
             header('Location: ' . BASE_URL . '/admin/appointments');
             exit;
         }
-        
+
         $this->appointmentModel->delete($appointmentId);
-        
+
         $_SESSION['success'] = 'Đã xóa lịch hẹn thành công';
         header('Location: ' . BASE_URL . '/admin/appointments');
         exit;
@@ -193,15 +193,15 @@ class AppointmentController
     public function adminDetail($appointmentId)
     {
         SessionHelper::requireAdmin();
-        
+
         $appointment = $this->appointmentModel->getAppointmentWithDetails($appointmentId);
-        
+
         if (!$appointment) {
             $_SESSION['error'] = 'Lịch hẹn không tồn tại';
             header('Location: ' . BASE_URL . '/admin/appointments');
             exit;
         }
-        
+
         include __DIR__ . '/../views/admin/appointments/detail.php';
     }
 }

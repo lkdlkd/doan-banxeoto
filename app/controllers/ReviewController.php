@@ -23,32 +23,32 @@ class ReviewController
     public function showReviewForm($carId)
     {
         SessionHelper::requireLogin();
-        
+
         $userId = $_SESSION['user_id'];
-        
+
         // Kiểm tra user đã mua xe này chưa (đơn hàng confirmed hoặc completed)
         $hasPurchased = $this->checkUserPurchased($userId, $carId);
-        
+
         if (!$hasPurchased) {
             $_SESSION['error'] = 'Bạn chỉ có thể đánh giá xe đã mua';
             header('Location: ' . BASE_URL . '/car/' . $carId);
             exit;
         }
-        
+
         // Kiểm tra đã đánh giá chưa
         if ($this->reviewModel->hasUserReviewed($userId, $carId)) {
             $_SESSION['error'] = 'Bạn đã đánh giá xe này rồi';
             header('Location: ' . BASE_URL . '/car/' . $carId);
             exit;
         }
-        
+
         $car = $this->carModel->getById($carId);
         if (!$car) {
             $_SESSION['error'] = 'Xe không tồn tại';
             header('Location: ' . BASE_URL . '/cars');
             exit;
         }
-        
+
         include __DIR__ . '/../views/user/review_form.php';
     }
 
@@ -56,24 +56,24 @@ class ReviewController
     public function submitReview()
     {
         SessionHelper::requireLogin();
-        
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . BASE_URL . '/cars');
             exit;
         }
-        
+
         $userId = $_SESSION['user_id'];
         $carId = $_POST['car_id'] ?? null;
         $rating = $_POST['rating'] ?? null;
         $comment = $_POST['comment'] ?? '';
-        
+
         // Validate
         if (!$carId || !$rating) {
             $_SESSION['error'] = 'Vui lòng chọn số sao đánh giá';
             header('Location: ' . BASE_URL . '/review/create/' . $carId);
             exit;
         }
-        
+
         // Validate rating (1-5)
         $rating = intval($rating);
         if ($rating < 1 || $rating > 5) {
@@ -81,7 +81,7 @@ class ReviewController
             header('Location: ' . BASE_URL . '/review/create/' . $carId);
             exit;
         }
-        
+
         // Kiểm tra user đã mua xe này chưa
         $hasPurchased = $this->checkUserPurchased($userId, $carId);
         if (!$hasPurchased) {
@@ -89,14 +89,14 @@ class ReviewController
             header('Location: ' . BASE_URL . '/car/' . $carId);
             exit;
         }
-        
+
         // Kiểm tra đã đánh giá chưa
         if ($this->reviewModel->hasUserReviewed($userId, $carId)) {
             $_SESSION['error'] = 'Bạn đã đánh giá xe này rồi';
             header('Location: ' . BASE_URL . '/car/' . $carId);
             exit;
         }
-        
+
         // Tạo đánh giá
         $reviewData = [
             'user_id' => $userId,
@@ -104,9 +104,9 @@ class ReviewController
             'rating' => $rating,
             'comment' => $comment
         ];
-        
+
         $reviewId = $this->reviewModel->createReview($reviewData);
-        
+
         if ($reviewId) {
             $_SESSION['success'] = 'Cảm ơn bạn đã đánh giá!';
             header('Location: ' . BASE_URL . '/car/' . $carId);
@@ -127,24 +127,24 @@ class ReviewController
     public function deleteReview($reviewId)
     {
         SessionHelper::requireLogin();
-        
+
         $review = $this->reviewModel->getById($reviewId);
-        
+
         if (!$review) {
             $_SESSION['error'] = 'Đánh giá không tồn tại';
             header('Location: ' . BASE_URL . '/orders');
             exit;
         }
-        
+
         // Kiểm tra quyền xóa
         if ($review['user_id'] != $_SESSION['user_id']) {
             $_SESSION['error'] = 'Bạn không có quyền xóa đánh giá này';
             header('Location: ' . BASE_URL . '/car/' . $review['car_id']);
             exit;
         }
-        
+
         $this->reviewModel->delete($reviewId);
-        
+
         $_SESSION['success'] = 'Đã xóa đánh giá thành công';
         header('Location: ' . BASE_URL . '/car/' . $review['car_id']);
         exit;
@@ -156,17 +156,55 @@ class ReviewController
     public function adminDelete($reviewId)
     {
         SessionHelper::requireAdmin();
-        
+
         $review = $this->reviewModel->getById($reviewId);
         if (!$review) {
             $_SESSION['error'] = 'Đánh giá không tồn tại';
             header('Location: ' . BASE_URL . '/admin/reviews');
             exit;
         }
-        
+
         $this->reviewModel->delete($reviewId);
-        
+
         $_SESSION['success'] = 'Đã xóa đánh giá thành công';
+        header('Location: ' . BASE_URL . '/admin/reviews');
+        exit;
+    }
+
+    // Phản hồi đánh giá (Admin)
+    public function adminReply()
+    {
+        SessionHelper::requireAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . '/admin/reviews');
+            exit;
+        }
+
+        $reviewId = $_POST['review_id'] ?? null;
+        $replyContent = trim($_POST['reply_content'] ?? '');
+
+        if (!$reviewId || empty($replyContent)) {
+            $_SESSION['error'] = 'Vui lòng nhập nội dung phản hồi';
+            header('Location: ' . BASE_URL . '/admin/reviews');
+            exit;
+        }
+
+        $review = $this->reviewModel->getById($reviewId);
+        if (!$review) {
+            $_SESSION['error'] = 'Đánh giá không tồn tại';
+            header('Location: ' . BASE_URL . '/admin/reviews');
+            exit;
+        }
+
+        $result = $this->reviewModel->addReply($reviewId, $replyContent);
+
+        if ($result) {
+            $_SESSION['success'] = 'Đã phản hồi đánh giá thành công';
+        } else {
+            $_SESSION['error'] = 'Có lỗi xảy ra. Vui lòng thử lại.';
+        }
+
         header('Location: ' . BASE_URL . '/admin/reviews');
         exit;
     }

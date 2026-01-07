@@ -1,5 +1,7 @@
-<?php 
-if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.php'; }
+<?php
+if (!defined('BASE_URL')) {
+    require_once __DIR__ . '/../../../../config/config.php';
+}
 
 // Lấy thông báo từ session
 $message = $_SESSION['success'] ?? $_SESSION['error'] ?? '';
@@ -10,6 +12,7 @@ unset($_SESSION['success'], $_SESSION['error']);
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,8 +24,10 @@ unset($_SESSION['success'], $_SESSION['error']);
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-categories.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-modal.css">
 </head>
+
 <body>
-    <?php $activePage = 'categories'; include __DIR__ . '/../layouts/sidebar.php'; ?>
+    <?php $activePage = 'categories';
+    include __DIR__ . '/../layouts/sidebar.php'; ?>
 
     <main class="admin-main">
         <header class="admin-header">
@@ -62,61 +67,61 @@ unset($_SESSION['success'], $_SESSION['error']);
             </div>
 
             <?php if ($totalCategories === 0): ?>
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <i class="fas fa-tags"></i>
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h3>Chưa có danh mục nào</h3>
+                    <p>Bắt đầu thêm danh mục để phân loại các dòng xe.</p>
+                    <button class="btn btn-primary" onclick="openAddModal()">
+                        <i class="fas fa-plus"></i> Thêm danh mục đầu tiên
+                    </button>
                 </div>
-                <h3>Chưa có danh mục nào</h3>
-                <p>Bắt đầu thêm danh mục để phân loại các dòng xe.</p>
-                <button class="btn btn-primary" onclick="openAddModal()">
-                    <i class="fas fa-plus"></i> Thêm danh mục đầu tiên
-                </button>
-            </div>
             <?php else: ?>
-            <!-- Categories Table -->
-            <div class="card">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 80px;">Icon</th>
-                            <th>Tên danh mỦc</th>
-                            <th>Mô tả</th>
-                            <th style="width: 120px; text-align: center;">Số xe</th>
-                            <th style="width: 120px; text-align: center;">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($categories as $cat): ?>
-                        <tr>
-                            <td>
-                                <div class="table-icon">
-                                    <i class="fas fa-tags"></i>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="table-category-name"><?= htmlspecialchars($cat['name']) ?></div>
-                            </td>
-                            <td>
-                                <div class="table-desc"><?= htmlspecialchars($cat['description'] ?? 'Chưa có mô tả') ?></div>
-                            </td>
-                            <td style="text-align: center;">
-                                <span class="table-badge"><?= $cat['car_count'] ?> xe</span>
-                            </td>
-                            <td>
-                                <div class="table-actions">
-                                    <button class="table-action edit" onclick="openEditModal(<?= htmlspecialchars(json_encode($cat)) ?>)" title="Chỉnh sửa">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="table-action delete" onclick="openDeleteModal(<?= $cat['id'] ?>, '<?= addslashes($cat['name']) ?>')" title="Xóa">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+                <!-- Categories Table -->
+                <div class="card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">Icon</th>
+                                <th>Tên danh mỦc</th>
+                                <th>Mô tả</th>
+                                <th style="width: 120px; text-align: center;">Số xe</th>
+                                <th style="width: 120px; text-align: center;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($categories as $cat): ?>
+                                <tr>
+                                    <td>
+                                        <div class="table-icon">
+                                            <i class="fas fa-tags"></i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="table-category-name"><?= htmlspecialchars($cat['name']) ?></div>
+                                    </td>
+                                    <td>
+                                        <div class="table-desc"><?= htmlspecialchars($cat['description'] ?? 'Chưa có mô tả') ?></div>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <span class="table-badge"><?= $cat['car_count'] ?> xe</span>
+                                    </td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <button class="table-action edit" onclick="openEditModal(<?= htmlspecialchars(json_encode($cat)) ?>)" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="table-action delete" onclick="openDeleteModal(<?= $cat['id'] ?>, '<?= addslashes($cat['name']) ?>')" title="Xóa">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             <?php endif; ?>
         </div>
     </main>
@@ -131,19 +136,19 @@ unset($_SESSION['success'], $_SESSION['error']);
             <form id="categoryForm" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="action" id="formAction" value="add">
                 <input type="hidden" name="id" id="categoryId">
-                
+
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Tên danh mục <span class="required">*</span></label>
                         <input type="text" name="name" id="categoryName" required placeholder="VD: Sedan, SUV, Coupe...">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Mô tả</label>
                         <textarea name="description" id="categoryDescription" rows="5" placeholder="Mô tả chi tiết về danh mục xe..."></textarea>
                     </div>
                 </div>
-                
+
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeModal('categoryModal')">
                         <i class="fas fa-times"></i> Hủy
@@ -183,20 +188,20 @@ unset($_SESSION['success'], $_SESSION['error']);
 
     <!-- Toast Notification -->
     <?php if ($message): ?>
-    <div class="toast <?= $messageType ?>" id="toast">
-        <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
-        <span><?= htmlspecialchars($message) ?></span>
-    </div>
+        <div class="toast <?= $messageType ?>" id="toast">
+            <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
+            <span><?= htmlspecialchars($message) ?></span>
+        </div>
     <?php endif; ?>
 
     <script>
         // Show toast notification
         <?php if ($message): ?>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toast = document.getElementById('toast');
-            setTimeout(() => toast.classList.add('show'), 100);
-            setTimeout(() => toast.classList.remove('show'), 4000);
-        });
+            document.addEventListener('DOMContentLoaded', function() {
+                const toast = document.getElementById('toast');
+                setTimeout(() => toast.classList.add('show'), 100);
+                setTimeout(() => toast.classList.remove('show'), 4000);
+            });
         <?php endif; ?>
 
         // Open Add Modal
@@ -252,4 +257,5 @@ unset($_SESSION['success'], $_SESSION['error']);
         });
     </script>
 </body>
+
 </html>

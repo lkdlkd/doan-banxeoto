@@ -23,7 +23,7 @@ class BrandModel extends BaseModel
                 LEFT JOIN cars c ON b.id = c.brand_id 
                 GROUP BY b.id 
                 ORDER BY b.name ASC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll();
@@ -48,7 +48,7 @@ class BrandModel extends BaseModel
             $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM {$this->table} WHERE name = ?");
             $stmt->execute([$name]);
         }
-        
+
         $result = $stmt->fetch();
         return $result['total'] > 0;
     }

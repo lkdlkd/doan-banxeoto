@@ -15,7 +15,7 @@ class ReviewModel extends BaseModel
                 LEFT JOIN users u ON r.user_id = u.id 
                 WHERE r.car_id = ? 
                 ORDER BY r.created_at DESC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$carId]);
         return $stmt->fetchAll();
@@ -33,7 +33,7 @@ class ReviewModel extends BaseModel
                 WHERE r.user_id = ? 
                 GROUP BY r.id 
                 ORDER BY r.created_at DESC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$userId]);
         return $stmt->fetchAll();
@@ -52,7 +52,7 @@ class ReviewModel extends BaseModel
                 LEFT JOIN users u ON r.user_id = u.id 
                 GROUP BY r.id 
                 ORDER BY r.created_at DESC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll();
@@ -93,7 +93,7 @@ class ReviewModel extends BaseModel
                 LEFT JOIN users u ON r.user_id = u.id 
                 WHERE r.car_id = ? AND r.rating = ? 
                 ORDER BY r.created_at DESC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$carId, $rating]);
         return $stmt->fetchAll();
@@ -103,5 +103,26 @@ class ReviewModel extends BaseModel
     public function getByCarId($carId)
     {
         return $this->getReviewsByCar($carId);
+    }
+
+    // Thêm phản hồi của admin
+    public function addReply($reviewId, $replyContent)
+    {
+        $sql = "UPDATE {$this->table} SET admin_reply = ?, replied_at = NOW() WHERE id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$replyContent, $reviewId]);
+    }
+
+    // Lấy review theo ID
+    public function getById($id)
+    {
+        $sql = "SELECT r.*, c.name as car_name, u.full_name as user_name, u.email as user_email 
+                FROM {$this->table} r 
+                LEFT JOIN cars c ON r.car_id = c.id 
+                LEFT JOIN users u ON r.user_id = u.id 
+                WHERE r.id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch();
     }
 }

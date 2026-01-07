@@ -1,5 +1,7 @@
-<?php 
-if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.php'; }
+<?php
+if (!defined('BASE_URL')) {
+    require_once __DIR__ . '/../../../../config/config.php';
+}
 
 // Load models
 require_once __DIR__ . '/../../../models/ReviewModel.php';
@@ -22,6 +24,7 @@ $cars = $carModel->getAll();
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,8 +36,10 @@ $cars = $carModel->getAll();
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-reviews.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-modal.css">
 </head>
+
 <body>
-    <?php $activePage = 'reviews'; include __DIR__ . '/../layouts/sidebar.php'; ?>
+    <?php $activePage = 'reviews';
+    include __DIR__ . '/../layouts/sidebar.php'; ?>
 
     <main class="admin-main">
         <header class="admin-header">
@@ -86,7 +91,8 @@ $cars = $carModel->getAll();
                     <div class="stat-info">
                         <h3><?= $totalReviews - $positiveReviews ?></h3>
                         <p>Đánh giá thấp</p>
-                        <span class="stat-detail"><i class="fas fa-frown"></i> < 4 sao</span>
+                        <span class="stat-detail"><i class="fas fa-frown"></i>
+                            < 4 sao</span>
                     </div>
                 </div>
             </div>
@@ -104,6 +110,14 @@ $cars = $carModel->getAll();
                         <option value="1">⭐ 1 sao</option>
                     </select>
                 </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-reply"></i> Trạng thái</label>
+                    <select id="filterReply">
+                        <option value="">Tất cả</option>
+                        <option value="replied">Đã trả lời</option>
+                        <option value="pending">Chưa trả lời</option>
+                    </select>
+                </div>
                 <div class="filter-search">
                     <i class="fas fa-search"></i>
                     <input type="text" id="searchReview" placeholder="Tìm theo khách hàng, xe, nội dung...">
@@ -111,194 +125,217 @@ $cars = $carModel->getAll();
             </div>
 
             <?php if ($totalReviews === 0): ?>
-            <!-- Empty State -->
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <i class="fas fa-comment-slash"></i>
+                <!-- Empty State -->
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-comment-slash"></i>
+                    </div>
+                    <h3>Chưa có đánh giá nào</h3>
+                    <p>Hiện tại chưa có khách hàng nào gửi đánh giá. Các đánh giá sẽ xuất hiện ở đây khi khách hàng đánh giá xe.</p>
                 </div>
-                <h3>Chưa có đánh giá nào</h3>
-                <p>Hiện tại chưa có khách hàng nào gửi đánh giá. Các đánh giá sẽ xuất hiện ở đây khi khách hàng đánh giá xe.</p>
-            </div>
             <?php else: ?>
-            <!-- Reviews Table -->
-            <div class="table-container">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 80px;">Mã ĐG</th>
-                            <th>Khách hàng</th>
-                            <th>Xe</th>
-                            <th style="width: 140px;">Đánh giá</th>
-                            <th style="width: 130px;">Ngày đánh giá</th>
-                            <th style="width: 130px; text-align: center;">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($reviews as $review): ?>
-                        <tr data-rating="<?= $review['rating'] ?>">
-                            <td><span class="order-id">#<?= str_pad($review['id'], 4, '0', STR_PAD_LEFT) ?></span></td>
-                            <td>
-                                <div style="display: flex; flex-direction: column; gap: 4px;">
-                                    <strong style="font-size: 14px; color: var(--gray-900);"><?= htmlspecialchars($review['user_name'] ?? 'Khách hàng') ?></strong>
-                                    <span style="font-size: 12px; color: var(--gray-500);"><?= htmlspecialchars($review['user_email'] ?? '') ?></span>
-                                </div>
-                            </td>
-                            <td>
-                                <div style="display: flex; flex-direction: column; gap: 4px;">
-                                    <a href="<?= BASE_URL ?>/car/detail/<?= $review['car_id'] ?>" target="_blank" style="font-size: 14px; color: var(--primary); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;" title="Xem chi tiết xe">
-                                        <span style="overflow: hidden; text-overflow: ellipsis; max-width: 180px;"><?= htmlspecialchars($review['car_name'] ?? 'Xe') ?></span>
-                                        <i class="fas fa-external-link-alt" style="font-size: 10px; flex-shrink: 0;"></i>
-                                    </a>
-                                    <span style="font-size: 12px; color: var(--gray-500);"><?= htmlspecialchars($review['brand_name'] ?? '') ?></span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="review-rating" style="display: flex; gap: 3px; font-size: 14px;">
-                                    <?php for ($i = 1; $i <= 5; $i++): ?>
-                                        <i class="fas fa-star" style="color: <?= $i <= $review['rating'] ? '#f59e0b' : '#e5e7eb' ?>;"></i>
-                                    <?php endfor; ?>
-                                    <span style="margin-left: 6px; font-weight: 600; color: var(--gray-900);"><?= $review['rating'] ?>.0</span>
-                                </div>
-                            </td>
-                            <td>
-                                <span style="font-size: 13px; color: var(--gray-600);"><?= date('d/m/Y', strtotime($review['created_at'])) ?></span>
-                                <br>
-                                <span style="font-size: 12px; color: var(--gray-400);"><?= date('H:i', strtotime($review['created_at'])) ?></span>
-                            </td>
-                            <td>
-                                <div class="table-actions" style="display: flex; gap: 6px; justify-content: center;">
-                                    <button class="action-btn" onclick="toggleReviewDetail(<?= $review['id'] ?>)" title="Xem chi tiết">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="action-btn" onclick="toggleReplyForm(<?= $review['id'] ?>)" title="Trả lời đánh giá">
-                                        <i class="fas fa-reply"></i>
-                                    </button>
-                                    <button class="action-btn" onclick='confirmDelete(<?= $review["id"] ?>, <?= json_encode($review["user_name"] ?? "Khách hàng") ?>)' title="Xóa đánh giá">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <!-- Expandable Detail Row -->
-                        <tr id="detail-<?= $review['id'] ?>" class="expandable-row" style="display: none;">
-                            <td colspan="6" style="padding: 0;">
-                                <div style="background: linear-gradient(135deg, #fafbfc 0%, #ffffff 100%); padding: 32px; margin: 8px 16px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); border: 1px solid rgba(212, 175, 55, 0.2);">
-                                    <!-- Header Section -->
-                                    <div style="display: flex; align-items: center; gap: 16px; padding-bottom: 24px; border-bottom: 2px solid #f3f4f6; margin-bottom: 24px;">
-                                        <div style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, #D4AF37, #B8960B); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);">
-                                            <i class="fas fa-user-circle" style="font-size: 36px; color: white;"></i>
+                <!-- Reviews Table -->
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 70px;">Mã ĐG</th>
+                                <th style="width: 150px;">Khách hàng</th>
+                                <th style="width: 150px;">Xe</th>
+                                <th style="width: 110px;">Đánh giá</th>
+                                <th>Nội dung</th>
+                                <th style="width: 90px; text-align: center;">Trả lời</th>
+                                <th style="width: 90px;">Ngày</th>
+                                <th style="width: 110px; text-align: center;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($reviews as $review):
+                                $hasReply = !empty($review['admin_reply']);
+                            ?>
+                                <tr data-rating="<?= $review['rating'] ?>" data-replied="<?= $hasReply ? 'replied' : 'pending' ?>">
+                                    <td><span class="order-id">#<?= str_pad($review['id'], 4, '0', STR_PAD_LEFT) ?></span></td>
+                                    <td>
+                                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                                            <strong style="font-size: 14px; color: var(--gray-900);"><?= htmlspecialchars($review['user_name'] ?? 'Khách hàng') ?></strong>
+                                            <span style="font-size: 12px; color: var(--gray-500);"><?= htmlspecialchars($review['user_email'] ?? '') ?></span>
                                         </div>
-                                        <div style="flex: 1;">
-                                            <strong style="font-size: 18px; color: #1f2937; display: block; margin-bottom: 6px; font-weight: 700;"><?= htmlspecialchars($review['user_name'] ?? 'Khách hàng') ?></strong>
-                                            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-                                                <span style="font-size: 14px; color: #6b7280; display: inline-flex; align-items: center; gap: 6px;">
-                                                    <i class="fas fa-car" style="color: #D4AF37;"></i>
-                                                    <strong style="color: #374151;"><?= htmlspecialchars($review['car_name'] ?? 'Xe') ?></strong>
-                                                </span>
-                                                <span style="font-size: 13px; color: #9ca3af; display: inline-flex; align-items: center; gap: 6px;">
-                                                    <i class="far fa-clock"></i>
-                                                    <?= date('d/m/Y H:i', strtotime($review['created_at'])) ?>
-                                                </span>
-                                            </div>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                                            <a href="<?= BASE_URL ?>/car/detail/<?= $review['car_id'] ?>" target="_blank" style="font-size: 14px; color: var(--primary); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;" title="Xem chi tiết xe">
+                                                <span style="overflow: hidden; text-overflow: ellipsis; max-width: 180px;"><?= htmlspecialchars($review['car_name'] ?? 'Xe') ?></span>
+                                                <i class="fas fa-external-link-alt" style="font-size: 10px; flex-shrink: 0;"></i>
+                                            </a>
+                                            <span style="font-size: 12px; color: var(--gray-500);"><?= htmlspecialchars($review['brand_name'] ?? '') ?></span>
                                         </div>
-                                    </div>
-                                    
-                                    <!-- Rating Section -->
-                                    <div style="text-align: center; padding: 28px; background: linear-gradient(135deg, #ffffff 0%, #fefcf7 100%); border-radius: 16px; margin-bottom: 24px; box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04); border: 2px solid #f9fafb;">
-                                        <div style="display: inline-flex; gap: 10px; font-size: 32px; margin-bottom: 12px;">
+                                    </td>
+                                    <td>
+                                        <div class="review-rating" style="display: flex; gap: 3px; font-size: 14px;">
                                             <?php for ($i = 1; $i <= 5; $i++): ?>
-                                                <i class="fas fa-star" style="color: <?= $i <= $review['rating'] ? '#f59e0b' : '#e5e7eb' ?>; transition: all 0.3s ease; filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.3));"></i>
+                                                <i class="fas fa-star" style="color: <?= $i <= $review['rating'] ? '#f59e0b' : '#e5e7eb' ?>;"></i>
                                             <?php endfor; ?>
+                                            <span style="margin-left: 6px; font-weight: 600; color: var(--gray-900);"><?= $review['rating'] ?>.0</span>
                                         </div>
-                                        <div style="font-size: 20px; font-weight: 700; color: #1f2937; margin-bottom: 4px;"><?= $review['rating'] ?>.0<span style="font-size: 16px; color: #9ca3af; font-weight: 600;">/5.0</span></div>
-                                        <div style="font-size: 13px; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Đánh giá của khách hàng</div>
-                                    </div>
-                                    
-                                    <!-- Comment Section -->
-                                    <div>
-                                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                                            <div style="width: 4px; height: 20px; background: linear-gradient(135deg, #D4AF37, #B8960B); border-radius: 2px;"></div>
-                                            <label style="font-size: 15px; font-weight: 700; color: #374151; margin: 0;">
-                                                <i class="fas fa-comment-alt" style="color: #D4AF37; margin-right: 6px;"></i> Nội dung đánh giá
-                                            </label>
+                                    </td>
+                                    <td>
+                                        <div style="max-width: 300px; font-size: 13px; color: var(--gray-700); line-height: 1.5;">
+                                            <?php
+                                            $comment = $review['comment'] ?? '';
+                                            if (strlen($comment) > 150) {
+                                                echo htmlspecialchars(substr($comment, 0, 150)) . '...';
+                                            } else {
+                                                echo htmlspecialchars($comment);
+                                            }
+                                            ?>
                                         </div>
-                                        <div style="padding: 20px 24px; background: white; border-radius: 12px; border: 2px solid #f3f4f6; position: relative; overflow: hidden;">
-                                            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(135deg, #D4AF37, #B8960B);"></div>
-                                            <p style="margin: 0; font-size: 15px; color: #374151; line-height: 1.8; white-space: pre-wrap;"><?= htmlspecialchars($review['comment']) ?></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <!-- Expandable Reply Row -->
-                        <tr id="reply-<?= $review['id'] ?>" class="expandable-row" style="display: none;">
-                            <td colspan="6" style="padding: 0;">
-                                <div style="background: linear-gradient(135deg, #fafbfc 0%, #ffffff 100%); padding: 32px; margin: 8px 16px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); border: 1px solid rgba(212, 175, 55, 0.2);">
-                                    <form method="POST" action="<?= BASE_URL ?>/admin/reviews/reply">
-                                        <!-- Reply Header -->
-                                        <div style="display: flex; align-items: center; gap: 16px; padding: 20px 24px; background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border-radius: 12px; margin-bottom: 24px; border: 2px solid #d1fae5;">
-                                            <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #10b981, #059669); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
-                                                <i class="fas fa-reply" style="font-size: 20px; color: white;"></i>
-                                            </div>
-                                            <div style="flex: 1;">
-                                                <div style="font-size: 16px; font-weight: 700; color: #1f2937; margin-bottom: 4px;">
-                                                    Trả lời đánh giá của <span style="color: #059669;"><?= htmlspecialchars($review['user_name'] ?? 'Khách hàng') ?></span>
-                                                </div>
-                                                <div style="font-size: 13px; color: #6b7280;">
-                                                    <i class="fas fa-car" style="color: #10b981; margin-right: 4px;"></i>
-                                                    Đánh giá về: <strong style="color: #374151;"><?= htmlspecialchars($review['car_name'] ?? 'Xe') ?></strong>
-                                                    <span style="margin: 0 8px; color: #d1d5db;">•</span>
-                                                    <i class="fas fa-star" style="color: #f59e0b; margin-right: 4px;"></i>
-                                                    <strong style="color: #374151;"><?= $review['rating'] ?>.0/5.0</strong>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <input type="hidden" name="review_id" value="<?= $review['id'] ?>">
-                                        
-                                        <!-- Form Group -->
-                                        <div style="margin-bottom: 24px;">
-                                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                                                <div style="width: 4px; height: 20px; background: linear-gradient(135deg, #D4AF37, #B8960B); border-radius: 2px;"></div>
-                                                <label for="replyContent-<?= $review['id'] ?>" style="font-size: 15px; font-weight: 700; color: #374151; margin: 0;">
-                                                    <i class="fas fa-comment-dots" style="color: #D4AF37; margin-right: 6px;"></i> Nội dung trả lời
-                                                </label>
-                                            </div>
-                                            <textarea 
-                                                id="replyContent-<?= $review['id'] ?>" 
-                                                name="reply_content" 
-                                                rows="6" 
-                                                required 
-                                                placeholder="Nhập nội dung trả lời cho khách hàng...&#10;&#10;Ví dụ: Cảm ơn quý khách đã tin tưởng và đánh giá cao dịch vụ của AutoCar. Chúng tôi rất vui khi..." 
-                                                style="width: 100%; padding: 16px 20px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 14px; font-family: inherit; resize: vertical; transition: all 0.3s ease; line-height: 1.6;"
-                                                onfocus="this.style.borderColor='#D4AF37'; this.style.boxShadow='0 0 0 3px rgba(212, 175, 55, 0.1)';" 
-                                                onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none';"
-                                            ></textarea>
-                                            <div style="margin-top: 10px; padding: 12px 16px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 8px; border-left: 3px solid #3b82f6;">
-                                                <small style="color: #1e40af; font-size: 13px; display: flex; align-items: center; gap: 8px; font-weight: 500;">
-                                                    <i class="fas fa-info-circle" style="font-size: 16px;"></i>
-                                                    <span>Trả lời của bạn sẽ được gửi qua email đến <strong><?= htmlspecialchars($review['user_email'] ?? 'khách hàng') ?></strong></span>
-                                                </small>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Form Actions -->
-                                        <div style="display: flex; gap: 12px; justify-content: flex-end; padding-top: 20px; border-top: 2px solid #f3f4f6;">
-                                            <button type="button" class="btn-secondary" onclick="toggleReplyForm(<?= $review['id'] ?>)" style="padding: 12px 24px; border: 2px solid #e5e7eb; background: white; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; color: #6b7280;" onmouseover="this.style.borderColor='#d1d5db'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.1)';" onmouseout="this.style.borderColor='#e5e7eb'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-                                                <i class="fas fa-times"></i> Hủy
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <?php if ($hasReply): ?>
+                                            <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(16, 185, 129, 0.1); color: #059669; border-radius: 20px; font-size: 11px; font-weight: 600;">
+                                                <i class="fas fa-check-circle"></i> Đã TL
+                                            </span>
+                                        <?php else: ?>
+                                            <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(245, 158, 11, 0.1); color: #d97706; border-radius: 20px; font-size: 11px; font-weight: 600;">
+                                                <i class="fas fa-clock"></i> Chờ TL
+                                            </span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <span style="font-size: 13px; color: var(--gray-600);"><?= date('d/m/Y', strtotime($review['created_at'])) ?></span>
+                                        <br>
+                                        <span style="font-size: 12px; color: var(--gray-400);"><?= date('H:i', strtotime($review['created_at'])) ?></span>
+                                    </td>
+                                    <td>
+                                        <div class="table-actions" style="display: flex; gap: 6px; justify-content: center;">
+                                            <button class="action-btn" onclick="toggleReviewDetail(<?= $review['id'] ?>)" title="Xem chi tiết">
+                                                <i class="fas fa-eye"></i>
                                             </button>
-                                            <button type="submit" style="padding: 12px 28px; border: none; background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(16, 185, 129, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129, 0.3)';">
-                                                <i class="fas fa-paper-plane"></i> Gửi trả lời
+                                            <button class="action-btn" onclick="toggleReplyForm(<?= $review['id'] ?>)" title="Phản hồi đánh giá">
+                                                <i class="fas fa-reply"></i>
+                                            </button>
+                                            <a href="<?= BASE_URL ?>/car/<?= $review['car_id'] ?>#reviews" class="action-btn" title="Xem xe" target="_blank">
+                                                <i class="fas fa-car"></i>
+                                            </a>
+                                            <button class="action-btn" onclick='confirmDelete(<?= $review["id"] ?>, <?= json_encode($review["user_name"] ?? "Khách hàng") ?>)' title="Xóa">
+                                                <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+                                    </td>
+                                </tr>
+                                <!-- Expandable Detail Row -->
+                                <tr id="detail-<?= $review['id'] ?>" class="expandable-row" style="display: none;">
+                                    <td colspan="8" style="padding: 0;">
+                                        <div style="background: linear-gradient(135deg, #fafbfc 0%, #ffffff 100%); padding: 32px; margin: 8px 16px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); border: 1px solid rgba(212, 175, 55, 0.2);">
+                                            <!-- Header Section -->
+                                            <div style="display: flex; align-items: center; gap: 16px; padding-bottom: 24px; border-bottom: 2px solid #f3f4f6; margin-bottom: 24px;">
+                                                <div style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, #D4AF37, #B8960B); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);">
+                                                    <i class="fas fa-user-circle" style="font-size: 36px; color: white;"></i>
+                                                </div>
+                                                <div style="flex: 1;">
+                                                    <strong style="font-size: 18px; color: #1f2937; display: block; margin-bottom: 6px; font-weight: 700;"><?= htmlspecialchars($review['user_name'] ?? 'Khách hàng') ?></strong>
+                                                    <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                                                        <span style="font-size: 14px; color: #6b7280; display: inline-flex; align-items: center; gap: 6px;">
+                                                            <i class="fas fa-car" style="color: #D4AF37;"></i>
+                                                            <strong style="color: #374151;"><?= htmlspecialchars($review['car_name'] ?? 'Xe') ?></strong>
+                                                        </span>
+                                                        <span style="font-size: 13px; color: #9ca3af; display: inline-flex; align-items: center; gap: 6px;">
+                                                            <i class="far fa-clock"></i>
+                                                            <?= date('d/m/Y H:i', strtotime($review['created_at'])) ?>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Rating Section -->
+                                            <div style="text-align: center; padding: 28px; background: linear-gradient(135deg, #ffffff 0%, #fefcf7 100%); border-radius: 16px; margin-bottom: 24px; box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04); border: 2px solid #f9fafb;">
+                                                <div style="display: inline-flex; gap: 10px; font-size: 32px; margin-bottom: 12px;">
+                                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                                        <i class="fas fa-star" style="color: <?= $i <= $review['rating'] ? '#f59e0b' : '#e5e7eb' ?>; transition: all 0.3s ease; filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.3));"></i>
+                                                    <?php endfor; ?>
+                                                </div>
+                                                <div style="font-size: 20px; font-weight: 700; color: #1f2937; margin-bottom: 4px;"><?= $review['rating'] ?>.0<span style="font-size: 16px; color: #9ca3af; font-weight: 600;">/5.0</span></div>
+                                                <div style="font-size: 13px; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Đánh giá của khách hàng</div>
+                                            </div>
+
+                                            <!-- Comment Section -->
+                                            <div>
+                                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                                                    <div style="width: 4px; height: 20px; background: linear-gradient(135deg, #D4AF37, #B8960B); border-radius: 2px;"></div>
+                                                    <label style="font-size: 15px; font-weight: 700; color: #374151; margin: 0;">
+                                                        <i class="fas fa-comment-alt" style="color: #D4AF37; margin-right: 6px;"></i> Nội dung đánh giá
+                                                    </label>
+                                                </div>
+                                                <div style="padding: 20px 24px; background: white; border-radius: 12px; border: 2px solid #f3f4f6; position: relative; overflow: hidden;">
+                                                    <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(135deg, #D4AF37, #B8960B);"></div>
+                                                    <p style="margin: 0; font-size: 15px; color: #374151; line-height: 1.8; white-space: pre-wrap;"><?= htmlspecialchars($review['comment']) ?></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- Expandable Reply Row -->
+                                <tr id="reply-<?= $review['id'] ?>" class="expandable-row" style="display: none;">
+                                    <td colspan="7" style="padding: 0;">
+                                        <div style="background: linear-gradient(135deg, #fafbfc 0%, #ffffff 100%); padding: 32px; margin: 8px 16px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); border: 1px solid rgba(212, 175, 55, 0.2);">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/reviews/reply">
+                                                <!-- Reply Header -->
+                                                <div style="display: flex; align-items: center; gap: 16px; padding: 20px 24px; background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border-radius: 12px; margin-bottom: 24px; border: 2px solid #d1fae5;">
+                                                    <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #10b981, #059669); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+                                                        <i class="fas fa-reply" style="font-size: 20px; color: white;"></i>
+                                                    </div>
+                                                    <div style="flex: 1;">
+                                                        <div style="font-size: 16px; font-weight: 700; color: #1f2937; margin-bottom: 4px;">
+                                                            Trả lời đánh giá của <span style="color: #059669;"><?= htmlspecialchars($review['user_name'] ?? 'Khách hàng') ?></span>
+                                                        </div>
+                                                        <div style="font-size: 13px; color: #6b7280;">
+                                                            <i class="fas fa-car" style="color: #10b981; margin-right: 4px;"></i>
+                                                            Đánh giá về: <strong style="color: #374151;"><?= htmlspecialchars($review['car_name'] ?? 'Xe') ?></strong>
+                                                            <span style="margin: 0 8px; color: #d1d5db;">•</span>
+                                                            <i class="fas fa-star" style="color: #f59e0b; margin-right: 4px;"></i>
+                                                            <strong style="color: #374151;"><?= $review['rating'] ?>.0/5.0</strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <input type="hidden" name="review_id" value="<?= $review['id'] ?>">
+
+                                                <!-- Form Group -->
+                                                <div style="margin-bottom: 24px;">
+                                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                                                        <div style="width: 4px; height: 20px; background: linear-gradient(135deg, #D4AF37, #B8960B); border-radius: 2px;"></div>
+                                                        <label for="replyContent-<?= $review['id'] ?>" style="font-size: 15px; font-weight: 700; color: #374151; margin: 0;">
+                                                            <i class="fas fa-comment-dots" style="color: #D4AF37; margin-right: 6px;"></i> Nội dung trả lời
+                                                        </label>
+                                                    </div>
+                                                    <textarea
+                                                        id="replyContent-<?= $review['id'] ?>"
+                                                        name="reply_content"
+                                                        rows="6"
+                                                        required
+                                                        placeholder="Nhập nội dung trả lời cho khách hàng...&#10;&#10;Ví dụ: Cảm ơn quý khách đã tin tưởng và đánh giá cao dịch vụ của AutoCar. Chúng tôi rất vui khi..."
+                                                        style="width: 100%; padding: 16px 20px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 14px; font-family: inherit; resize: vertical; transition: all 0.3s ease; line-height: 1.6;"
+                                                        onfocus="this.style.borderColor='#D4AF37'; this.style.boxShadow='0 0 0 3px rgba(212, 175, 55, 0.1)';"
+                                                        onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none';"></textarea>
+                                                </div>
+
+                                                <!-- Form Actions -->
+                                                <div style="display: flex; gap: 12px; justify-content: flex-end; padding-top: 20px; border-top: 2px solid #f3f4f6;">
+                                                    <button type="button" class="btn-secondary" onclick="toggleReplyForm(<?= $review['id'] ?>)" style="padding: 12px 24px; border: 2px solid #e5e7eb; background: white; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; color: #6b7280;" onmouseover="this.style.borderColor='#d1d5db'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.1)';" onmouseout="this.style.borderColor='#e5e7eb'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                                        <i class="fas fa-times"></i> Hủy
+                                                    </button>
+                                                    <button type="submit" style="padding: 12px 28px; border: none; background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(16, 185, 129, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129, 0.3)';">
+                                                        <i class="fas fa-paper-plane"></i> Gửi trả lời
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             <?php endif; ?>
         </div>
     </main>
@@ -356,12 +393,12 @@ $cars = $carModel->getAll();
         function toggleReviewDetail(reviewId) {
             const detailRow = document.getElementById('detail-' + reviewId);
             const replyRow = document.getElementById('reply-' + reviewId);
-            
+
             // Close reply form if open
             if (replyRow.style.display !== 'none') {
                 replyRow.style.display = 'none';
             }
-            
+
             // Toggle detail row
             if (detailRow.style.display === 'none') {
                 // Close all other detail rows
@@ -377,12 +414,12 @@ $cars = $carModel->getAll();
         function toggleReplyForm(reviewId) {
             const replyRow = document.getElementById('reply-' + reviewId);
             const detailRow = document.getElementById('detail-' + reviewId);
-            
+
             // Close detail view if open
             if (detailRow.style.display !== 'none') {
                 detailRow.style.display = 'none';
             }
-            
+
             // Toggle reply form
             if (replyRow.style.display === 'none') {
                 // Close all other expandable rows
@@ -413,26 +450,45 @@ $cars = $carModel->getAll();
             }
         });
 
-        // Filter by rating
-        document.getElementById('filterRating').addEventListener('change', function() {
-            const rating = this.value;
-            const cards = document.querySelectorAll('.review-card');
-            cards.forEach(card => {
-                if (!rating || card.dataset.rating === rating) {
-                    card.style.display = 'block';
+        // Filter function
+        function filterReviews() {
+            const rating = document.getElementById('filterRating').value;
+            const replyStatus = document.getElementById('filterReply').value;
+            const rows = document.querySelectorAll('.data-table tbody > tr:not(.expandable-row)');
+
+            rows.forEach(row => {
+                const matchRating = !rating || row.dataset.rating === rating;
+                const matchReply = !replyStatus || row.dataset.replied === replyStatus;
+
+                if (matchRating && matchReply) {
+                    row.style.display = '';
                 } else {
-                    card.style.display = 'none';
+                    row.style.display = 'none';
+                    // Also hide associated expandable rows
+                    const id = row.querySelector('.order-id')?.textContent.replace('#', '');
+                    if (id) {
+                        const detailRow = document.getElementById('detail-' + parseInt(id));
+                        const replyRow = document.getElementById('reply-' + parseInt(id));
+                        if (detailRow) detailRow.style.display = 'none';
+                        if (replyRow) replyRow.style.display = 'none';
+                    }
                 }
             });
-        });
+        }
+
+        // Filter by rating
+        document.getElementById('filterRating').addEventListener('change', filterReviews);
+
+        // Filter by reply status
+        document.getElementById('filterReply').addEventListener('change', filterReviews);
 
         // Search
         document.getElementById('searchReview').addEventListener('input', function() {
             const search = this.value.toLowerCase();
-            const cards = document.querySelectorAll('.review-card');
-            cards.forEach(card => {
-                const text = card.textContent.toLowerCase();
-                card.style.display = text.includes(search) ? 'block' : 'none';
+            const rows = document.querySelectorAll('.data-table tbody > tr:not(.expandable-row)');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(search) ? '' : 'none';
             });
         });
 
@@ -444,13 +500,16 @@ $cars = $carModel->getAll();
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        <?php if (isset($_GET['success'])): ?>
-        showToast('<?= htmlspecialchars($_GET['success']) ?>');
-        <?php endif; ?>
+        <?php if (isset($_SESSION['success'])): ?>
+            showToast('<?= htmlspecialchars($_SESSION['success']) ?>');
+        <?php unset($_SESSION['success']);
+        endif; ?>
 
-        <?php if (isset($_GET['error'])): ?>
-        showToast('<?= htmlspecialchars($_GET['error']) ?>', 'error');
-        <?php endif; ?>
+        <?php if (isset($_SESSION['error'])): ?>
+            showToast('<?= htmlspecialchars($_SESSION['error']) ?>', 'error');
+        <?php unset($_SESSION['error']);
+        endif; ?>
     </script>
 </body>
+
 </html>

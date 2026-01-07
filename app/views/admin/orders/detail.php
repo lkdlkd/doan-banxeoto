@@ -1,8 +1,11 @@
-<?php 
-if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.php'; }
+<?php
+if (!defined('BASE_URL')) {
+    require_once __DIR__ . '/../../../../config/config.php';
+}
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,7 +68,7 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
             background: #fff;
             border-radius: 12px;
             padding: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .detail-card h3 {
@@ -273,8 +276,10 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
         }
     </style>
 </head>
+
 <body>
-    <?php $activePage = 'orders'; include __DIR__ . '/../layouts/sidebar.php'; ?>
+    <?php $activePage = 'orders';
+    include __DIR__ . '/../layouts/sidebar.php'; ?>
 
     <main class="admin-main">
         <header class="admin-header">
@@ -326,12 +331,12 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
 
                         <!-- Notes -->
                         <?php if (!empty($order['notes'])): ?>
-                        <div class="detail-card" style="margin-top: 2rem;">
-                            <div class="notes-section">
-                                <h4><i class="fas fa-comment-dots"></i> Ghi chú của khách hàng</h4>
-                                <p><?= nl2br(htmlspecialchars($order['notes'])) ?></p>
+                            <div class="detail-card" style="margin-top: 2rem;">
+                                <div class="notes-section">
+                                    <h4><i class="fas fa-comment-dots"></i> Ghi chú của khách hàng</h4>
+                                    <p><?= nl2br(htmlspecialchars($order['notes'])) ?></p>
+                                </div>
                             </div>
-                        </div>
                         <?php endif; ?>
                     </div>
 
@@ -340,7 +345,7 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
                         <!-- Order Info -->
                         <div class="detail-card">
                             <h3>Chi tiết đơn hàng</h3>
-                            
+
                             <div class="info-row">
                                 <span class="info-label">Mã đơn hàng:</span>
                                 <span class="info-value">#<?= str_pad($order['id'], 5, '0', STR_PAD_LEFT) ?></span>
@@ -360,14 +365,19 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
                                 <span class="info-label">Thanh toán:</span>
                                 <span class="info-value">
                                     <span class="payment-method <?= $order['payment_method'] ?>">
-                                        <?php 
-                                        switch($order['payment_method']) {
-                                            case 'bank_transfer': echo 'Chuyển khoản'; break;
-                                            case 'cash': echo 'Tiền mặt'; break;
-                                            case 'deposit': 
+                                        <?php
+                                        switch ($order['payment_method']) {
+                                            case 'bank_transfer':
+                                                echo 'Chuyển khoản';
+                                                break;
+                                            case 'cash':
+                                                echo 'Tiền mặt';
+                                                break;
+                                            case 'deposit':
                                                 echo 'Đặt cọc ' . ($order['deposit_percentage'] ?? 10) . '%';
                                                 break;
-                                            default: echo $order['payment_method'];
+                                            default:
+                                                echo $order['payment_method'];
                                         }
                                         ?>
                                     </span>
@@ -375,30 +385,39 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
                             </div>
 
                             <?php if ($order['payment_method'] === 'deposit'): ?>
-                            <div class="info-row">
-                                <span class="info-label">Số tiền cọc:</span>
-                                <span class="info-value" style="color: #D4AF37;">
-                                    <?= number_format($order['deposit_amount'] ?? 0, 0, ',', '.') ?>₫
-                                </span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Còn lại:</span>
-                                <span class="info-value">
-                                    <?= number_format($order['price'] - ($order['deposit_amount'] ?? 0), 0, ',', '.') ?>₫
-                                </span>
-                            </div>
+                                <div class="info-row">
+                                    <span class="info-label">Số tiền cọc:</span>
+                                    <span class="info-value" style="color: #D4AF37;">
+                                        <?= number_format($order['deposit_amount'] ?? 0, 0, ',', '.') ?>₫
+                                    </span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Còn lại:</span>
+                                    <span class="info-value">
+                                        <?= number_format($order['price'] - ($order['deposit_amount'] ?? 0), 0, ',', '.') ?>₫
+                                    </span>
+                                </div>
                             <?php endif; ?>
 
                             <div class="status-current">
                                 <label>Trạng thái hiện tại</label>
                                 <span class="order-status <?= $order['status'] ?>">
-                                    <?php 
-                                    switch($order['status']) {
-                                        case 'pending': echo 'Chờ xử lý'; break;
-                                        case 'confirmed': echo 'Đã xác nhận'; break;
-                                        case 'cancelled': echo 'Đã hủy'; break;
-                                        case 'completed': echo 'Hoàn thành'; break;
-                                        default: echo $order['status'];
+                                    <?php
+                                    switch ($order['status']) {
+                                        case 'pending':
+                                            echo 'Chờ xử lý';
+                                            break;
+                                        case 'confirmed':
+                                            echo 'Đã xác nhận';
+                                            break;
+                                        case 'cancelled':
+                                            echo 'Đã hủy';
+                                            break;
+                                        case 'completed':
+                                            echo 'Hoàn thành';
+                                            break;
+                                        default:
+                                            echo $order['status'];
                                     }
                                     ?>
                                 </span>
@@ -407,16 +426,16 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
                             <div class="status-actions">
                                 <div class="action-buttons">
                                     <?php if ($order['status'] === 'pending'): ?>
-                                    <button class="btn btn-confirm" onclick="updateStatus(<?= $order['id'] ?>, 'confirmed')">
-                                        <i class="fas fa-check-circle"></i> Xác nhận đơn hàng
-                                    </button>
-                                    <button class="btn btn-cancel" onclick="updateStatus(<?= $order['id'] ?>, 'cancelled')">
-                                        <i class="fas fa-times-circle"></i> Hủy đơn hàng
-                                    </button>
+                                        <button class="btn btn-confirm" onclick="updateStatus(<?= $order['id'] ?>, 'confirmed')">
+                                            <i class="fas fa-check-circle"></i> Xác nhận đơn hàng
+                                        </button>
+                                        <button class="btn btn-cancel" onclick="updateStatus(<?= $order['id'] ?>, 'cancelled')">
+                                            <i class="fas fa-times-circle"></i> Hủy đơn hàng
+                                        </button>
                                     <?php elseif ($order['status'] === 'confirmed'): ?>
-                                    <button class="btn btn-confirm" onclick="updateStatus(<?= $order['id'] ?>, 'completed')">
-                                        <i class="fas fa-check-double"></i> Đánh dấu hoàn thành
-                                    </button>
+                                        <button class="btn btn-confirm" onclick="updateStatus(<?= $order['id'] ?>, 'completed')">
+                                            <i class="fas fa-check-double"></i> Đánh dấu hoàn thành
+                                        </button>
                                     <?php endif; ?>
                                     <button class="btn btn-delete" onclick="deleteOrder(<?= $order['id'] ?>)">
                                         <i class="fas fa-trash"></i> Xóa đơn hàng
@@ -433,12 +452,18 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
     <script>
         function updateStatus(id, status) {
             let statusText = '';
-            switch(status) {
-                case 'confirmed': statusText = 'xác nhận'; break;
-                case 'cancelled': statusText = 'hủy'; break;
-                case 'completed': statusText = 'đánh dấu hoàn thành'; break;
+            switch (status) {
+                case 'confirmed':
+                    statusText = 'xác nhận';
+                    break;
+                case 'cancelled':
+                    statusText = 'hủy';
+                    break;
+                case 'completed':
+                    statusText = 'đánh dấu hoàn thành';
+                    break;
             }
-            
+
             if (confirm(`Bạn có chắc chắn muốn ${statusText} đơn hàng này?`)) {
                 window.location.href = `<?= BASE_URL ?>/admin/orders/update-status/${id}/${status}`;
             }
@@ -451,4 +476,5 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../../config/config.p
         }
     </script>
 </body>
+
 </html>
