@@ -514,11 +514,12 @@ include __DIR__ . '/../layouts/header.php';
         align-items: center;
         gap: 10px;
         padding: 12px 20px;
-        background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
-        color: #000;
+        background: transparent;
+        color: #D4AF37;
         text-decoration: none;
         font-weight: 700;
         font-size: 15px;
+        border: none;
         border-radius: 8px;
         transition: all 0.3s;
         width: 100%;
@@ -526,8 +527,8 @@ include __DIR__ . '/../layouts/header.php';
     }
 
     .phone-link:hover {
+        background: rgba(212, 175, 55, 0.1);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
     }
 
     @media (max-width: 1200px) {
