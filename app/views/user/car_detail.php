@@ -84,6 +84,19 @@ function getDrivetrainText($drivetrain)
     return $driveMap[$drivetrain] ?? $drivetrain;
 }
 
+// Hàm kiểm tra URL đầy đủ
+function isFullUrl($url)
+{
+    return strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0;
+}
+
+// Lấy ảnh chính cho banner
+$mainImage = '';
+if (!empty($carImages) && count($carImages) > 0) {
+    $mainImage = $carImages[0]['image_url'];
+}
+$mainImageSrc = $mainImage ? (isFullUrl($mainImage) ? $mainImage : BASE_URL . '/' . $mainImage) : BASE_URL . '/assets/images/no-image.jpg';
+
 include __DIR__ . '/../layouts/header.php';
 ?>
 
@@ -97,6 +110,32 @@ include __DIR__ . '/../layouts/header.php';
         max-width: 1200px;
         margin: 0 auto;
         padding: 0 20px;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background: white;
+        color: #D4AF37;
+        border: 2px solid #D4AF37;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 20px;
+        transition: all 0.3s;
+    }
+
+    .back-button:hover {
+        background: #D4AF37;
+        color: white;
+        transform: translateX(-5px);
+    }
+
+    .back-button i {
+        font-size: 16px;
     }
 
     .breadcrumb {
@@ -365,23 +404,96 @@ include __DIR__ . '/../layouts/header.php';
         gap: 15px;
     }
 
+    .specs-section {
+        margin-bottom: 30px;
+        padding-bottom: 25px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .specs-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .specs-section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #D4AF37;
+    }
+
+    .specs-section-title i {
+        color: #D4AF37;
+        font-size: 20px;
+    }
+
     .spec-item {
         display: flex;
         justify-content: space-between;
-        padding: 12px 15px;
-        background: #f9f9f9;
-        border-radius: 6px;
+        align-items: center;
+        padding: 15px 18px;
+        background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
+        border-radius: 10px;
+        border: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+    }
+
+    .spec-item:hover {
+        background: linear-gradient(135deg, #fef9ed 0%, #fffbf5 100%);
+        border-color: #D4AF37;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15);
     }
 
     .spec-label {
         font-weight: 600;
         color: #333;
         font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .spec-label i {
+        color: #D4AF37;
+        font-size: 16px;
+        width: 20px;
+        text-align: center;
     }
 
     .spec-value {
-        color: #666;
+        color: #555;
         font-size: 14px;
+        font-weight: 500;
+        text-align: right;
+    }
+
+    .spec-price {
+        color: #D4AF37;
+        font-weight: 700;
+        font-size: 15px;
+    }
+
+    .status-available {
+        color: #22c55e;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .status-sold {
+        color: #ef4444;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
     }
 
     .description {
@@ -547,6 +659,16 @@ include __DIR__ . '/../layouts/header.php';
         .similar-grid {
             grid-template-columns: repeat(2, 1fr);
         }
+
+        .spec-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .spec-value {
+            text-align: left;
+        }
     }
 
     @media (max-width: 768px) {
@@ -563,111 +685,49 @@ include __DIR__ . '/../layouts/header.php';
         }
     }
 
-    /* Banner */
-    .page-banner {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-        padding: 60px 0 70px;
-        margin-bottom: 40px;
+    /* Banner - Blurred Image with Centered Title */
+    .car-banner {
         position: relative;
+        height: 450px;
+        margin-bottom: 40px;
         overflow: hidden;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    .page-banner::before {
-        content: '';
+    .car-banner img {
         position: absolute;
         top: 0;
         left: 0;
-        right: 0;
-        bottom: 0;
-        background:
-            radial-gradient(ellipse at 20% 50%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
-            radial-gradient(ellipse at 80% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
-            url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><path d="M30 0L60 30L30 60L0 30z" fill="%23D4AF37" opacity="0.02"/></svg>');
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: blur(8px) brightness(0.5);
+        transform: scale(1.1);
     }
 
-    .page-banner::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, transparent, #D4AF37, transparent);
-    }
-
-    .page-banner .container {
+    .car-banner-title {
         position: relative;
-        z-index: 1;
-    }
-
-    .banner-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: linear-gradient(135deg, #D4AF37, #B8960B);
-        color: white;
-        padding: 8px 20px;
-        border-radius: 30px;
-        font-size: 13px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
-    }
-
-    .page-banner h1 {
+        z-index: 10;
         font-family: 'Playfair Display', serif;
-        font-size: 48px;
+        font-size: 64px;
         font-weight: 700;
         color: white;
-        margin: 0 0 20px 0;
-        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
-        line-height: 1.2;
+        text-align: center;
+        text-shadow: 0 4px 30px rgba(0,0,0,0.8);
+        padding: 0 20px;
     }
 
-    .page-banner .price-banner {
-        font-family: 'Playfair Display', serif;
-        font-size: 36px;
-        font-weight: 700;
-        background: linear-gradient(135deg, #D4AF37, #f0d078);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 25px;
-        display: inline-block;
-    }
+    @media (max-width: 768px) {
+        .car-banner {
+            height: 300px;
+        }
 
-    .page-banner .car-meta-banner {
-        display: flex;
-        gap: 30px;
-        flex-wrap: wrap;
-    }
-
-    .page-banner .meta-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: rgba(255, 255, 255, 0.9);
-        font-size: 15px;
-        font-weight: 500;
-        padding: 10px 18px;
-        background: rgba(255, 255, 255, 0.08);
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        transition: all 0.3s;
-    }
-
-    .page-banner .meta-item:hover {
-        background: rgba(212, 175, 55, 0.2);
-        border-color: rgba(212, 175, 55, 0.3);
-        transform: translateY(-2px);
-    }
-
-    .page-banner .meta-item i {
-        color: #D4AF37;
-        font-size: 16px;
+        .car-banner-title {
+            font-size: 36px;
+        }
     }
 
     /* Add to cart button */
@@ -683,76 +743,31 @@ include __DIR__ . '/../layouts/header.php';
 </style>
 
 <!-- Banner -->
-<div class="page-banner">
-    <div class="container">
-        <div class="banner-badge">
-            <i class="fas fa-star"></i>
-            <?php
-            $stock = $car['stock'] ?? 0;
-            if ($car['status'] == 'available' && $stock > 0) {
-                echo 'Còn hàng (' . $stock . ' xe)';
-            } else {
-                echo 'Đã hết hàng';
-            }
-            ?>
-        </div>
-        <h1><?= htmlspecialchars($car['name']) ?></h1>
-        <div class="price-banner"><?= formatPrice($car['price']) ?> VND</div>
-        <div class="car-meta-banner">
-            <div class="meta-item">
-                <i class="fas fa-building"></i>
-                <?= htmlspecialchars($car['brand_name']) ?>
-            </div>
-            <div class="meta-item">
-                <i class="fas fa-tag"></i>
-                <?= htmlspecialchars($car['category_name']) ?>
-            </div>
-            <div class="meta-item">
-                <i class="fas fa-calendar-alt"></i>
-                <?= htmlspecialchars($car['year']) ?>
-            </div>
-            <div class="meta-item">
-                <i class="fas fa-tachometer-alt"></i>
-                <?= number_format($car['mileage']) ?> km
-            </div>
-            <div class="meta-item">
-                <i class="fas fa-palette"></i>
-                <?= htmlspecialchars($car['color']) ?>
-            </div>
-        </div>
-    </div>
+<div class="car-banner">
+    <img src="<?= htmlspecialchars($mainImageSrc) ?>" alt="<?= htmlspecialchars($car['name']) ?>">
+    <h1 class="car-banner-title"><?= htmlspecialchars($car['name']) ?></h1>
 </div>
 
 <div class="car-detail">
     <div class="container">
+        <!-- Back Button -->
+        <a href="<?= BASE_URL ?>/cars" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            Quay lại danh sách xe
+        </a>
+        
         <!-- Breadcrumb -->
         <div class="breadcrumb">
-            <a href="<?= BASE_URL ?>"><i class="fas fa-home"></i> Trang chủ</a>
+            <a href="<?= BASE_URL ?>/"><i class="fas fa-home"></i> Trang chủ</a>
             <span>/</span>
-            <a href="<?= BASE_URL ?>/user/car_list">Danh sách xe</a>
+            <a href="<?= BASE_URL ?>/cars">Danh sách xe</a>
             <span>/</span>
             <span><?= htmlspecialchars($car['name']) ?></span>
         </div>
-
         <!-- Main Content -->
         <div class="detail-grid">
             <!-- Gallery -->
             <div class="card">
-                <?php
-                // Lấy ảnh chính - kiểm tra nếu là URL đầy đủ hay đường dẫn local
-                $mainImage = '';
-                if (!empty($carImages) && count($carImages) > 0) {
-                    $mainImage = $carImages[0]['image_url'];
-                }
-
-                // Hàm kiểm tra URL đầy đủ
-                function isFullUrl($url)
-                {
-                    return strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0;
-                }
-
-                $mainImageSrc = $mainImage ? (isFullUrl($mainImage) ? $mainImage : BASE_URL . '/' . $mainImage) : BASE_URL . '/assets/images/no-image.jpg';
-                ?>
                 <div class="main-image">
                     <img src="<?= htmlspecialchars($mainImageSrc) ?>" alt="<?= htmlspecialchars($car['name']) ?>" id="mainImage">
                 </div>
@@ -848,7 +863,7 @@ include __DIR__ . '/../layouts/header.php';
                 <div class="contact-box">
                     <h4><i class="fas fa-headset"></i> Cần tư vấn?</h4>
                     <p>Liên hệ với chúng tôi để được hỗ trợ</p>
-                    <a href="<?= BASE_URL ?>/user/contact">Liên hệ ngay <i class="fas fa-arrow-right"></i></a>
+                    <a href="<?= BASE_URL ?>/contact">Liên hệ ngay <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
         </div>
@@ -869,107 +884,105 @@ include __DIR__ . '/../layouts/header.php';
 
             <!-- Specifications -->
             <div id="specs" class="tab-content active">
-                <div class="specs-grid">
-                    <div class="spec-item">
-                        <span class="spec-label">Tên xe</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['name']) ?></span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Thương hiệu</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['brand_name']) ?></span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Danh mục</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['category_name']) ?></span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Năm sản xuất</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['year']) ?></span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Giá bán</span>
-                        <span class="spec-value"><?= formatPrice($car['price']) ?> VND</span>
-                    </div>
-                    <?php if (!empty($car['stock'])) : ?>
+                <!-- Thông tin cơ bản -->
+                <div class="specs-section">
+                    <h3 class="specs-section-title"><i class="fas fa-info-circle"></i> Thông tin cơ bản</h3>
+                    <div class="specs-grid">
                         <div class="spec-item">
-                            <span class="spec-label">Số lượng</span>
-                            <span class="spec-value"><?= htmlspecialchars($car['stock']) ?> xe</span>
+                            <span class="spec-label"><i class="fas fa-car"></i> Tên xe</span>
+                            <span class="spec-value"><?= !empty($car['name']) ? htmlspecialchars($car['name']) : '—' ?></span>
                         </div>
-                    <?php endif; ?>
-                    <?php if (!empty($car['engine'])) : ?>
                         <div class="spec-item">
-                            <span class="spec-label">Động cơ</span>
-                            <span class="spec-value"><?= htmlspecialchars($car['engine']) ?></span>
+                            <span class="spec-label"><i class="fas fa-building"></i> Thương hiệu</span>
+                            <span class="spec-value"><?= !empty($car['brand_name']) ? htmlspecialchars($car['brand_name']) : '—' ?></span>
                         </div>
-                    <?php endif; ?>
-                    <?php if (!empty($car['horsepower'])) : ?>
                         <div class="spec-item">
-                            <span class="spec-label">Công suất</span>
-                            <span class="spec-value"><?= htmlspecialchars($car['horsepower']) ?> HP</span>
+                            <span class="spec-label"><i class="fas fa-tag"></i> Danh mục</span>
+                            <span class="spec-value"><?= !empty($car['category_name']) ? htmlspecialchars($car['category_name']) : '—' ?></span>
                         </div>
-                    <?php endif; ?>
-                    <?php if (!empty($car['torque'])) : ?>
                         <div class="spec-item">
-                            <span class="spec-label">Mô-men xoắn</span>
-                            <span class="spec-value"><?= htmlspecialchars($car['torque']) ?> Nm</span>
+                            <span class="spec-label"><i class="fas fa-calendar-alt"></i> Năm sản xuất</span>
+                            <span class="spec-value"><?= !empty($car['year']) ? htmlspecialchars($car['year']) : '—' ?></span>
                         </div>
-                    <?php endif; ?>
-                    <?php if (!empty($car['acceleration'])) : ?>
                         <div class="spec-item">
-                            <span class="spec-label">Tăng tốc 0-100 km/h</span>
-                            <span class="spec-value"><?= htmlspecialchars($car['acceleration']) ?> giây</span>
+                            <span class="spec-label"><i class="fas fa-money-bill-wave"></i> Giá bán</span>
+                            <span class="spec-value spec-price"><?= !empty($car['price']) ? formatPrice($car['price']) . ' VND' : '—' ?></span>
                         </div>
-                    <?php endif; ?>
-                    <?php if (!empty($car['drivetrain'])) : ?>
                         <div class="spec-item">
-                            <span class="spec-label">Hệ dẫn động</span>
-                            <span class="spec-value"><?= getDrivetrainText($car['drivetrain']) ?></span>
+                            <span class="spec-label"><i class="fas fa-palette"></i> Màu sắc</span>
+                            <span class="spec-value"><?= !empty($car['color']) ? htmlspecialchars($car['color']) : '—' ?></span>
                         </div>
-                    <?php endif; ?>
-                    <div class="spec-item">
-                        <span class="spec-label">Hộp số</span>
-                        <span class="spec-value"><?= getTransmissionText($car['transmission']) ?></span>
+                        <div class="spec-item">
+                            <span class="spec-label"><i class="fas fa-tachometer-alt"></i> Số km đã đi</span>
+                            <span class="spec-value"><?= isset($car['mileage']) ? number_format($car['mileage']) . ' km' : '—' ?></span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label"><i class="fas fa-box"></i> Số lượng tồn kho</span>
+                            <span class="spec-value"><?= isset($car['stock']) ? $car['stock'] . ' xe' : '—' ?></span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label"><i class="fas fa-check-circle"></i> Trạng thái</span>
+                            <span class="spec-value">
+                                <?php
+                                $stock = $car['stock'] ?? 0;
+                                if ($car['status'] == 'available' && $stock > 0) {
+                                    echo '<span class="status-available"><i class="fas fa-check"></i> Còn hàng (' . $stock . ' xe)</span>';
+                                } else {
+                                    echo '<span class="status-sold"><i class="fas fa-times"></i> Đã hết hàng</span>';
+                                }
+                                ?>
+                            </span>
+                        </div>
                     </div>
-                    <?php if (!empty($car['seats'])) : ?>
+                </div>
+
+                <!-- Động cơ & Hiệu suất -->
+                <div class="specs-section">
+                    <h3 class="specs-section-title"><i class="fas fa-engine"></i> Động cơ & Hiệu suất</h3>
+                    <div class="specs-grid">
                         <div class="spec-item">
-                            <span class="spec-label">Số chỗ ngồi</span>
-                            <span class="spec-value"><?= htmlspecialchars($car['seats']) ?> chỗ</span>
+                            <span class="spec-label"><i class="fas fa-cogs"></i> Động cơ</span>
+                            <span class="spec-value"><?= !empty($car['engine']) ? htmlspecialchars($car['engine']) : '—' ?></span>
                         </div>
-                    <?php endif; ?>
-                    <?php if (!empty($car['doors'])) : ?>
                         <div class="spec-item">
-                            <span class="spec-label">Số cửa</span>
-                            <span class="spec-value"><?= htmlspecialchars($car['doors']) ?> cửa</span>
+                            <span class="spec-label"><i class="fas fa-bolt"></i> Công suất</span>
+                            <span class="spec-value"><?= !empty($car['horsepower']) ? htmlspecialchars($car['horsepower']) . ' HP' : '—' ?></span>
                         </div>
-                    <?php endif; ?>
-                    <div class="spec-item">
-                        <span class="spec-label">Nhiên liệu</span>
-                        <span class="spec-value"><?= getFuelText($car['fuel']) ?></span>
+                        <div class="spec-item">
+                            <span class="spec-label"><i class="fas fa-sync-alt"></i> Mô-men xoắn</span>
+                            <span class="spec-value"><?= !empty($car['torque']) ? htmlspecialchars($car['torque']) . ' Nm' : '—' ?></span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label"><i class="fas fa-stopwatch"></i> Tăng tốc 0-100 km/h</span>
+                            <span class="spec-value"><?= !empty($car['acceleration']) ? htmlspecialchars($car['acceleration']) . ' giây' : '—' ?></span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label"><i class="fas fa-gas-pump"></i> Nhiên liệu</span>
+                            <span class="spec-value"><?= !empty($car['fuel']) ? getFuelText($car['fuel']) : '—' ?></span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label"><i class="fas fa-cog"></i> Hộp số</span>
+                            <span class="spec-value"><?= !empty($car['transmission']) ? getTransmissionText($car['transmission']) : '—' ?></span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label"><i class="fas fa-road"></i> Hệ dẫn động</span>
+                            <span class="spec-value"><?= !empty($car['drivetrain']) ? getDrivetrainText($car['drivetrain']) : '—' ?></span>
+                        </div>
                     </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Số km đã đi</span>
-                        <span class="spec-value"><?= number_format($car['mileage']) ?> km</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Màu sắc</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['color']) ?></span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Số lượng tồn</span>
-                        <span class="spec-value"><?= $car['stock'] ?? 1 ?> xe</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Trạng thái</span>
-                        <span class="spec-value">
-                            <?php
-                            $stock = $car['stock'] ?? 0;
-                            if ($car['status'] == 'available' && $stock > 0) {
-                                echo 'Còn hàng (' . $stock . ' xe)';
-                            } else {
-                                echo 'Đã hết hàng';
-                            }
-                            ?>
-                        </span>
+                </div>
+
+                <!-- Nội thất & Kích thước -->
+                <div class="specs-section">
+                    <h3 class="specs-section-title"><i class="fas fa-chair"></i> Nội thất & Thiết kế</h3>
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label"><i class="fas fa-users"></i> Số chỗ ngồi</span>
+                            <span class="spec-value"><?= !empty($car['seats']) ? htmlspecialchars($car['seats']) . ' chỗ' : '—' ?></span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label"><i class="fas fa-door-open"></i> Số cửa</span>
+                            <span class="spec-value"><?= !empty($car['doors']) ? htmlspecialchars($car['doors']) . ' cửa' : '—' ?></span>
+                        </div>
                     </div>
                 </div>
             </div>

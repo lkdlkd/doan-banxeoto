@@ -143,8 +143,7 @@ $cars = $carModel->getAll();
                                 <th style="width: 150px;">Khách hàng</th>
                                 <th style="width: 150px;">Xe</th>
                                 <th style="width: 110px;">Đánh giá</th>
-                                <th>Nội dung</th>
-                                <th style="width: 90px; text-align: center;">Trả lời</th>
+                                <th style="width: 130px; text-align: center;">Trạng thái</th>
                                 <th style="width: 90px;">Ngày</th>
                                 <th style="width: 110px; text-align: center;">Thao tác</th>
                             </tr>
@@ -178,26 +177,14 @@ $cars = $carModel->getAll();
                                             <span style="margin-left: 6px; font-weight: 600; color: var(--gray-900);"><?= $review['rating'] ?>.0</span>
                                         </div>
                                     </td>
-                                    <td>
-                                        <div style="max-width: 300px; font-size: 13px; color: var(--gray-700); line-height: 1.5;">
-                                            <?php
-                                            $comment = $review['comment'] ?? '';
-                                            if (strlen($comment) > 150) {
-                                                echo htmlspecialchars(substr($comment, 0, 150)) . '...';
-                                            } else {
-                                                echo htmlspecialchars($comment);
-                                            }
-                                            ?>
-                                        </div>
-                                    </td>
                                     <td style="text-align: center;">
                                         <?php if ($hasReply): ?>
-                                            <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(16, 185, 129, 0.1); color: #059669; border-radius: 20px; font-size: 11px; font-weight: 600;">
-                                                <i class="fas fa-check-circle"></i> Đã TL
+                                            <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(16, 185, 129, 0.1); color: #059669; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap;">
+                                                <i class="fas fa-check-circle"></i> Đã phản hồi
                                             </span>
                                         <?php else: ?>
-                                            <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(245, 158, 11, 0.1); color: #d97706; border-radius: 20px; font-size: 11px; font-weight: 600;">
-                                                <i class="fas fa-clock"></i> Chờ TL
+                                            <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(245, 158, 11, 0.1); color: #d97706; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap;">
+                                                <i class="fas fa-clock"></i> Chưa phản hồi
                                             </span>
                                         <?php endif; ?>
                                     </td>
@@ -225,7 +212,7 @@ $cars = $carModel->getAll();
                                 </tr>
                                 <!-- Expandable Detail Row -->
                                 <tr id="detail-<?= $review['id'] ?>" class="expandable-row" style="display: none;">
-                                    <td colspan="8" style="padding: 0;">
+                                    <td colspan="7" style="padding: 0;">
                                         <div style="background: linear-gradient(135deg, #fafbfc 0%, #ffffff 100%); padding: 32px; margin: 8px 16px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); border: 1px solid rgba(212, 175, 55, 0.2);">
                                             <!-- Header Section -->
                                             <div style="display: flex; align-items: center; gap: 16px; padding-bottom: 24px; border-bottom: 2px solid #f3f4f6; margin-bottom: 24px;">

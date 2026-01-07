@@ -377,8 +377,10 @@ include __DIR__ . '/../layouts/header.php';
 
     /* Apply Button */
     .apply-filter-btn {
-        width: 100%;
-        padding: 12px 24px;
+        width: auto;
+        max-width: 300px;
+        margin: 16px auto 0;
+        padding: 12px 32px;
         background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
         color: #fff;
         border: none;
@@ -392,7 +394,6 @@ include __DIR__ . '/../layouts/header.php';
         justify-content: center;
         gap: 10px;
         transition: all 0.3s;
-        margin-top: 16px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
@@ -463,15 +464,14 @@ include __DIR__ . '/../layouts/header.php';
 
     /* Car Card - Premium Design */
     .car-card {
-        background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
-        border: 3px solid transparent;
-        border-radius: 24px;
+        background: #ffffff;
+        border: 2px solid #e8e8e8;
+        border-radius: 20px;
         overflow: hidden;
-        transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         position: relative;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08),
-            0 4px 12px rgba(0, 0, 0, 0.04),
-            inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06),
+            0 2px 8px rgba(0, 0, 0, 0.03);
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -562,20 +562,19 @@ include __DIR__ . '/../layouts/header.php';
     }
 
     .car-card:hover {
-        transform: translateY(-16px) scale(1.02);
-        box-shadow: 0 35px 60px rgba(212, 175, 55, 0.35),
-            0 20px 40px rgba(0, 0, 0, 0.15),
-            0 10px 20px rgba(212, 175, 55, 0.2),
-            inset 0 -2px 20px rgba(212, 175, 55, 0.1);
-        border-color: rgba(212, 175, 55, 0.1);
+        transform: translateY(-12px);
+        box-shadow: 0 24px 48px rgba(212, 175, 55, 0.2),
+            0 12px 24px rgba(0, 0, 0, 0.1);
+        border-color: #D4AF37;
     }
 
     .car-image {
         position: relative;
-        height: 200px;
+        height: 220px;
         overflow: hidden;
         background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 50%, #f5f5f5 100%);
         border-radius: 20px 20px 0 0;
+        box-shadow: inset 0 -4px 20px rgba(0, 0, 0, 0.05);
     }
 
     .car-image::before {
@@ -622,36 +621,36 @@ include __DIR__ . '/../layouts/header.php';
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
-            filter 0.6s;
-        filter: brightness(0.98) contrast(1.05);
+        transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1),
+            filter 0.5s;
+        filter: brightness(1) contrast(1.02);
     }
 
     .car-card:hover .car-image img {
-        transform: scale(1.08);
-        filter: brightness(1.05) contrast(1.05) saturate(1.05);
+        transform: scale(1.12);
+        filter: brightness(1.08) contrast(1.08) saturate(1.1);
     }
 
     .car-badges {
         position: absolute;
-        top: 12px;
-        left: 12px;
+        top: 16px;
+        left: 16px;
         z-index: 5;
     }
 
     .car-badges .badge {
         display: inline-block;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 800;
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 10px;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25),
-            0 2px 8px rgba(0, 0, 0, 0.15);
+        letter-spacing: 0.5px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
         transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         position: relative;
         overflow: hidden;
+        backdrop-filter: blur(8px);
     }
 
     .badge::before {
@@ -855,10 +854,11 @@ include __DIR__ . '/../layouts/header.php';
 
     /* Car Info */
     .car-info {
-        padding: 12px;
+        padding: 18px 16px 16px;
         flex: 1;
         display: flex;
         flex-direction: column;
+        background: #ffffff;
     }
 
     /* View Detail Button - Hidden by default, shown on hover */

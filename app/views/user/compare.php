@@ -366,7 +366,7 @@ include __DIR__ . '/../layouts/header.php';
     .car-image-small img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         transition: transform 0.5s;
         display: block;
     }
@@ -881,7 +881,146 @@ include __DIR__ . '/../layouts/header.php';
                                 </div>
                             </td>
                             <?php foreach ($compareItems as $item): ?>
-                                <td><?= htmlspecialchars($item['color'] ?? 'N/A') ?></td>
+                                <td><?= htmlspecialchars($item['color'] ?? '—') ?></td>
+                            <?php endforeach; ?>
+                            <?php if ($compareCount < $maxCompare): ?><td></td><?php endif; ?>
+                        </tr>
+
+                        <!-- Engine -->
+                        <tr>
+                            <td>
+                                <div class="label-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                                        <circle cx="12" cy="12" r="2"></circle>
+                                        <path d="M6 12h.01M18 12h.01"></path>
+                                    </svg>
+                                    Động cơ
+                                </div>
+                            </td>
+                            <?php foreach ($compareItems as $item): ?>
+                                <td><?= htmlspecialchars($item['engine'] ?? '—') ?></td>
+                            <?php endforeach; ?>
+                            <?php if ($compareCount < $maxCompare): ?><td></td><?php endif; ?>
+                        </tr>
+
+                        <!-- Horsepower -->
+                        <tr>
+                            <td>
+                                <div class="label-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                                    </svg>
+                                    Công suất
+                                </div>
+                            </td>
+                            <?php foreach ($compareItems as $item): ?>
+                                <td><?= $item['horsepower'] ? $item['horsepower'] . ' HP' : '—' ?></td>
+                            <?php endforeach; ?>
+                            <?php if ($compareCount < $maxCompare): ?><td></td><?php endif; ?>
+                        </tr>
+
+                        <!-- Torque -->
+                        <tr>
+                            <td>
+                                <div class="label-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                                    </svg>
+                                    Mô-men xoắn
+                                </div>
+                            </td>
+                            <?php foreach ($compareItems as $item): ?>
+                                <td><?= $item['torque'] ? $item['torque'] . ' Nm' : '—' ?></td>
+                            <?php endforeach; ?>
+                            <?php if ($compareCount < $maxCompare): ?><td></td><?php endif; ?>
+                        </tr>
+
+                        <!-- Acceleration -->
+                        <tr>
+                            <td>
+                                <div class="label-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                    </svg>
+                                    Tăng tốc 0-100
+                                </div>
+                            </td>
+                            <?php foreach ($compareItems as $item): ?>
+                                <td><?= $item['acceleration'] ? $item['acceleration'] . ' giây' : '—' ?></td>
+                            <?php endforeach; ?>
+                            <?php if ($compareCount < $maxCompare): ?><td></td><?php endif; ?>
+                        </tr>
+
+                        <!-- Drivetrain -->
+                        <tr>
+                            <td>
+                                <div class="label-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="14.31" y1="8" x2="20.05" y2="17.94"></line>
+                                        <line x1="9.69" y1="8" x2="21.17" y2="8"></line>
+                                        <line x1="7.38" y1="12" x2="13.12" y2="2.06"></line>
+                                    </svg>
+                                    Hệ dẫn động
+                                </div>
+                            </td>
+                            <?php 
+                            $drivetrainTypes = ['fwd' => 'Dẫn động cầu trước', 'rwd' => 'Dẫn động cầu sau', 'awd' => 'Dẫn động 4 bánh', '4wd' => 'Dẫn động 4 bánh'];
+                            foreach ($compareItems as $item):
+                                $drivetrain = $item['drivetrain'] ? ($drivetrainTypes[$item['drivetrain']] ?? $item['drivetrain']) : '—';
+                            ?>
+                                <td><?= $drivetrain ?></td>
+                            <?php endforeach; ?>
+                            <?php if ($compareCount < $maxCompare): ?><td></td><?php endif; ?>
+                        </tr>
+
+                        <!-- Seats -->
+                        <tr>
+                            <td>
+                                <div class="label-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M5 9v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"></path>
+                                        <path d="M5 9h14V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v4z"></path>
+                                    </svg>
+                                    Số chỗ ngồi
+                                </div>
+                            </td>
+                            <?php foreach ($compareItems as $item): ?>
+                                <td><?= $item['seats'] ? $item['seats'] . ' chỗ' : '—' ?></td>
+                            <?php endforeach; ?>
+                            <?php if ($compareCount < $maxCompare): ?><td></td><?php endif; ?>
+                        </tr>
+
+                        <!-- Doors -->
+                        <tr>
+                            <td>
+                                <div class="label-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="12" r="1.5"></circle>
+                                    </svg>
+                                    Số cửa
+                                </div>
+                            </td>
+                            <?php foreach ($compareItems as $item): ?>
+                                <td><?= $item['doors'] ? $item['doors'] . ' cửa' : '—' ?></td>
+                            <?php endforeach; ?>
+                            <?php if ($compareCount < $maxCompare): ?><td></td><?php endif; ?>
+                        </tr>
+
+                        <!-- Stock -->
+                        <tr>
+                            <td>
+                                <div class="label-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                    </svg>
+                                    Số lượng
+                                </div>
+                            </td>
+                            <?php foreach ($compareItems as $item): ?>
+                                <td><?= $item['stock'] ?? '—' ?></td>
                             <?php endforeach; ?>
                             <?php if ($compareCount < $maxCompare): ?><td></td><?php endif; ?>
                         </tr>
