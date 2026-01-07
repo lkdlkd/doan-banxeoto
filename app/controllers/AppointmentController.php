@@ -82,7 +82,7 @@ class AppointmentController
         
         if ($appointmentId) {
             $_SESSION['success'] = 'Đặt lịch xem xe thành công! Chúng tôi sẽ liên hệ xác nhận với bạn sớm.';
-            header('Location: /car/' . $carId);
+            header('Location: /appointments');
         } else {
             $_SESSION['error'] = 'Có lỗi xảy ra. Vui lòng thử lại.';
             header('Location: /appointment/book/' . $carId);

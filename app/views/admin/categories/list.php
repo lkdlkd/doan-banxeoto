@@ -14,9 +14,10 @@ unset($_SESSION['success'], $_SESSION['error']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý danh mục - AutoCar Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-common.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-stats.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-categories.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-modal.css">
 </head>
@@ -25,27 +26,29 @@ unset($_SESSION['success'], $_SESSION['error']);
 
     <main class="admin-main">
         <header class="admin-header">
-            <h1>Quản lý danh mục</h1>
-            <div class="header-profile">
-                <img src="https://ui-avatars.com/api/?name=Admin&background=D4AF37&color=fff" alt="Admin">
+            <div>
+                <h1>Quản lý danh mục</h1>
+                <p style="font-size: 13px; color: var(--gray-500); margin: 6px 0 0 0; font-weight: 500;">Phân loại dòng xe theo từng danh mục</p>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-primary btn-sm" onclick="openAddModal()" style="gap: 8px;">
+                    <i class="fas fa-plus"></i> Thêm danh mục
+                </button>
+                <div class="header-profile">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=D4AF37&color=fff" alt="Admin">
+                </div>
             </div>
         </header>
 
         <div class="admin-content">
-            <div class="page-header">
-                <h2>Danh sách danh mục (<?= $totalCategories ?>)</h2>
-                <button class="btn-primary" onclick="openAddModal()">
-                    <i class="fas fa-plus"></i> Thêm danh mục
-                </button>
-            </div>
-
             <!-- Stats -->
-            <div class="stats-row">
+            <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-bottom: 30px;">
                 <div class="stat-card">
-                    <div class="stat-icon purple"><i class="fas fa-layer-group"></i></div>
+                    <div class="stat-icon purple"><i class="fas fa-tags"></i></div>
                     <div class="stat-info">
                         <h3><?= $totalCategories ?></h3>
                         <p>Danh mục</p>
+                        <span class="stat-detail"><i class="fas fa-layer-group"></i> Đang hoạt động</span>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -53,6 +56,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                     <div class="stat-info">
                         <h3><?= array_sum(array_column($categories, 'car_count')) ?></h3>
                         <p>Tổng xe</p>
+                        <span class="stat-detail"><i class="fas fa-check-circle"></i> Tất cả danh mục</span>
                     </div>
                 </div>
             </div>
@@ -60,41 +64,58 @@ unset($_SESSION['success'], $_SESSION['error']);
             <?php if ($totalCategories === 0): ?>
             <div class="empty-state">
                 <div class="empty-icon">
-                    <i class="fas fa-layer-group"></i>
+                    <i class="fas fa-tags"></i>
                 </div>
                 <h3>Chưa có danh mục nào</h3>
                 <p>Bắt đầu thêm danh mục để phân loại các dòng xe.</p>
-                <button class="btn-primary" onclick="openAddModal()">
+                <button class="btn btn-primary" onclick="openAddModal()">
                     <i class="fas fa-plus"></i> Thêm danh mục đầu tiên
                 </button>
             </div>
             <?php else: ?>
-            <!-- Categories Grid -->
-            <div class="categories-grid">
-                <?php foreach ($categories as $cat): ?>
-                <div class="category-card">
-                    <div class="category-content">
-                        <div class="category-icon">
-                            <i class="fas fa-layer-group"></i>
-                        </div>
-                        <h3 class="category-name"><?= htmlspecialchars($cat['name']) ?></h3>
-                        <p class="category-desc"><?= htmlspecialchars($cat['description'] ?? 'Chưa có mô tả') ?></p>
-                        <div class="category-stats">
-                            <span class="category-stat">
-                                <i class="fas fa-car"></i> <?= $cat['car_count'] ?> xe
-                            </span>
-                        </div>
-                        <div class="category-actions">
-                            <button class="category-action" onclick="openEditModal(<?= htmlspecialchars(json_encode($cat)) ?>)">
-                                <i class="fas fa-edit"></i> Sửa
-                            </button>
-                            <button class="category-action delete" onclick="openDeleteModal(<?= $cat['id'] ?>, '<?= addslashes($cat['name']) ?>')">
-                                <i class="fas fa-trash"></i> Xóa
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <?php endforeach; ?>
+            <!-- Categories Table -->
+            <div class="card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">Icon</th>
+                            <th>Tên danh mỦc</th>
+                            <th>Mô tả</th>
+                            <th style="width: 120px; text-align: center;">Số xe</th>
+                            <th style="width: 120px; text-align: center;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($categories as $cat): ?>
+                        <tr>
+                            <td>
+                                <div class="table-icon">
+                                    <i class="fas fa-tags"></i>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-category-name"><?= htmlspecialchars($cat['name']) ?></div>
+                            </td>
+                            <td>
+                                <div class="table-desc"><?= htmlspecialchars($cat['description'] ?? 'Chưa có mô tả') ?></div>
+                            </td>
+                            <td style="text-align: center;">
+                                <span class="table-badge"><?= $cat['car_count'] ?> xe</span>
+                            </td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="table-action edit" onclick="openEditModal(<?= htmlspecialchars(json_encode($cat)) ?>)" title="Chỉnh sửa">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="table-action delete" onclick="openDeleteModal(<?= $cat['id'] ?>, '<?= addslashes($cat['name']) ?>')" title="Xóa">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
             <?php endif; ?>
         </div>

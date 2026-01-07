@@ -98,8 +98,15 @@ unset($_SESSION['success'], $_SESSION['error']);
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label>Giá bán (VNĐ) <span class="required">*</span></label>
-                                        <input type="number" name="price" required placeholder="5000000000" min="0">
+                                        <input type="number" name="price" required placeholder="VD: 2500000000" min="0" step="1000000">
                                     </div>
+                                    <div class="form-group">
+                                        <label><i class="fas fa-boxes"></i> Số lượng tồn kho <span class="required">*</span></label>
+                                        <input type="number" name="stock" required placeholder="Số lượng xe" min="0" value="1">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
                                     <div class="form-group">
                                         <label>Năm sản xuất</label>
                                         <input type="number" name="year" value="<?= date('Y') ?>" min="1990" max="<?= date('Y') + 1 ?>">
@@ -119,32 +126,67 @@ unset($_SESSION['success'], $_SESSION['error']);
                                 <h3><i class="fas fa-cogs"></i> Thông số kỹ thuật</h3>
                             </div>
                             <div class="card-body">
+                                <div class="form-group">
+                                    <label><i class="fas fa-engine"></i> Loại động cơ</label>
+                                    <input type="text" name="engine" placeholder="VD: V8 4.0L Twin-Turbo">
+                                    <small class="form-hint">Loại động cơ và dung tích</small>
+                                </div>
+                                
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label><i class="fas fa-road"></i> Số km đã đi</label>
-                                        <input type="number" name="mileage" placeholder="0" min="0">
+                                        <label><i class="fas fa-bolt"></i> Công suất (HP)</label>
+                                        <input type="number" name="horsepower" placeholder="450" min="0">
                                     </div>
                                     <div class="form-group">
-                                        <label><i class="fas fa-gas-pump"></i> Nhiên liệu</label>
-                                        <select name="fuel_type">
-                                            <option value="">Chọn loại nhiên liệu</option>
-                                            <option value="Xăng">Xăng</option>
-                                            <option value="Dầu Diesel">Dầu Diesel</option>
-                                            <option value="Điện">Điện</option>
-                                            <option value="Hybrid">Hybrid</option>
+                                        <label><i class="fas fa-sync-alt"></i> Mô-men xoắn (Nm)</label>
+                                        <input type="number" name="torque" placeholder="500" min="0">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label><i class="fas fa-tachometer-alt"></i> Tăng tốc 0-100 km/h (s)</label>
+                                        <input type="number" name="acceleration" step="0.1" placeholder="3.5" min="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><i class="fas fa-road"></i> Hệ dẫn động</label>
+                                        <select name="drivetrain">
+                                            <option value="">Chọn hệ dẫn động</option>
+                                            <option value="FWD">FWD (Cầu trước)</option>
+                                            <option value="RWD">RWD (Cầu sau)</option>
+                                            <option value="AWD">AWD (4 bánh toàn thời gian)</option>
+                                            <option value="4WD">4WD (4 bánh bán thời gian)</option>
                                         </select>
                                     </div>
                                 </div>
                                 
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label><i class="fas fa-cog"></i> Hộp số</label>
-                                        <select name="transmission">
-                                            <option value="">Chọn loại hộp số</option>
-                                            <option value="Tự động">Tự động</option>
-                                            <option value="Số sàn">Số sàn</option>
-                                            <option value="Bán tự động">Bán tự động</option>
+                                        <label><i class="fas fa-user-friends"></i> Số chỗ ngồi</label>
+                                        <select name="seats">
+                                            <option value="">Chọn số chỗ</option>
+                                            <option value="2">2 chỗ</option>
+                                            <option value="4">4 chỗ</option>
+                                            <option value="5">5 chỗ</option>
+                                            <option value="7">7 chỗ</option>
+                                            <option value="8">8 chỗ</option>
                                         </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label><i class="fas fa-door-open"></i> Số cửa</label>
+                                        <select name="doors">
+                                            <option value="">Chọn số cửa</option>
+                                            <option value="2">2 cửa</option>
+                                            <option value="4">4 cửa</option>
+                                            <option value="5">5 cửa</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label><i class="fas fa-road"></i> Số km đã đi</label>
+                                        <input type="number" name="mileage" placeholder="0" min="0">
                                     </div>
                                     <div class="form-group">
                                         <label><i class="fas fa-palette"></i> Màu sắc</label>
@@ -152,9 +194,26 @@ unset($_SESSION['success'], $_SESSION['error']);
                                     </div>
                                 </div>
                                 
-                                <div class="form-group">
-                                    <label>Thông số chi tiết</label>
-                                    <textarea name="specifications" rows="5" placeholder="Động cơ: 3.0L V6 Turbo&#10;Công suất: 450 HP&#10;Mô-men xoắn: 500 Nm&#10;..."></textarea>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label><i class="fas fa-gas-pump"></i> Nhiên liệu</label>
+                                        <select name="fuel">
+                                            <option value="">Chọn loại nhiên liệu</option>
+                                            <option value="gasoline">Xăng</option>
+                                            <option value="diesel">Dầu Diesel</option>
+                                            <option value="electric">Điện</option>
+                                            <option value="hybrid">Hybrid</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label><i class="fas fa-cog"></i> Hộp số</label>
+                                        <select name="transmission">
+                                            <option value="">Chọn loại hộp số</option>
+                                            <option value="automatic">Tự động</option>
+                                            <option value="manual">Số sàn</option>
+                                            <option value="semi-automatic">Bán tự động</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -248,50 +307,13 @@ unset($_SESSION['success'], $_SESSION['error']);
                             </div>
                         </div>
 
-                        <!-- Status & Options -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h3><i class="fas fa-sliders-h"></i> Trạng thái & Tùy chọn</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label>Trạng thái</label>
-                                    <div class="status-options">
-                                        <label class="status-option available selected">
-                                            <input type="radio" name="status" value="available" checked>
-                                            <i class="fas fa-check-circle"></i>
-                                            <span>Còn hàng</span>
-                                        </label>
-                                        <label class="status-option reserved">
-                                            <input type="radio" name="status" value="reserved">
-                                            <i class="fas fa-clock"></i>
-                                            <span>Đã đặt</span>
-                                        </label>
-                                        <label class="status-option sold">
-                                            <input type="radio" name="status" value="sold">
-                                            <i class="fas fa-times-circle"></i>
-                                            <span>Đã bán</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group" style="margin-top: 20px;">
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" name="featured" value="1">
-                                        <span class="toggle-slider"></span>
-                                        <span class="toggle-label">Đánh dấu là xe nổi bật</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Submit -->
-                        <div class="form-actions" style="background: transparent; padding: 0; border: none;">
+                        <div class="form-actions" style="background: transparent; padding: 0; border: none; margin-top: 24px;">
                             <button type="reset" class="btn-secondary">
-                                <i class="fas fa-undo"></i> Reset
+                                <i class="fas fa-redo"></i> Đặt lại
                             </button>
-                            <button type="submit" class="btn-primary">
-                                <i class="fas fa-save"></i> Lưu xe
+                            <button type="submit" class="btn-primary btn-submit-large">
+                                <i class="fas fa-check-circle"></i> Lưu xe mới
                             </button>
                         </div>
                     </div>

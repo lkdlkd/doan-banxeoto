@@ -11,14 +11,13 @@ class AppointmentModel extends BaseModel
     public function getAllWithDetails()
     {
         $sql = "SELECT a.*, c.name as car_name, c.price as car_price, 
-                ci.image_url as car_image, b.name as brand_name, 
-                u.full_name as user_name, u.email as user_email 
+                b.name as brand_name, 
+                u.full_name as user_name, u.email as user_email,
+                (SELECT image_url FROM car_images WHERE car_id = c.id ORDER BY id ASC LIMIT 1) as car_image
                 FROM {$this->table} a 
                 LEFT JOIN cars c ON a.car_id = c.id 
-                LEFT JOIN car_images ci ON c.id = ci.car_id 
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 LEFT JOIN users u ON a.user_id = u.id 
-                GROUP BY a.id 
                 ORDER BY a.appointment_date DESC, a.appointment_time DESC";
         
         $stmt = $this->db->prepare($sql);
@@ -30,11 +29,11 @@ class AppointmentModel extends BaseModel
     public function getAppointmentWithDetails($id)
     {
         $sql = "SELECT a.*, c.name as car_name, c.price as car_price, 
-                ci.image_url as car_image, b.name as brand_name, 
-                u.full_name as user_name, u.email as user_email 
+                b.name as brand_name, 
+                u.full_name as user_name, u.email as user_email,
+                (SELECT image_url FROM car_images WHERE car_id = c.id ORDER BY id ASC LIMIT 1) as car_image
                 FROM {$this->table} a 
                 LEFT JOIN cars c ON a.car_id = c.id 
-                LEFT JOIN car_images ci ON c.id = ci.car_id 
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 LEFT JOIN users u ON a.user_id = u.id 
                 WHERE a.id = ?";
@@ -57,13 +56,12 @@ class AppointmentModel extends BaseModel
     public function getAppointmentsByUser($userId, $limit = null)
     {
         $sql = "SELECT a.*, c.name as car_name, c.price as car_price, 
-                ci.image_url as car_image, b.name as brand_name 
+                b.name as brand_name,
+                (SELECT image_url FROM car_images WHERE car_id = c.id ORDER BY id ASC LIMIT 1) as car_image
                 FROM {$this->table} a 
                 LEFT JOIN cars c ON a.car_id = c.id 
-                LEFT JOIN car_images ci ON c.id = ci.car_id 
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 WHERE a.user_id = ? 
-                GROUP BY a.id 
                 ORDER BY a.appointment_date DESC, a.appointment_time DESC";
         
         if ($limit !== null) {

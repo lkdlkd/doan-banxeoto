@@ -9,6 +9,7 @@ require_once __DIR__ . '/../../models/BrandModel.php';
 require_once __DIR__ . '/../../models/CategoryModel.php';
 require_once __DIR__ . '/../../models/ReviewModel.php';
 require_once __DIR__ . '/../../models/ContactModel.php';
+require_once __DIR__ . '/../../models/AppointmentModel.php';
 
 $carModel = new CarModel();
 $userModel = new UserModel();
@@ -17,8 +18,9 @@ $brandModel = new BrandModel();
 $categoryModel = new CategoryModel();
 $reviewModel = new ReviewModel();
 $contactModel = new ContactModel();
+$appointmentModel = new AppointmentModel();
 
-// Lấy thống kê
+// Lấy thống kê cơ bản
 $cars = $carModel->getAll();
 $users = $userModel->getAll();
 $orders = $orderModel->getAllWithDetails();
@@ -26,6 +28,7 @@ $brands = $brandModel->getAll();
 $categories = $categoryModel->getAll();
 $reviews = $reviewModel->getAllWithDetails();
 $contacts = $contactModel->getAll();
+$appointments = $appointmentModel->getAllWithDetails();
 
 $totalCars = count($cars);
 $totalUsers = count($users);
@@ -34,18 +37,27 @@ $totalBrands = count($brands);
 $totalCategories = count($categories);
 $totalReviews = count($reviews);
 $totalContacts = count($contacts);
+$totalAppointments = count($appointments);
 
 // Đếm đơn hàng theo trạng thái
 $pendingOrders = count(array_filter($orders, fn($o) => $o['status'] === 'pending'));
 $confirmedOrders = count(array_filter($orders, fn($o) => $o['status'] === 'confirmed'));
 $cancelledOrders = count(array_filter($orders, fn($o) => $o['status'] === 'cancelled'));
 
-// Tính doanh thu (từ đơn confirmed)
+// Đếm lịch hẹn theo trạng thái  
+$pendingAppointments = count(array_filter($appointments, fn($a) => $a['status'] === 'pending'));
+$confirmedAppointments = count(array_filter($appointments, fn($a) => $a['status'] === 'confirmed'));
+
+// Tính doanh thu
 $totalRevenue = array_sum(array_map(fn($o) => $o['status'] === 'confirmed' ? $o['price'] : 0, $orders));
+$pendingRevenue = array_sum(array_map(fn($o) => $o['status'] === 'pending' ? $o['price'] : 0, $orders));
 
 // Xe còn hàng / đã bán
 $availableCars = count(array_filter($cars, fn($c) => $c['status'] === 'available'));
 $soldCars = count(array_filter($cars, fn($c) => $c['status'] === 'sold'));
+
+// Đánh giá trung bình
+$avgRating = count($reviews) > 0 ? array_sum(array_map(fn($r) => $r['rating'], $reviews)) / count($reviews) : 0;
 
 // Format doanh thu
 function formatRevenue($value) {
@@ -56,6 +68,44 @@ function formatRevenue($value) {
     }
     return number_format($value, 0, ',', '.');
 }
+
+// Top 5 xe bán chạy (theo số đơn hàng)
+$carSales = [];
+foreach ($orders as $order) {
+    if ($order['status'] === 'confirmed') {
+        $carId = $order['car_id'];
+        if (!isset($carSales[$carId])) {
+            $carSales[$carId] = [
+                'name' => $order['car_name'],
+                'count' => 0,
+                'revenue' => 0
+            ];
+        }
+        $carSales[$carId]['count']++;
+        $carSales[$carId]['revenue'] += $order['price'];
+    }
+}
+usort($carSales, fn($a, $b) => $b['count'] - $a['count']);
+$topCars = array_slice($carSales, 0, 5);
+
+// Top 5 khách hàng VIP (theo tổng chi tiêu)
+$customerSpending = [];
+foreach ($orders as $order) {
+    if ($order['status'] === 'confirmed') {
+        $userId = $order['user_id'];
+        if (!isset($customerSpending[$userId])) {
+            $customerSpending[$userId] = [
+                'name' => $order['user_name'],
+                'total' => 0,
+                'orders' => 0
+            ];
+        }
+        $customerSpending[$userId]['total'] += $order['price'];
+        $customerSpending[$userId]['orders']++;
+    }
+}
+usort($customerSpending, fn($a, $b) => $b['total'] - $a['total']);
+$topCustomers = array_slice($customerSpending, 0, 5);
 
 // Lấy 5 đơn hàng gần nhất
 $recentOrders = array_slice($orders, 0, 5);
@@ -71,10 +121,11 @@ $unreadContacts = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unre
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - AutoCar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Dashboard - AutoCar Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-common.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-stats.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-dashboard.css">
 </head>
 <body>
@@ -82,7 +133,10 @@ $unreadContacts = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unre
 
     <main class="admin-main">
         <header class="admin-header">
-            <h1>Dashboard</h1>
+            <div>
+                <h1>Dashboard <span>Analytics</span></h1>
+                <p style="font-size: 13px; color: var(--gray-500); margin: 6px 0 0 0; font-weight: 500;">Tổng quan hệ thống AutoCar</p>
+            </div>
             <div class="header-right">
                 <div class="header-notifications">
                     <i class="fas fa-bell"></i>
@@ -104,7 +158,7 @@ $unreadContacts = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unre
                     <div class="stat-info">
                         <h3><?= $totalCars ?></h3>
                         <p>Tổng số xe</p>
-                        <span class="stat-detail"><?= $availableCars ?> còn hàng / <?= $soldCars ?> đã bán</span>
+                        <span class="stat-detail"><i class="fas fa-check-circle"></i> <?= $availableCars ?> còn hàng</span>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -112,7 +166,7 @@ $unreadContacts = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unre
                     <div class="stat-info">
                         <h3><?= $totalUsers ?></h3>
                         <p>Khách hàng</p>
-                        <span class="stat-detail">Tài khoản đã đăng ký</span>
+                        <span class="stat-detail"><i class="fas fa-user-plus"></i> Đã đăng ký</span>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -120,7 +174,7 @@ $unreadContacts = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unre
                     <div class="stat-info">
                         <h3><?= $totalOrders ?></h3>
                         <p>Đơn hàng</p>
-                        <span class="stat-detail"><?= $pendingOrders ?> chờ xử lý</span>
+                        <span class="stat-detail"><i class="fas fa-clock"></i> <?= $pendingOrders ?> chờ xử lý</span>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -128,7 +182,39 @@ $unreadContacts = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unre
                     <div class="stat-info">
                         <h3><?= formatRevenue($totalRevenue) ?></h3>
                         <p>Doanh thu</p>
-                        <span class="stat-detail">Từ <?= $confirmedOrders ?> đơn hoàn thành</span>
+                        <span class="stat-detail"><i class="fas fa-chart-line"></i> <?= $confirmedOrders ?> đơn hoàn thành</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple"><i class="fas fa-calendar-alt"></i></div>
+                    <div class="stat-info">
+                        <h3><?= $totalAppointments ?></h3>
+                        <p>Lịch hẹn</p>
+                        <span class="stat-detail"><i class="fas fa-hourglass-half"></i> <?= $pendingAppointments ?> chờ duyệt</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon indigo"><i class="fas fa-star"></i></div>
+                    <div class="stat-info">
+                        <h3><?= number_format($avgRating, 1) ?></h3>
+                        <p>Đánh giá TB</p>
+                        <span class="stat-detail"><i class="fas fa-comment-dots"></i> <?= $totalReviews ?> đánh giá</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange"><i class="fas fa-copyright"></i></div>
+                    <div class="stat-info">
+                        <h3><?= $totalBrands ?></h3>
+                        <p>Thương hiệu</p>
+                        <span class="stat-detail"><i class="fas fa-tags"></i> <?= $totalCategories ?> danh mục</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon teal"><i class="fas fa-envelope"></i></div>
+                    <div class="stat-info">
+                        <h3><?= $totalContacts ?></h3>
+                        <p>Liên hệ</p>
+                        <span class="stat-detail"><i class="fas fa-envelope-open"></i> <?= $unreadContacts ?> chưa đọc</span>
                     </div>
                 </div>
             </div>
@@ -136,20 +222,75 @@ $unreadContacts = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unre
             <!-- Quick Stats Row -->
             <div class="quick-stats">
                 <div class="quick-stat">
-                    <i class="fas fa-copyright"></i>
-                    <span><?= $totalBrands ?> thương hiệu</span>
+                    <i class="fas fa-box"></i>
+                    <span><?= $soldCars ?> xe đã bán</span>
                 </div>
                 <div class="quick-stat">
-                    <i class="fas fa-tags"></i>
-                    <span><?= $totalCategories ?> danh mục</span>
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span><?= formatRevenue($pendingRevenue) ?> đang chờ</span>
                 </div>
                 <div class="quick-stat">
-                    <i class="fas fa-star"></i>
-                    <span><?= $totalReviews ?> đánh giá</span>
+                    <i class="fas fa-user-check"></i>
+                    <span><?= $confirmedAppointments ?> lịch đã duyệt</span>
                 </div>
                 <div class="quick-stat">
-                    <i class="fas fa-envelope"></i>
-                    <span><?= $totalContacts ?> liên hệ</span>
+                    <i class="fas fa-trophy"></i>
+                    <span><?= count($topCars) ?> xe bán chạy</span>
+                </div>
+            </div>
+
+            <!-- Top Stats Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 30px;">
+                <!-- Top Xe Bán Chạy -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-fire"></i> Top Xe Bán Chạy</h3>
+                    </div>
+                    <?php if (count($topCars) === 0): ?>
+                    <div style="text-align: center; padding: 40px; color: var(--gray-400);">
+                        <i class="fas fa-car" style="font-size: 48px; margin-bottom: 16px;"></i>
+                        <p>Chưa có dữ liệu xe bán</p>
+                    </div>
+                    <?php else: ?>
+                    <div class="leaderboard">
+                        <?php foreach ($topCars as $index => $car): ?>
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank <?= $index === 0 ? 'top' : '' ?>"><?= $index + 1 ?></div>
+                            <div class="leaderboard-info">
+                                <h4><?= htmlspecialchars($car['name']) ?></h4>
+                                <p><?= $car['count'] ?> đơn hàng • <?= formatRevenue($car['revenue']) ?> VND</p>
+                            </div>
+                            <div class="leaderboard-value"><?= formatRevenue($car['revenue']) ?></div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Top Khách Hàng VIP -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-crown"></i> Top Khách Hàng VIP</h3>
+                    </div>
+                    <?php if (count($topCustomers) === 0): ?>
+                    <div style="text-align: center; padding: 40px; color: var(--gray-400);">
+                        <i class="fas fa-users" style="font-size: 48px; margin-bottom: 16px;"></i>
+                        <p>Chưa có dữ liệu khách hàng</p>
+                    </div>
+                    <?php else: ?>
+                    <div class="leaderboard">
+                        <?php foreach ($topCustomers as $index => $customer): ?>
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank <?= $index === 0 ? 'top' : '' ?>"><?= $index + 1 ?></div>
+                            <div class="leaderboard-info">
+                                <h4><?= htmlspecialchars($customer['name']) ?></h4>
+                                <p><?= $customer['orders'] ?> đơn hàng • Chi tiêu <?= formatRevenue($customer['total']) ?></p>
+                            </div>
+                            <div class="leaderboard-value"><?= formatRevenue($customer['total']) ?></div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
 

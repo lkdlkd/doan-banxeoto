@@ -14,9 +14,10 @@ unset($_SESSION['success'], $_SESSION['error']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý thương hiệu - AutoCar Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-common.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-stats.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-brands.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-modal.css">
 </head>
@@ -25,27 +26,29 @@ unset($_SESSION['success'], $_SESSION['error']);
 
     <main class="admin-main">
         <header class="admin-header">
-            <h1>Quản lý thương hiệu</h1>
-            <div class="header-profile">
-                <img src="https://ui-avatars.com/api/?name=Admin&background=D4AF37&color=fff" alt="Admin">
+            <div>
+                <h1>Quản lý thương hiệu</h1>
+                <p style="font-size: 13px; color: var(--gray-500); margin: 6px 0 0 0; font-weight: 500;">Quản lý các thương hiệu xe tại AutoCar</p>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-primary btn-sm" onclick="openAddModal()" style="gap: 8px;">
+                    <i class="fas fa-plus"></i> Thêm thương hiệu
+                </button>
+                <div class="header-profile">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=D4AF37&color=fff" alt="Admin">
+                </div>
             </div>
         </header>
 
         <div class="admin-content">
-            <div class="page-header">
-                <h2>Danh sách thương hiệu (<?= $totalBrands ?>)</h2>
-                <button class="btn-primary" onclick="openAddModal()">
-                    <i class="fas fa-plus"></i> Thêm thương hiệu
-                </button>
-            </div>
-
             <!-- Stats -->
-            <div class="stats-row">
+            <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-bottom: 30px;">
                 <div class="stat-card">
                     <div class="stat-icon gold"><i class="fas fa-copyright"></i></div>
                     <div class="stat-info">
                         <h3><?= $totalBrands ?></h3>
                         <p>Thương hiệu</p>
+                        <span class="stat-detail"><i class="fas fa-building"></i> Đang hoạt động</span>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -53,6 +56,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                     <div class="stat-info">
                         <h3><?= array_sum(array_column($brands, 'car_count')) ?></h3>
                         <p>Tổng xe</p>
+                        <span class="stat-detail"><i class="fas fa-layer-group"></i> Tất cả thương hiệu</span>
                     </div>
                 </div>
             </div>
@@ -64,36 +68,54 @@ unset($_SESSION['success'], $_SESSION['error']);
                 </div>
                 <h3>Chưa có thương hiệu nào</h3>
                 <p>Bắt đầu thêm thương hiệu xe để quản lý danh mục sản phẩm.</p>
-                <button class="btn-primary" onclick="openAddModal()">
+                <button class="btn btn-primary" onclick="openAddModal()">
                     <i class="fas fa-plus"></i> Thêm thương hiệu đầu tiên
                 </button>
             </div>
             <?php else: ?>
-            <!-- Brands Grid -->
-            <div class="brands-grid">
-                <?php foreach ($brands as $brand): ?>
-                <div class="brand-card">
-                    <div class="brand-logo">
-                        <img src="<?= $brand['logo'] ?: 'https://ui-avatars.com/api/?name=' . urlencode($brand['name']) . '&background=D4AF37&color=fff&size=100' ?>" alt="<?= htmlspecialchars($brand['name']) ?>">
-                    </div>
-                    <h3 class="brand-name"><?= htmlspecialchars($brand['name']) ?></h3>
-                    <p class="brand-desc"><?= htmlspecialchars($brand['description'] ?? 'Chưa có mô tả') ?></p>
-                    <div class="brand-stats">
-                        <div class="brand-stat">
-                            <div class="brand-stat-value"><?= $brand['car_count'] ?></div>
-                            <div class="brand-stat-label">Xe</div>
-                        </div>
-                    </div>
-                    <div class="brand-actions">
-                        <button class="brand-action" onclick="openEditModal(<?= htmlspecialchars(json_encode($brand)) ?>)">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="brand-action delete" onclick="openDeleteModal(<?= $brand['id'] ?>, '<?= addslashes($brand['name']) ?>')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-                <?php endforeach; ?>
+            <!-- Brands Table -->
+            <div class="card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">Logo</th>
+                            <th>Tên thương hiệu</th>
+                            <th>Mô tả</th>
+                            <th style="width: 120px; text-align: center;">Số xe</th>
+                            <th style="width: 120px; text-align: center;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($brands as $brand): ?>
+                        <tr>
+                            <td>
+                                <div class="table-logo">
+                                    <img src="<?= $brand['logo'] ?: 'https://ui-avatars.com/api/?name=' . urlencode($brand['name']) . '&background=D4AF37&color=fff&size=60' ?>" alt="<?= htmlspecialchars($brand['name']) ?>">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table-brand-name"><?= htmlspecialchars($brand['name']) ?></div>
+                            </td>
+                            <td>
+                                <div class="table-desc"><?= htmlspecialchars($brand['description'] ?? 'Chưa có mô tả') ?></div>
+                            </td>
+                            <td style="text-align: center;">
+                                <span class="table-badge"><?= $brand['car_count'] ?> xe</span>
+                            </td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="table-action edit" onclick="openEditModal(<?= htmlspecialchars(json_encode($brand)) ?>)" title="Chỉnh sửa">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="table-action delete" onclick="openDeleteModal(<?= $brand['id'] ?>, '<?= addslashes($brand['name']) ?>')" title="Xóa">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
             <?php endif; ?>
         </div>

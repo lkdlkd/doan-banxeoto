@@ -41,6 +41,16 @@ CREATE TABLE `appointments` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `appointments`
+--
+
+INSERT INTO `appointments` (`id`, `user_id`, `car_id`, `appointment_date`, `appointment_time`, `full_name`, `phone`, `email`, `notes`, `status`, `created_at`) VALUES
+(1, 2, 13, '2026-01-10', '10:00:00', 'Nguyễn Văn A', '0901234567', 'nguyenvana@gmail.com', 'Muốn xem và lái thử Ferrari F8 Tributo', 'pending', '2026-01-05 08:30:00'),
+(2, 2, 16, '2026-01-12', '14:00:00', 'Nguyễn Văn A', '0901234567', 'nguyenvana@gmail.com', 'Quan tâm đến Lamborghini Huracán EVO', 'confirmed', '2026-01-05 09:15:00'),
+(3, 2, 24, '2026-01-08', '09:00:00', 'Nguyễn Văn A', '0901234567', 'nguyenvana@gmail.com', 'Xem Rolls-Royce Phantom', 'completed', '2026-01-03 10:00:00'),
+(4, 2, 10, '2026-01-15', '15:30:00', 'Nguyễn Văn A', '0901234567', 'nguyenvana@gmail.com', 'Lái thử Porsche 911 Turbo S', 'pending', '2026-01-05 11:20:00');
+
 -- --------------------------------------------------------
 
 --
@@ -422,7 +432,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `appointments`
 --
 ALTER TABLE `appointments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `brands`

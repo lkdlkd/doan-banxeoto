@@ -260,10 +260,11 @@ include __DIR__ . '/../layouts/header.php';
 
 .order-item-info h4 {
     color: #1a1a1a;
-    font-size: 17px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 700;
     margin: 0 0 8px 0;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: -0.3px;
 }
 
 .order-item-info p {
@@ -288,10 +289,11 @@ include __DIR__ . '/../layouts/header.php';
 }
 
 .order-item-price .price {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 22px;
     color: #D4AF37;
-    font-weight: 700;
+    font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
 .order-footer {
@@ -316,10 +318,11 @@ include __DIR__ . '/../layouts/header.php';
 }
 
 .order-total .total-price {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 28px;
     color: #D4AF37;
-    font-weight: 700;
+    font-weight: 900;
+    letter-spacing: -0.5px;
 }
 
 .order-actions {

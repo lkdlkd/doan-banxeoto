@@ -392,58 +392,6 @@
     color: #fff;
 }
 
-/* Action Buttons */
-.action-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius);
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    background: rgba(212, 175, 55, 0.1);
-    color: var(--primary);
-}
-
-.action-btn:hover {
-    background: var(--primary);
-    color: #fff;
-    transform: translateY(-2px);
-}
-
-.action-btn.view {
-    background: rgba(59, 130, 246, 0.1);
-    color: var(--info);
-}
-
-.action-btn.view:hover {
-    background: var(--info);
-    color: #fff;
-}
-
-.action-btn.edit {
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--success);
-}
-
-.action-btn.edit:hover {
-    background: var(--success);
-    color: #fff;
-}
-
-.action-btn.delete {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--danger);
-}
-
-.action-btn.delete:hover {
-    background: var(--danger);
-    color: #fff;
-}
-
 /* Contact Detail Modal Styles */
 .contact-detail {
     padding: 10px 0;

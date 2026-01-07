@@ -27,6 +27,438 @@ $repliedCount = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unread
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-common.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-contacts.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin-modal.css">
+    <style>
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            color: #374151;
+        }
+
+        .stat-icon::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #D4AF37, #B8960B);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover .stat-icon::before {
+            opacity: 0.1;
+        }
+
+        .stat-icon.blue,
+        .stat-icon.orange,
+        .stat-icon.red,
+        .stat-icon.green {
+            background: linear-gradient(135deg, #1f2937, #374151);
+            color: white;
+        }
+
+        .stat-info h3 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 4px 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .stat-info p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .filters-bar {
+            background: white;
+            padding: 20px 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            display: grid;
+            grid-template-columns: auto auto 1fr;
+            gap: 20px;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .filters-bar {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+            min-width: fit-content;
+        }
+
+        .filter-group select {
+            padding: 10px 36px 10px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #374151;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 160px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23374151' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+
+        .filter-group select:hover {
+            border-color: #D4AF37;
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: #D4AF37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .filter-search {
+            position: relative;
+            min-width: 250px;
+        }
+
+        .filter-search i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .filter-search input {
+            width: 100%;
+            padding: 10px 16px 10px 44px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-search input:hover {
+            border-color: #D4AF37;
+        }
+
+        .filter-search input:focus {
+            outline: none;
+            border-color: #D4AF37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .bulk-actions-bar {
+            background: linear-gradient(135deg, #1f2937, #374151);
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .bulk-selected {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .bulk-selected input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .bulk-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-bulk {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-bulk:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-bulk.danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .btn-bulk.danger:hover {
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .contacts-list {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .contact-card {
+            padding: 24px;
+            border-bottom: 1px solid #f3f4f6;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .contact-card:last-child {
+            border-bottom: none;
+        }
+
+        .contact-card:hover {
+            background: linear-gradient(to right, rgba(212, 175, 55, 0.03), transparent);
+        }
+
+        .contact-card.unread,
+        .contact-card.new {
+            background: linear-gradient(to right, rgba(59, 130, 246, 0.05), transparent);
+            border-left: 3px solid #3b82f6;
+        }
+
+        .contact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .contact-sender {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .contact-sender input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #D4AF37;
+        }
+
+        .contact-sender img {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .contact-sender-info h4 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .contact-sender-info p {
+            margin: 0;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .contact-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .contact-status {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-status.new {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .contact-status.unread {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .contact-status.read {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+        }
+
+        .contact-status.replied {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .contact-date {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .contact-subject {
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .contact-subject strong {
+            color: #1f2937;
+            font-weight: 700;
+        }
+
+        .contact-message {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid #D4AF37;
+        }
+
+        .contact-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-btn.view {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .action-btn.view:hover {
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .action-btn.delete {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .action-btn.delete:hover {
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .empty-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #D4AF37, #B8960B);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        .empty-state h3 {
+            margin: 0 0 12px 0;
+            font-size: 24px;
+            color: #1f2937;
+        }
+
+        .empty-state p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 16px;
+        }
+    </style>
 </head>
 
 <body>
@@ -35,7 +467,7 @@ $repliedCount = count(array_filter($contacts, fn($c) => ($c['status'] ?? 'unread
 
     <main class="admin-main">
         <header class="admin-header">
-            <h1>Quản lý liên hệ</h1>
+            <h1><i class="fas fa-inbox" style="color: #D4AF37; margin-right: 12px;"></i>Quản lý liên hệ</h1>
             <div class="header-profile">
                 <img src="https://ui-avatars.com/api/?name=Admin&background=D4AF37&color=fff" alt="Admin">
             </div>

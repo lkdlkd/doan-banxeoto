@@ -337,37 +337,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--gray-100);
+    color: var(--gray-700);
 }
 
-.user-actions .btn-view {
-    background: rgba(59, 130, 246, 0.1);
-    color: var(--info);
-}
-
-.user-actions .btn-view:hover {
-    background: var(--info);
-    color: #fff;
-}
-
-.user-actions .btn-edit {
-    background: rgba(212, 175, 55, 0.1);
-    color: var(--primary);
-}
-
-.user-actions .btn-edit:hover {
-    background: var(--primary);
-    color: #fff;
-}
-
-.user-actions .btn-delete {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--danger);
-}
-
-.user-actions .btn-delete:hover {
-    background: var(--danger);
-    color: #fff;
+.user-actions .btn-icon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: var(--gray-200);
+    color: var(--gray-900);
 }
 
 /* Add User Modal */

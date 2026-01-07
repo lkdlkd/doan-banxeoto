@@ -572,6 +572,22 @@ switch ($request) {
         require VIEW_PATH . '/admin/reviews/list.php';
         break;
     
+    case '/admin/statistics':
+        // Kiểm tra đăng nhập và quyền admin
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+        if ($_SESSION['role'] !== 'admin') {
+            $_SESSION['error'] = 'Bạn không có quyền truy cập trang này';
+            header('Location: /');
+            exit;
+        }
+        require_once APP_PATH . '/controllers/StatisticsController.php';
+        $controller = new StatisticsController();
+        $controller->dashboard();
+        break;
+    
     case (preg_match('/^\/admin\/reviews\/delete\/(\d+)$/', $request, $matches) ? true : false):
         require_once APP_PATH . '/controllers/ReviewController.php';
         $controller = new ReviewController();

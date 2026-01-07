@@ -34,7 +34,10 @@ $totalRevenue = array_sum(array_map(fn($o) => $o['status'] === 'confirmed' ? $o[
 
     <main class="admin-main">
         <header class="admin-header">
-            <h1>Quản lý đơn hàng</h1>
+            <div>
+                <h1>Quản lý đơn hàng</h1>
+                <p style="font-size: 13px; color: var(--gray-500); margin: 6px 0 0 0; font-weight: 500;">Theo dõi và xử lý đơn đặt hàng</p>
+            </div>
             <div class="header-profile">
                 <img src="https://ui-avatars.com/api/?name=Admin&background=D4AF37&color=fff" alt="Admin">
             </div>
@@ -42,37 +45,44 @@ $totalRevenue = array_sum(array_map(fn($o) => $o['status'] === 'confirmed' ? $o[
 
         <div class="admin-content">
             <div class="page-header">
-                <h2>Danh sách đơn hàng (<?= $totalOrders ?>)</h2>
+                <div class="page-header-content">
+                    <h2>Danh sách đơn hàng (<?= $totalOrders ?>)</h2>
+                    <p class="page-subtitle">Quản lý tất cả đơn đặt xe từ khách hàng</p>
+                </div>
             </div>
 
             <!-- Order Stats -->
-            <div class="order-stats">
-                <div class="order-stat">
-                    <div class="order-stat-icon total"><i class="fas fa-shopping-cart"></i></div>
-                    <div class="order-stat-info">
+            <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 30px;">
+                <div class="stat-card">
+                    <div class="stat-icon gold"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="stat-info">
                         <h3><?= $totalOrders ?></h3>
                         <p>Tổng đơn hàng</p>
+                        <span class="stat-detail"><i class="fas fa-calendar"></i> Tất cả</span>
                     </div>
                 </div>
-                <div class="order-stat">
-                    <div class="order-stat-icon pending"><i class="fas fa-clock"></i></div>
-                    <div class="order-stat-info">
+                <div class="stat-card">
+                    <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+                    <div class="stat-info">
                         <h3><?= $pendingOrders ?></h3>
                         <p>Chờ xử lý</p>
+                        <span class="stat-detail"><i class="fas fa-hourglass-half"></i> Cần xử lý</span>
                     </div>
                 </div>
-                <div class="order-stat">
-                    <div class="order-stat-icon confirmed"><i class="fas fa-check-circle"></i></div>
-                    <div class="order-stat-info">
+                <div class="stat-card">
+                    <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-info">
                         <h3><?= $confirmedOrders ?></h3>
                         <p>Đã xác nhận</p>
+                        <span class="stat-detail"><i class="fas fa-thumbs-up"></i> Hoàn tất</span>
                     </div>
                 </div>
-                <div class="order-stat">
-                    <div class="order-stat-icon revenue"><i class="fas fa-dollar-sign"></i></div>
-                    <div class="order-stat-info">
-                        <h3><?= number_format($totalRevenue, 0, ',', '.') ?>₫</h3>
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="fas fa-coins"></i></div>
+                    <div class="stat-info">
+                        <h3 style="font-size: 28px;"><?= number_format($totalRevenue/1000000000, 1) ?> tỷ</h3>
                         <p>Doanh thu</p>
+                        <span class="stat-detail"><i class="fas fa-chart-line"></i> Đã xác nhận</span>
                     </div>
                 </div>
             </div>
@@ -80,26 +90,27 @@ $totalRevenue = array_sum(array_map(fn($o) => $o['status'] === 'confirmed' ? $o[
             <!-- Filters -->
             <div class="filters-bar">
                 <div class="filter-group">
-                    <label>Trạng thái:</label>
+                    <label>Trạng thái</label>
                     <select id="filterStatus">
-                        <option value="">Tất cả</option>
+                        <option value="">Tất cả trạng thái</option>
                         <option value="pending">Chờ xử lý</option>
                         <option value="confirmed">Đã xác nhận</option>
                         <option value="cancelled">Đã hủy</option>
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label>Thanh toán:</label>
+                    <label>Thanh toán</label>
                     <select id="filterPayment">
-                        <option value="">Tất cả</option>
+                        <option value="">Tất cả hình thức</option>
                         <option value="bank_transfer">Chuyển khoản</option>
                         <option value="cash">Tiền mặt</option>
                         <option value="deposit">Đặt cọc</option>
                     </select>
                 </div>
                 <div class="filter-search">
+                    <label>Tìm kiếm</label>
                     <i class="fas fa-search"></i>
-                    <input type="text" id="searchOrder" placeholder="Tìm theo mã đơn, tên khách...">
+                    <input type="text" id="searchOrder" placeholder="Tìm theo mã đơn, tên khách hàng...">
                 </div>
             </div>
 
@@ -114,85 +125,68 @@ $totalRevenue = array_sum(array_map(fn($o) => $o['status'] === 'confirmed' ? $o[
             </div>
             <?php else: ?>
             <!-- Orders Table -->
-            <div class="orders-table-container">
-                <table class="orders-table">
+            <div class="card">
+                <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Mã đơn</th>
-                            <th>Khách hàng</th>
+                            <th style="width: 80px;">Mã ĐH</th>
+                            <th style="width: 200px;">Khách hàng</th>
                             <th>Xe</th>
-                            <th>Giá</th>
-                            <th>Thanh toán</th>
-                            <th>Trạng thái</th>
-                            <th>Ngày đặt</th>
-                            <th>Thao tác</th>
+                            <th style="width: 120px; text-align: right;">Giá</th>
+                            <th style="width: 130px; text-align: center;">Trạng thái</th>
+                            <th style="width: 110px; text-align: center;">Ngày đặt</th>
+                            <th style="width: 120px; text-align: center;">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($orders as $order): ?>
                         <tr data-status="<?= $order['status'] ?>" data-payment="<?= $order['payment_method'] ?>">
-                            <td><span class="order-id">#<?= str_pad($order['id'], 5, '0', STR_PAD_LEFT) ?></span></td>
+                            <td><span class="order-id">#<?= str_pad($order['id'], 4, '0', STR_PAD_LEFT) ?></span></td>
                             <td>
-                                <div class="customer-info">
-                                    <img src="https://ui-avatars.com/api/?name=<?= urlencode($order['user_name'] ?? 'User') ?>&background=D4AF37&color=fff" alt="">
-                                    <div>
-                                        <strong><?= htmlspecialchars($order['user_name'] ?? 'Khách hàng') ?></strong>
-                                        <span><?= htmlspecialchars($order['user_email'] ?? '') ?></span>
-                                    </div>
+                                <div class="table-info">
+                                    <div class="table-name" style="font-size: 14px;"><?= htmlspecialchars($order['user_name'] ?? 'Khách hàng') ?></div>
+                                    <div style="font-size: 12px; color: var(--gray-500);"><?= htmlspecialchars($order['user_email'] ?? '') ?></div>
                                 </div>
                             </td>
                             <td>
-                                <div class="car-info">
-                                    <img src="<?= $order['car_image'] ?? 'https://via.placeholder.com/60' ?>" alt="">
-                                    <div>
-                                        <strong><?= htmlspecialchars($order['car_name'] ?? 'Xe') ?></strong>
-                                        <span><?= htmlspecialchars($order['brand_name'] ?? '') ?></span>
-                                    </div>
+                                <div class="table-info">
+                                    <div class="table-name" style="font-size: 14px;"><?= htmlspecialchars($order['car_name'] ?? 'Xe') ?></div>
+                                    <div style="font-size: 12px; color: var(--gray-500);"><?= htmlspecialchars($order['brand_name'] ?? '') ?></div>
                                 </div>
                             </td>
-                            <td><span class="order-price"><?= number_format($order['price'], 0, ',', '.') ?>₫</span></td>
-                            <td>
-                                <span class="payment-method <?= $order['payment_method'] ?>">
-                                    <?php 
-                                    switch($order['payment_method']) {
-                                        case 'bank_transfer': echo 'Chuyển khoản'; break;
-                                        case 'cash': echo 'Tiền mặt'; break;
-                                        case 'deposit': 
-                                            echo 'Đặt cọc ' . ($order['deposit_percentage'] ?? 10) . '%';
-                                            break;
-                                        default: echo $order['payment_method'];
-                                    }
-                                    ?>
-                                </span>
+                            <td style="text-align: right;">
+                                <div class="table-price-main"><?= number_format($order['price']/1000000000, 2) ?> tỷ</div>
+                                <?php if ($order['payment_method'] === 'deposit'): ?>
+                                <div style="font-size: 11px; color: var(--gray-500);">Cọc <?= ($order['deposit_percentage'] ?? 10) ?>%</div>
+                                <?php endif; ?>
                             </td>
-                            <td>
-                                <span class="order-status <?= $order['status'] ?>">
+                            <td style="text-align: center;">
+                                <span class="status-badge <?= $order['status'] ?>">
                                     <?php 
                                     switch($order['status']) {
-                                        case 'pending': echo 'Chờ xử lý'; break;
-                                        case 'confirmed': echo 'Đã xác nhận'; break;
-                                        case 'cancelled': echo 'Đã hủy'; break;
-                                        default: echo $order['status'];
+                                        case 'pending': echo 'CHỜ XỬ LÝ'; break;
+                                        case 'confirmed': echo 'ĐÃ XÁC NHẬN'; break;
+                                        case 'cancelled': echo 'ĐÃ HỦY'; break;
+                                        default: echo strtoupper($order['status']);
                                     }
                                     ?>
                                 </span>
                             </td>
-                            <td><span class="order-date"><?= date('d/m/Y', strtotime($order['created_at'])) ?></span></td>
+                            <td style="text-align: center;">
+                                <span class="order-date"><?= date('d/m/Y', strtotime($order['created_at'])) ?></span>
+                            </td>
                             <td>
-                                <div class="order-actions">
+                                <div class="table-actions">
                                     <?php if ($order['status'] === 'pending'): ?>
-                                    <button class="action-btn confirm" onclick="updateStatus(<?= $order['id'] ?>, 'confirmed')" title="Xác nhận">
+                                    <button class="action-btn" onclick="updateStatus(<?= $order['id'] ?>, 'confirmed')" title="Xác nhận">
                                         <i class="fas fa-check"></i>
                                     </button>
-                                    <button class="action-btn cancel" onclick="updateStatus(<?= $order['id'] ?>, 'cancelled')" title="Hủy đơn">
+                                    <button class="action-btn" onclick="updateStatus(<?= $order['id'] ?>, 'cancelled')" title="Hủy đơn">
                                         <i class="fas fa-times"></i>
                                     </button>
                                     <?php endif; ?>
                                     <button class="action-btn" onclick="viewDetail(<?= $order['id'] ?>)" title="Xem chi tiết">
                                         <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="action-btn delete" onclick="openDeleteModal(<?= $order['id'] ?>, '#<?= str_pad($order['id'], 5, '0', STR_PAD_LEFT) ?>')" title="Xóa">
-                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </td>

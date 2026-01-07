@@ -23,14 +23,17 @@ if (isset($_SESSION['user_id'])) {
 $car = $carModel->getById($carId);
 
 if (!$car) {
-    header('Location: /cars');
+    header('Location: ' . BASE_URL . '/user/car_list');
     exit;
 }
+
+// Lấy danh sách ảnh của xe
+$carImages = $carModel->getImages($carId);
 
 // Lấy đánh giá của xe
 $reviews = $reviewModel->getByCarId($carId);
 
-// Lấy xe tương tự (cùng thương hiệu hoặc danh mục)
+// Lấy xe tương tự
 $similarCars = $carModel->getSimilarCars($carId, $car['brand_id'], $car['category_id'], 4);
 
 $pageTitle = htmlspecialchars($car['name']) . ' - Chi tiết xe';
@@ -50,32 +53,22 @@ include __DIR__ . '/../layouts/header.php';
 ?>
 
 <style>
-    /* Page Banner */
-    .page-banner {
-        position: relative;
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-        padding: 60px 0 40px;
-        overflow: hidden;
+    .car-detail {
+        padding: 40px 0;
+        background: #f5f5f5;
     }
 
-    .page-banner::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z" fill="none"/><path d="M50 0L100 50L50 100L0 50z" fill="%23D4AF37" opacity="0.03"/></svg>');
-    }
-
-    .banner-content {
-        position: relative;
-        max-width: 1400px;
+    .container {
+        max-width: 1200px;
         margin: 0 auto;
-        padding: 0 30px;
+        padding: 0 20px;
     }
 
     .breadcrumb {
+        background: white;
+        padding: 15px 25px;
+        border-radius: 8px;
+        margin-bottom: 30px;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -85,54 +78,38 @@ include __DIR__ . '/../layouts/header.php';
     .breadcrumb a {
         color: #D4AF37;
         text-decoration: none;
-        transition: opacity 0.3s;
     }
 
     .breadcrumb a:hover {
-        opacity: 0.8;
+        text-decoration: underline;
     }
 
-    .breadcrumb .divider {
-        color: rgba(255, 255, 255, 0.3);
+    .breadcrumb span {
+        color: #999;
     }
 
-    .breadcrumb .current {
-        color: rgba(255, 255, 255, 0.6);
-    }
-
-    /* Car Detail */
-    .car-detail-section {
-        padding: 60px 0;
-        background: #f5f2ed;
-    }
-
-    .container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 30px;
-    }
-
-    .car-detail-grid {
+    .detail-grid {
         display: grid;
         grid-template-columns: 1.2fr 1fr;
-        gap: 40px;
-        margin-bottom: 50px;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
     /* Gallery */
-    .car-gallery {
-        background: #fff;
-        border-radius: 20px;
-        padding: 30px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-    }
-
     .main-image {
         width: 100%;
-        height: 450px;
-        border-radius: 15px;
+        height: 400px;
+        border-radius: 8px;
         overflow: hidden;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
+        background: #f0f0f0;
     }
 
     .main-image img {
@@ -144,20 +121,20 @@ include __DIR__ . '/../layouts/header.php';
     .thumbnail-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 15px;
+        gap: 10px;
     }
 
     .thumbnail {
-        height: 100px;
-        border-radius: 10px;
+        height: 80px;
+        border-radius: 6px;
         overflow: hidden;
         cursor: pointer;
-        border: 3px solid transparent;
+        border: 2px solid transparent;
         transition: all 0.3s;
     }
 
-    .thumbnail:hover,
-    .thumbnail.active {
+    .thumbnail.active,
+    .thumbnail:hover {
         border-color: #D4AF37;
     }
 
@@ -168,16 +145,9 @@ include __DIR__ . '/../layouts/header.php';
     }
 
     /* Info */
-    .car-info {
-        background: #fff;
-        border-radius: 20px;
-        padding: 35px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-    }
-
-    .car-info h1 {
-        font-family: 'Playfair Display', serif;
-        font-size: 32px;
+    .car-name {
+        font-size: 28px;
+        font-weight: 700;
         color: #1a1a1a;
         margin-bottom: 15px;
     }
@@ -187,13 +157,14 @@ include __DIR__ . '/../layouts/header.php';
         gap: 20px;
         margin-bottom: 20px;
         padding-bottom: 20px;
-        border-bottom: 2px solid #f5f5f5;
+        border-bottom: 2px solid #f0f0f0;
+        flex-wrap: wrap;
     }
 
     .meta-item {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         font-size: 14px;
         color: #666;
     }
@@ -203,37 +174,30 @@ include __DIR__ . '/../layouts/header.php';
     }
 
     .car-price {
-        font-family: 'Playfair Display', serif;
         font-size: 36px;
         font-weight: 700;
         color: #D4AF37;
         margin-bottom: 25px;
     }
 
-    .car-price small {
-        font-size: 16px;
-        color: #999;
-        font-weight: 400;
-    }
-
-    .car-highlights {
+    .highlights {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-        margin-bottom: 30px;
+        gap: 12px;
+        margin-bottom: 25px;
     }
 
     .highlight-item {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 12px 15px;
-        background: #f9f7f3;
-        border-radius: 10px;
+        gap: 10px;
+        padding: 12px;
+        background: #f9f9f9;
+        border-radius: 8px;
     }
 
     .highlight-item i {
-        font-size: 20px;
+        font-size: 18px;
         color: #D4AF37;
     }
 
@@ -244,93 +208,90 @@ include __DIR__ . '/../layouts/header.php';
 
     .action-buttons {
         display: flex;
-        gap: 15px;
+        flex-direction: column;
+        gap: 12px;
         margin-bottom: 25px;
     }
 
     .btn {
-        padding: 16px 30px;
-        border-radius: 12px;
+        padding: 14px 24px;
+        border-radius: 8px;
         font-size: 15px;
         font-weight: 600;
         text-decoration: none;
-        display: inline-flex;
+        display: flex;
         align-items: center;
-        gap: 10px;
         justify-content: center;
+        gap: 8px;
         transition: all 0.3s;
         cursor: pointer;
         border: none;
     }
 
     .btn-primary {
-        background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
-        color: #fff;
-        flex: 1;
+        background: linear-gradient(135deg, #D4AF37, #B8960B);
+        color: white;
     }
 
     .btn-primary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(212,175,55,0.3);
     }
 
     .btn-outline {
-        background: #fff;
+        background: white;
         color: #D4AF37;
         border: 2px solid #D4AF37;
     }
 
     .btn-outline:hover {
         background: #D4AF37;
-        color: #fff;
+        color: white;
     }
 
-    .contact-seller {
+    .contact-box {
         padding: 20px;
-        background: #f9f7f3;
-        border-radius: 12px;
+        background: #fef9ed;
+        border-radius: 8px;
         border-left: 4px solid #D4AF37;
     }
 
-    .contact-seller h4 {
+    .contact-box h4 {
         font-size: 16px;
+        margin-bottom: 8px;
         color: #1a1a1a;
-        margin-bottom: 10px;
     }
 
-    .contact-seller p {
+    .contact-box p {
         font-size: 14px;
         color: #666;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
     }
 
-    .contact-seller a {
+    .contact-box a {
         color: #D4AF37;
         text-decoration: none;
         font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .contact-seller a:hover {
-        opacity: 0.8;
     }
 
     /* Tabs */
-    .car-tabs {
-        margin-top: 50px;
+    .tabs {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 40px;
     }
 
     .tab-buttons {
         display: flex;
         gap: 10px;
-        margin-bottom: 30px;
-        border-bottom: 2px solid #eee;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #f0f0f0;
     }
 
     .tab-btn {
-        padding: 15px 30px;
+        padding: 12px 24px;
         background: none;
         border: none;
         font-size: 15px;
@@ -366,76 +327,76 @@ include __DIR__ . '/../layouts/header.php';
     .specs-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-        background: #fff;
-        padding: 30px;
-        border-radius: 15px;
+        gap: 15px;
     }
 
     .spec-item {
         display: flex;
         justify-content: space-between;
-        padding: 15px;
-        background: #f9f7f3;
-        border-radius: 10px;
+        padding: 12px 15px;
+        background: #f9f9f9;
+        border-radius: 6px;
     }
 
     .spec-label {
         font-weight: 600;
         color: #333;
+        font-size: 14px;
     }
 
     .spec-value {
         color: #666;
+        font-size: 14px;
     }
 
     .description {
-        background: #fff;
-        padding: 30px;
-        border-radius: 15px;
         line-height: 1.8;
         color: #555;
+        font-size: 15px;
     }
 
     /* Reviews */
-    .reviews-section {
-        background: #fff;
-        padding: 30px;
-        border-radius: 15px;
-    }
-
     .review-summary {
         display: flex;
-        gap: 40px;
-        margin-bottom: 30px;
-        padding-bottom: 30px;
-        border-bottom: 2px solid #f5f5f5;
+        gap: 30px;
+        margin-bottom: 25px;
+        padding-bottom: 25px;
+        border-bottom: 2px solid #f0f0f0;
     }
 
-    .rating-overview {
+    .rating-box {
         text-align: center;
+        padding: 20px;
+        background: #fef9ed;
+        border-radius: 8px;
     }
 
     .rating-score {
-        font-size: 48px;
+        font-size: 42px;
         font-weight: 700;
         color: #D4AF37;
     }
 
     .rating-stars {
         color: #D4AF37;
-        font-size: 20px;
-        margin: 10px 0;
+        font-size: 18px;
+        margin: 8px 0;
     }
 
     .rating-count {
-        font-size: 14px;
+        font-size: 13px;
         color: #999;
     }
 
-    .review-card {
+    .review-list {
+        flex: 1;
+    }
+
+    .review-item {
         padding: 20px;
-        border-bottom: 1px solid #f5f5f5;
+        background: #f9f9f9;
+        border-radius: 8px;
+        margin-bottom: 15px;
     }
 
     .review-header {
@@ -446,7 +407,7 @@ include __DIR__ . '/../layouts/header.php';
 
     .reviewer-name {
         font-weight: 600;
-        color: #333;
+        color: #1a1a1a;
     }
 
     .review-date {
@@ -454,445 +415,673 @@ include __DIR__ . '/../layouts/header.php';
         color: #999;
     }
 
-    .review-stars {
+    .review-rating {
         color: #D4AF37;
-        margin-bottom: 10px;
     }
 
     .review-text {
-        color: #666;
+        color: #555;
         line-height: 1.6;
+        font-size: 14px;
+    }
+
+    .no-reviews {
+        text-align: center;
+        padding: 40px;
+        color: #999;
     }
 
     /* Similar Cars */
-    .similar-cars {
-        margin-top: 60px;
-    }
-
-    .section-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 32px;
-        color: #1a1a1a;
-        text-align: center;
+    .similar-section {
         margin-bottom: 40px;
     }
 
-    .cars-grid {
+    .section-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 20px;
+    }
+
+    .similar-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 25px;
+        gap: 20px;
     }
 
-    .car-card {
-        background: #fff;
-        border-radius: 15px;
+    .similar-car {
+        background: white;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         transition: all 0.3s;
         text-decoration: none;
-        display: block;
+        color: inherit;
     }
 
-    .car-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    .similar-car:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
     }
 
-    .car-card-image {
-        height: 200px;
+    .similar-car-image {
+        height: 180px;
         overflow: hidden;
     }
 
-    .car-card-image img {
+    .similar-car-image img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
 
-    .car-card-body {
-        padding: 20px;
+    .similar-car-info {
+        padding: 15px;
     }
 
-    .car-card-title {
-        font-size: 16px;
+    .similar-car-name {
+        font-size: 15px;
         font-weight: 600;
         color: #1a1a1a;
         margin-bottom: 8px;
     }
 
-    .car-card-meta {
-        font-size: 13px;
-        color: #999;
-        margin-bottom: 12px;
-    }
-
-    .car-card-price {
+    .similar-car-price {
         font-size: 18px;
         font-weight: 700;
         color: #D4AF37;
+        margin-bottom: 8px;
+    }
+
+    .similar-car-meta {
+        display: flex;
+        gap: 12px;
+        font-size: 12px;
+        color: #999;
     }
 
     @media (max-width: 1024px) {
-        .car-detail-grid {
+        .detail-grid {
             grid-template-columns: 1fr;
         }
-
-        .cars-grid {
+        .specs-grid {
+            grid-template-columns: 1fr;
+        }
+        .similar-grid {
             grid-template-columns: repeat(2, 1fr);
         }
     }
 
     @media (max-width: 768px) {
-        .cars-grid {
+        .similar-grid {
             grid-template-columns: 1fr;
         }
+        .highlights {
+            grid-template-columns: 1fr;
+        }
+        .page-banner h1 {
+            font-size: 28px;
+        }
+    }
 
-        .specs-grid {
-            grid-template-columns: 1fr;
-        }
+    /* Banner */
+    .page-banner {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        padding: 60px 0 70px;
+        margin-bottom: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(ellipse at 20% 50%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+            url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><path d="M30 0L60 30L30 60L0 30z" fill="%23D4AF37" opacity="0.02"/></svg>');
+    }
+
+    .page-banner::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+    }
+
+    .page-banner .container {
+        position: relative;
+        z-index: 1;
+    }
+
+    .banner-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #D4AF37, #B8960B);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+    }
+
+    .page-banner h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 48px;
+        font-weight: 700;
+        color: white;
+        margin: 0 0 20px 0;
+        text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        line-height: 1.2;
+    }
+
+    .page-banner .price-banner {
+        font-family: 'Playfair Display', serif;
+        font-size: 36px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #D4AF37, #f0d078);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 25px;
+        display: inline-block;
+    }
+
+    .page-banner .car-meta-banner {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .page-banner .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: rgba(255,255,255,0.9);
+        font-size: 15px;
+        font-weight: 500;
+        padding: 10px 18px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s;
+    }
+
+    .page-banner .meta-item:hover {
+        background: rgba(212, 175, 55, 0.2);
+        border-color: rgba(212, 175, 55, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .page-banner .meta-item i {
+        color: #D4AF37;
+        font-size: 16px;
+    }
+
+    /* Add to cart button */
+    .btn-cart {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+    }
+
+    .btn-cart:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(34,197,94,0.3);
     }
 </style>
 
-<!-- Page Banner -->
-<section class="page-banner">
-    <div class="banner-content">
-        <div class="breadcrumb">
-            <a href="/">Trang Chủ</a>
-            <span class="divider">›</span>
-            <a href="/cars">Danh Sách Xe</a>
-            <span class="divider">›</span>
-            <span class="current"><?= htmlspecialchars($car['name']) ?></span>
+<!-- Banner -->
+<div class="page-banner">
+    <div class="container">
+        <div class="banner-badge">
+            <i class="fas fa-star"></i>
+            <?= $car['status'] == 'available' ? 'Còn hàng' : 'Đã bán' ?>
+        </div>
+        <h1><?= htmlspecialchars($car['name']) ?></h1>
+        <div class="price-banner"><?= formatPrice($car['price']) ?> VND</div>
+        <div class="car-meta-banner">
+            <div class="meta-item">
+                <i class="fas fa-building"></i>
+                <?= htmlspecialchars($car['brand_name']) ?>
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-tag"></i>
+                <?= htmlspecialchars($car['category_name']) ?>
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-calendar-alt"></i>
+                <?= htmlspecialchars($car['year']) ?>
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <?= number_format($car['mileage']) ?> km
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-palette"></i>
+                <?= htmlspecialchars($car['color']) ?>
+            </div>
         </div>
     </div>
-</section>
+</div>
 
-<!-- Car Detail Section -->
-<section class="car-detail-section">
+<div class="car-detail">
     <div class="container">
-        <div class="car-detail-grid">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="<?= BASE_URL ?>"><i class="fas fa-home"></i> Trang chủ</a>
+            <span>/</span>
+            <a href="<?= BASE_URL ?>/user/car_list">Danh sách xe</a>
+            <span>/</span>
+            <span><?= htmlspecialchars($car['name']) ?></span>
+        </div>
+
+        <!-- Main Content -->
+        <div class="detail-grid">
             <!-- Gallery -->
-            <div class="car-gallery">
+            <div class="card">
                 <?php
-                // Lấy hình ảnh từ car_images
-                $carImages = $carModel->getImages($car['id']);
-                $mainImage = !empty($carImages) ? $carImages[0]['image_url'] : 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800';
+                // Lấy ảnh chính - kiểm tra nếu là URL đầy đủ hay đường dẫn local
+                $mainImage = '';
+                if (!empty($carImages) && count($carImages) > 0) {
+                    $mainImage = $carImages[0]['image_url'];
+                }
+                
+                // Hàm kiểm tra URL đầy đủ
+                function isFullUrl($url) {
+                    return strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0;
+                }
+                
+                $mainImageSrc = $mainImage ? (isFullUrl($mainImage) ? $mainImage : BASE_URL . '/' . $mainImage) : BASE_URL . '/assets/images/no-image.jpg';
                 ?>
                 <div class="main-image">
-                    <img id="mainImage" src="<?= htmlspecialchars($mainImage) ?>" alt="<?= htmlspecialchars($car['name']) ?>">
+                    <img src="<?= htmlspecialchars($mainImageSrc) ?>" alt="<?= htmlspecialchars($car['name']) ?>" id="mainImage">
                 </div>
                 <div class="thumbnail-grid">
-                    <?php if (!empty($carImages)): ?>
-                        <?php foreach (array_slice($carImages, 0, 4) as $index => $img): ?>
-                            <div class="thumbnail <?= $index === 0 ? 'active' : '' ?>" onclick="changeImage(this, '<?= htmlspecialchars($img['image_url']) ?>')">
-                                <img src="<?= htmlspecialchars($img['image_url']) ?>" alt="View <?= $index + 1 ?>">
-                            </div>
-                        <?php endforeach; ?>
-                        <?php 
-                        // Nếu có ít hơn 4 ảnh, điền thêm từ placeholder
-                        $imageCount = count($carImages);
-                        if ($imageCount < 1) {
-                            $placeholders = [
-                                'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800',
-                                'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800',
-                                'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800',
-                                'https://images.unsplash.com/photo-1542282088-fe8426682b8f?w=800'
-                            ];
-                            for ($i = $imageCount; $i < 4; $i++): ?>
-                                <div class="thumbnail" onclick="changeImage(this, '<?= $placeholders[$i] ?>')">
-                                    <img src="<?= str_replace('w=800', 'w=200', $placeholders[$i]) ?>" alt="View <?= $i + 1 ?>">
-                                </div>
-                            <?php endfor;
-                        }
-                        ?>
-                    <?php else: ?>
-                        <?php 
-                        // Nếu không có ảnh nào từ DB, dùng placeholder
-                        $placeholders = [
-                            'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800',
-                            'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800',
-                            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800',
-                            'https://images.unsplash.com/photo-1542282088-fe8426682b8f?w=800'
-                        ];
-                        foreach ($placeholders as $index => $placeholder): ?>
-                            <div class="thumbnail <?= $index === 0 ? 'active' : '' ?>" onclick="changeImage(this, '<?= $placeholder ?>')">
-                                <img src="<?= str_replace('w=800', 'w=200', $placeholder) ?>" alt="View <?= $index + 1 ?>">
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                    <?php
+                    if (!empty($carImages) && is_array($carImages)) :
+                        foreach ($carImages as $index => $imageData) :
+                            $thumbSrc = isFullUrl($imageData['image_url']) ? $imageData['image_url'] : BASE_URL . '/' . $imageData['image_url'];
+                    ?>
+                        <div class="thumbnail <?= $index === 0 ? 'active' : '' ?>" onclick="changeImage('<?= htmlspecialchars($thumbSrc) ?>', this)">
+                            <img src="<?= htmlspecialchars($thumbSrc) ?>" alt="Image <?= $index + 1 ?>">
+                        </div>
+                    <?php 
+                        endforeach;
+                    else:
+                    ?>
+                        <div class="thumbnail active">
+                            <img src="<?= BASE_URL ?>/assets/images/no-image.jpg" alt="No image">
+                        </div>
+                    <?php
+                    endif;
+                    ?>
                 </div>
             </div>
 
             <!-- Info -->
-            <div class="car-info">
-                <h1><?= htmlspecialchars($car['name']) ?></h1>
+            <div class="card">
+                <h1 class="car-name"><?= htmlspecialchars($car['name']) ?></h1>
+                
                 <div class="car-meta">
                     <div class="meta-item">
-                        <i class="fas fa-copyright"></i>
-                        <span><?= htmlspecialchars($car['brand_name'] ?? 'N/A') ?></span>
+                        <i class="fas fa-car"></i>
+                        <?= htmlspecialchars($car['brand_name']) ?>
                     </div>
                     <div class="meta-item">
                         <i class="fas fa-tag"></i>
-                        <span><?= htmlspecialchars($car['category_name'] ?? 'N/A') ?></span>
+                        <?= htmlspecialchars($car['category_name']) ?>
                     </div>
                     <div class="meta-item">
-                        <i class="fas fa-calendar"></i>
-                        <span><?= htmlspecialchars($car['year'] ?? 'N/A') ?></span>
-                    </div>
-                    <div class="meta-item">
-                        <i class="fas fa-star"></i>
-                        <span>4.8 (<?= count($reviews) ?> đánh giá)</span>
+                        <i class="fas fa-calendar-alt"></i>
+                        <?= htmlspecialchars($car['year']) ?>
                     </div>
                 </div>
 
-                <div class="car-price">
-                    <?= formatPrice($car['price']) ?> <small>VNĐ</small>
-                </div>
+                <div class="car-price"><?= formatPrice($car['price']) ?> VND</div>
 
-                <div class="car-highlights">
+                <div class="highlights">
                     <div class="highlight-item">
                         <i class="fas fa-tachometer-alt"></i>
-                        <span><?= isset($car['mileage']) ? number_format($car['mileage']) . ' km' : '0 km' ?></span>
-                    </div>
-                    <div class="highlight-item">
-                        <i class="fas fa-cog"></i>
-                        <span><?php
-                                if (isset($car['transmission'])) {
-                                    echo $car['transmission'] == 'automatic' ? 'Tự động' : 'Số sàn';
-                                } else {
-                                    echo 'N/A';
-                                }
-                                ?></span>
+                        <span><?= number_format($car['mileage']) ?> km</span>
                     </div>
                     <div class="highlight-item">
                         <i class="fas fa-gas-pump"></i>
-                        <span><?php
-                                if (isset($car['fuel'])) {
-                                    $fuelMap = ['gasoline' => 'Xăng', 'diesel' => 'Dầu diesel', 'electric' => 'Điện'];
-                                    echo $fuelMap[$car['fuel']] ?? 'N/A';
-                                } else {
-                                    echo 'N/A';
-                                }
-                                ?></span>
+                        <span><?= htmlspecialchars($car['fuel']) ?></span>
+                    </div>
+                    <div class="highlight-item">
+                        <i class="fas fa-cog"></i>
+                        <span><?= htmlspecialchars($car['transmission']) ?></span>
                     </div>
                     <div class="highlight-item">
                         <i class="fas fa-palette"></i>
-                        <span><?= htmlspecialchars($car['color'] ?? 'N/A') ?></span>
+                        <span><?= htmlspecialchars($car['color']) ?></span>
                     </div>
                 </div>
 
+                <?php if ($car['status'] == 'available') : ?>
                 <div class="action-buttons">
-                    <button class="btn btn-primary btn-add-cart" onclick="addToCart(<?= $car['id'] ?>, this)">
+                    <a href="<?= BASE_URL ?>/user/add_to_cart?car_id=<?= $car['id'] ?>" class="btn btn-cart" onclick="addToCart(<?= $car['id'] ?>); return false;">
                         <i class="fas fa-shopping-cart"></i>
-                        Thêm Vào Giỏ Hàng
-                    </button>
-                    <a href="/appointment/book/<?= $car['id'] ?>" class="btn btn-primary" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                        Thêm vào giỏ hàng
+                    </a>
+                    <a href="<?= BASE_URL ?>/user/book_appointment?car_id=<?= $car['id'] ?>" class="btn btn-primary">
                         <i class="fas fa-calendar-check"></i>
-                        Đặt Lịch Xem Xe
+                        Đặt lịch xem xe
                     </a>
-                    <a href="/cart" class="btn btn-outline">
-                        <i class="fas fa-eye"></i>
-                        Xem Giỏ Hàng
+                    <a href="#" onclick="toggleFavorite(<?= $car['id'] ?>); return false;" class="btn btn-outline">
+                        <i class="<?= $isFavorite ? 'fas' : 'far' ?> fa-heart"></i>
+                        <?= $isFavorite ? 'Đã yêu thích' : 'Yêu thích' ?>
                     </a>
-                    <button class="btn btn-outline" id="favoriteBtn" onclick="toggleFavorite(<?= $car['id'] ?>)" data-is-favorite="<?= $isFavorite ? 'true' : 'false' ?>">
-                        <i class="<?= $isFavorite ? 'fas' : 'far' ?> fa-heart" id="favoriteIcon"></i>
+                </div>
+                <?php else : ?>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" disabled style="opacity: 0.5;">
+                        <i class="fas fa-ban"></i>
+                        Xe đã được bán
                     </button>
                 </div>
+                <?php endif; ?>
 
-                <div class="contact-seller">
-                    <h4>Cần tư vấn thêm?</h4>
-                    <p>Liên hệ với chúng tôi để được hỗ trợ chi tiết về chiếc xe này</p>
-                    <a href="/contact">
-                        <i class="fas fa-phone"></i>
-                        0368 920 249
-                    </a>
+                <div class="contact-box">
+                    <h4><i class="fas fa-headset"></i> Cần tư vấn?</h4>
+                    <p>Liên hệ với chúng tôi để được hỗ trợ</p>
+                    <a href="<?= BASE_URL ?>/user/contact">Liên hệ ngay <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
         </div>
 
         <!-- Tabs -->
-        <div class="car-tabs">
+        <div class="tabs">
             <div class="tab-buttons">
-                <button class="tab-btn active" onclick="switchTab('specs')">Thông Số Kỹ Thuật</button>
-                <button class="tab-btn" onclick="switchTab('description')">Mô Tả</button>
-                <button class="tab-btn" onclick="switchTab('reviews')">Đánh Giá (<?= count($reviews) ?>)</button>
+                <button class="tab-btn active" onclick="switchTab(event, 'specs')">
+                    <i class="fas fa-list-ul"></i> Thông số kỹ thuật
+                </button>
+                <button class="tab-btn" onclick="switchTab(event, 'description')">
+                    <i class="fas fa-align-left"></i> Mô tả
+                </button>
+                <button class="tab-btn" onclick="switchTab(event, 'reviews')">
+                    <i class="fas fa-star"></i> Đánh giá (<?= count($reviews) ?>)
+                </button>
             </div>
 
+            <!-- Specifications -->
             <div id="specs" class="tab-content active">
                 <div class="specs-grid">
                     <div class="spec-item">
-                        <span class="spec-label">Hãng xe:</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['brand_name'] ?? 'N/A') ?></span>
+                        <span class="spec-label">Tên xe</span>
+                        <span class="spec-value"><?= htmlspecialchars($car['name']) ?></span>
                     </div>
                     <div class="spec-item">
-                        <span class="spec-label">Loại xe:</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['category_name'] ?? 'N/A') ?></span>
+                        <span class="spec-label">Thương hiệu</span>
+                        <span class="spec-value"><?= htmlspecialchars($car['brand_name']) ?></span>
                     </div>
                     <div class="spec-item">
-                        <span class="spec-label">Năm sản xuất:</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['year'] ?? 'N/A') ?></span>
+                        <span class="spec-label">Danh mục</span>
+                        <span class="spec-value"><?= htmlspecialchars($car['category_name']) ?></span>
                     </div>
                     <div class="spec-item">
-                        <span class="spec-label">Số km đã đi:</span>
-                        <span class="spec-value"><?= isset($car['mileage']) ? number_format($car['mileage']) . ' km' : 'N/A' ?></span>
+                        <span class="spec-label">Năm sản xuất</span>
+                        <span class="spec-value"><?= htmlspecialchars($car['year']) ?></span>
                     </div>
                     <div class="spec-item">
-                        <span class="spec-label">Hộp số:</span>
-                        <span class="spec-value"><?php
-                                                    if (isset($car['transmission'])) {
-                                                        echo $car['transmission'] == 'automatic' ? 'Tự động' : 'Số sàn';
-                                                    } else {
-                                                        echo 'N/A';
-                                                    }
-                                                    ?></span>
+                        <span class="spec-label">Giá bán</span>
+                        <span class="spec-value"><?= formatPrice($car['price']) ?> VND</span>
+                    </div>
+                    <?php if (!empty($car['stock'])) : ?>
+                    <div class="spec-item">
+                        <span class="spec-label">Số lượng</span>
+                        <span class="spec-value"><?= htmlspecialchars($car['stock']) ?> xe</span>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (!empty($car['engine'])) : ?>
+                    <div class="spec-item">
+                        <span class="spec-label">Động cơ</span>
+                        <span class="spec-value"><?= htmlspecialchars($car['engine']) ?></span>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (!empty($car['horsepower'])) : ?>
+                    <div class="spec-item">
+                        <span class="spec-label">Công suất</span>
+                        <span class="spec-value"><?= htmlspecialchars($car['horsepower']) ?> HP</span>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (!empty($car['torque'])) : ?>
+                    <div class="spec-item">
+                        <span class="spec-label">Mô-men xoắn</span>
+                        <span class="spec-value"><?= htmlspecialchars($car['torque']) ?> Nm</span>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (!empty($car['acceleration'])) : ?>
+                    <div class="spec-item">
+                        <span class="spec-label">Tăng tốc 0-100 km/h</span>
+                        <span class="spec-value"><?= htmlspecialchars($car['acceleration']) ?> giây</span>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (!empty($car['drivetrain'])) : ?>
+                    <div class="spec-item">
+                        <span class="spec-label">Hệ dẫn động</span>
+                        <span class="spec-value"><?= htmlspecialchars($car['drivetrain']) ?></span>
+                    </div>
+                    <?php endif; ?>
+                    <div class="spec-item">
+                        <span class="spec-label">Hộp số</span>
+                        <span class="spec-value"><?= htmlspecialchars($car['transmission']) ?></span>
+                    </div>
+                    <?php if (!empty($car['seats'])) : ?>
+                    <div class="spec-item">
+                        <span class="spec-label">Số chỗ ngồi</span>
+                        <span class="spec-value"><?= htmlspecialchars($car['seats']) ?> chỗ</span>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (!empty($car['doors'])) : ?>
+                    <div class="spec-item">
+                        <span class="spec-label">Số cửa</span>
+                        <span class="spec-value"><?= htmlspecialchars($car['doors']) ?> cửa</span>
+                    </div>
+                    <?php endif; ?>
+                    <div class="spec-item">
+                        <span class="spec-label">Nhiên liệu</span>
+                        <span class="spec-value"><?= htmlspecialchars($car['fuel']) ?></span>
                     </div>
                     <div class="spec-item">
-                        <span class="spec-label">Nhiên liệu:</span>
-                        <span class="spec-value"><?php
-                                                    if (isset($car['fuel'])) {
-                                                        $fuelMap = ['gasoline' => 'Xăng', 'diesel' => 'Dầu diesel', 'electric' => 'Điện'];
-                                                        echo $fuelMap[$car['fuel']] ?? 'N/A';
-                                                    } else {
-                                                        echo 'N/A';
-                                                    }
-                                                    ?></span>
+                        <span class="spec-label">Số km đã đi</span>
+                        <span class="spec-value"><?= number_format($car['mileage']) ?> km</span>
                     </div>
                     <div class="spec-item">
-                        <span class="spec-label">Màu sắc:</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['color'] ?? 'N/A') ?></span>
+                        <span class="spec-label">Màu sắc</span>
+                        <span class="spec-value"><?= htmlspecialchars($car['color']) ?></span>
                     </div>
                     <div class="spec-item">
-                        <span class="spec-label">Tình trạng:</span>
-                        <span class="spec-value"><?= isset($car['status']) && $car['status'] === 'available' ? 'Còn hàng' : 'Đã bán' ?></span>
+                        <span class="spec-label">Trạng thái</span>
+                        <span class="spec-value"><?= $car['status'] == 'available' ? 'Còn hàng' : 'Đã bán' ?></span>
                     </div>
                 </div>
             </div>
 
+            <!-- Description -->
             <div id="description" class="tab-content">
                 <div class="description">
-                    <?= nl2br(htmlspecialchars($car['description'] ?? 'Chưa có mô tả chi tiết cho xe này.')) ?>
+                    <?= nl2br(htmlspecialchars($car['description'])) ?>
                 </div>
             </div>
 
+            <!-- Reviews -->
             <div id="reviews" class="tab-content">
-                <div class="reviews-section">
-                    <?php if (!empty($reviews)): ?>
-                        <div class="review-summary">
-                            <div class="rating-overview">
-                                <div class="rating-score">4.8</div>
-                                <div class="rating-stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
+                <?php if (!empty($reviews)) : ?>
+                <div class="review-summary">
+                    <div class="rating-box">
+                        <div class="rating-score">
+                            <?php
+                            $totalRating = 0;
+                            foreach ($reviews as $review) {
+                                $totalRating += $review['rating'];
+                            }
+                            $avgRating = round($totalRating / count($reviews), 1);
+                            echo $avgRating;
+                            ?>
+                        </div>
+                        <div class="rating-stars">
+                            <?php
+                            for ($i = 1; $i <= 5; $i++) {
+                                echo $i <= $avgRating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+                            }
+                            ?>
+                        </div>
+                        <div class="rating-count"><?= count($reviews) ?> đánh giá</div>
+                    </div>
+                    <div class="review-list">
+                        <?php foreach ($reviews as $review) : ?>
+                        <div class="review-item">
+                            <div class="review-header">
+                                <div>
+                                    <div class="reviewer-name"><?= htmlspecialchars($review['user_name']) ?></div>
+                                    <div class="review-date"><?= date('d/m/Y', strtotime($review['created_at'])) ?></div>
                                 </div>
-                                <div class="rating-count"><?= count($reviews) ?> đánh giá</div>
+                                <div class="review-rating">
+                                    <?php
+                                    for ($i = 1; $i <= 5; $i++) {
+                                        echo $i <= $review['rating'] ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                            <div class="review-text">
+                                <?= nl2br(htmlspecialchars($review['comment'])) ?>
                             </div>
                         </div>
-
-                        <?php foreach ($reviews as $review): ?>
-                            <div class="review-card">
-                                <div class="review-header">
-                                    <span class="reviewer-name"><?= htmlspecialchars($review['user_name']) ?></span>
-                                    <span class="review-date"><?= date('d/m/Y', strtotime($review['created_at'])) ?></span>
-                                </div>
-                                <div class="review-stars">
-                                    <?php for ($i = 0; $i < 5; $i++): ?>
-                                        <i class="<?= $i < $review['rating'] ? 'fas' : 'far' ?> fa-star"></i>
-                                    <?php endfor; ?>
-                                </div>
-                                <div class="review-text"><?= nl2br(htmlspecialchars($review['comment'])) ?></div>
-                            </div>
                         <?php endforeach; ?>
-                    <?php else: ?>
-                        <p style="text-align: center; color: #999; padding: 40px;">Chưa có đánh giá nào cho xe này.</p>
-                    <?php endif; ?>
+                    </div>
                 </div>
+                <?php else : ?>
+                <div class="no-reviews">
+                    <i class="fas fa-comment-slash" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
+                    <p>Chưa có đánh giá nào</p>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
 
         <!-- Similar Cars -->
-        <?php if (!empty($similarCars)): ?>
-            <div class="similar-cars">
-                <h2 class="section-title">Xe Tương Tự</h2>
-                <div class="cars-grid">
-                    <?php foreach ($similarCars as $similarCar): ?>
-                        <?php
-                        $similarImages = $carModel->getImages($similarCar['id']);
-                        $similarImage = !empty($similarImages) ? $similarImages[0]['image_url'] : 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400';
-                        ?>
-                        <a href="/car/<?= $similarCar['id'] ?>" class="car-card">
-                            <div class="car-card-image">
-                                <img src="<?= htmlspecialchars($similarImage) ?>" alt="<?= htmlspecialchars($similarCar['name']) ?>">
-                            </div>
-                            <div class="car-card-body">
-                                <h3 class="car-card-title"><?= htmlspecialchars($similarCar['name']) ?></h3>
-                                <p class="car-card-meta"><?= htmlspecialchars($similarCar['brand_name'] ?? 'N/A') ?> • <?= $similarCar['year'] ?? 'N/A' ?></p>
-                                <div class="car-card-price"><?= formatPrice($similarCar['price'] ?? 0) ?> VNĐ</div>
-                            </div>
-                        </a>
-                    <?php endforeach; ?>
-                </div>
+        <?php if (!empty($similarCars)) : ?>
+        <div class="similar-section">
+            <h2 class="section-title">Xe tương tự</h2>
+            <div class="similar-grid">
+                <?php foreach ($similarCars as $similarCar) : 
+                    // Lấy ảnh đầu tiên của xe tương tự từ image_url
+                    $similarImage = !empty($similarCar['image_url']) ? $similarCar['image_url'] : '';
+                    $similarImgSrc = $similarImage ? (isFullUrl($similarImage) ? $similarImage : BASE_URL . '/' . $similarImage) : BASE_URL . '/assets/images/no-image.jpg';
+                ?>
+                <a href="<?= BASE_URL ?>/user/car_detail?id=<?= $similarCar['id'] ?>" class="similar-car">
+                    <div class="similar-car-image">
+                        <img src="<?= htmlspecialchars($similarImgSrc) ?>" alt="<?= htmlspecialchars($similarCar['name']) ?>">
+                    </div>
+                    <div class="similar-car-info">
+                        <div class="similar-car-name"><?= htmlspecialchars($similarCar['name']) ?></div>
+                        <div class="similar-car-price"><?= formatPrice($similarCar['price']) ?> VND</div>
+                        <div class="similar-car-meta">
+                            <span><i class="fas fa-calendar-alt"></i> <?= htmlspecialchars($similarCar['year']) ?></span>
+                            <span><i class="fas fa-tachometer-alt"></i> <?= number_format($similarCar['mileage'] / 1000) ?>K km</span>
+                        </div>
+                    </div>
+                </a>
+                <?php endforeach; ?>
             </div>
+        </div>
         <?php endif; ?>
     </div>
-</section>
+</div>
 
 <script>
-    function changeImage(thumbnail, imageUrl) {
-        document.getElementById('mainImage').src = imageUrl;
+    // Change main image
+    function changeImage(src, element) {
+        document.getElementById('mainImage').src = src;
         document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
-        thumbnail.classList.add('active');
+        element.classList.add('active');
     }
 
-    function switchTab(tabName) {
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-        event.target.classList.add('active');
+    // Switch tabs
+    function switchTab(event, tabName) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        
         document.getElementById(tabName).classList.add('active');
+        event.currentTarget.classList.add('active');
     }
 
-    function toggleFavorite(carId) {
-        <?php if (isset($_SESSION['user_id'])): ?>
-            const btn = document.getElementById('favoriteBtn');
-            const icon = document.getElementById('favoriteIcon');
-            const isFavorite = btn.getAttribute('data-is-favorite') === 'true';
-            const endpoint = isFavorite ? '/favorites/remove' : '/favorites/add';
-            
-            fetch(endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        car_id: carId
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Toggle icon
-                        if (isFavorite) {
-                            icon.className = 'far fa-heart';
-                            btn.setAttribute('data-is-favorite', 'false');
-                            alert('Đã xóa khỏi danh sách yêu thích!');
-                        } else {
-                            icon.className = 'fas fa-heart';
-                            btn.setAttribute('data-is-favorite', 'true');
-                            alert('Đã thêm vào yêu thích!');
-                        }
-                    } else {
-                        alert(data.message || 'Có lỗi xảy ra!');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Có lỗi xảy ra!');
-                });
-        <?php else: ?>
-            alert('Vui lòng đăng nhập để thêm vào yêu thích!');
-            window.location.href = '/login';
+    // Add to cart
+    function addToCart(carId) {
+        <?php if (!isset($_SESSION['user_id'])) : ?>
+            alert('Vui lòng đăng nhập để sử dụng tính năng này!');
+            window.location.href = '<?= BASE_URL ?>/auth/login';
+            return;
         <?php endif; ?>
+
+        fetch('<?= BASE_URL ?>/user/add_to_cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'car_id=' + carId
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Đã thêm xe vào giỏ hàng!');
+                // Cập nhật số lượng giỏ hàng trên header nếu có
+                const cartCount = document.querySelector('.cart-count');
+                if (cartCount && data.cart_count) {
+                    cartCount.textContent = data.cart_count;
+                }
+            } else {
+                alert(data.message || 'Có lỗi xảy ra!');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi thêm vào giỏ hàng!');
+        });
+    }
+
+    // Toggle favorite
+    function toggleFavorite(carId) {
+        <?php if (!isset($_SESSION['user_id'])) : ?>
+            alert('Vui lòng đăng nhập để sử dụng tính năng này!');
+            window.location.href = '<?= BASE_URL ?>/auth/login';
+            return;
+        <?php endif; ?>
+
+        fetch('<?= BASE_URL ?>/user/toggle_favorite', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'car_id=' + carId
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.message || 'Có lỗi xảy ra!');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra!');
+        });
     }
 </script>
 

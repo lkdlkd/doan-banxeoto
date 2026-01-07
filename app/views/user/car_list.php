@@ -596,7 +596,7 @@ include __DIR__ . '/../layouts/header.php';
 }
 
 .car-card:hover .car-image::after {
-    opacity: 1;
+    opacity: 0.3;
 }
 
 .car-image img {
@@ -609,8 +609,8 @@ include __DIR__ . '/../layouts/header.php';
 }
 
 .car-card:hover .car-image img {
-    transform: scale(1.2) rotate(2deg);
-    filter: brightness(1.08) contrast(1.1) saturate(1.1);
+    transform: scale(1.08);
+    filter: brightness(1.05) contrast(1.05) saturate(1.05);
 }
 
 .car-badges {
@@ -802,28 +802,28 @@ include __DIR__ . '/../layouts/header.php';
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.8);
-    padding: 14px 28px;
-    background: linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%);
-    border: 3px solid rgba(255,255,255,0.9);
+    padding: 12px 24px;
+    background: rgba(212, 175, 55, 0.92);
+    backdrop-filter: blur(8px);
+    border: 2px solid rgba(255,255,255,0.8);
     color: #000;
     font-family: 'Inter', sans-serif;
-    font-weight: 800;
-    font-size: 14px;
-    border-radius: 12px;
+    font-weight: 700;
+    font-size: 13px;
+    border-radius: 10px;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.2px;
     cursor: pointer;
     opacity: 0;
     pointer-events: none;
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.4),
-                0 4px 12px rgba(212,175,55,0.6);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.25);
     z-index: 15;
     white-space: nowrap;
 }
 
 .car-card:hover .btn-view-detail {
-    opacity: 1;
+    opacity: 0.95;
     pointer-events: auto;
     transform: translate(-50%, -50%) scale(1);
 }

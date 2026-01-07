@@ -18,7 +18,21 @@ class BaseModel
     public function all()
     {
         $stmt = $this->db->prepare("SELECT * FROM {$this->table}");
-        $stmt->execute();
+        
+        try {
+            $stmt->execute();
+        } catch (PDOException $e) {
+            // Nếu lỗi "server has gone away", thử reconnect và execute lại
+            if (strpos($e->getMessage(), 'server has gone away') !== false || 
+                strpos($e->getMessage(), 'MySQL server has gone away') !== false) {
+                $this->db = Database::getInstance()->refreshConnection();
+                $stmt = $this->db->prepare("SELECT * FROM {$this->table}");
+                $stmt->execute();
+            } else {
+                throw $e;
+            }
+        }
+        
         return $stmt->fetchAll();
     }
 
@@ -32,7 +46,20 @@ class BaseModel
     public function find($id)
     {
         $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE {$this->primaryKey} = ?");
-        $stmt->execute([$id]);
+        
+        try {
+            $stmt->execute([$id]);
+        } catch (PDOException $e) {
+            if (strpos($e->getMessage(), 'server has gone away') !== false || 
+                strpos($e->getMessage(), 'MySQL server has gone away') !== false) {
+                $this->db = Database::getInstance()->refreshConnection();
+                $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE {$this->primaryKey} = ?");
+                $stmt->execute([$id]);
+            } else {
+                throw $e;
+            }
+        }
+        
         return $stmt->fetch();
     }
 
@@ -136,6 +163,28 @@ class BaseModel
         $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
         $stmt->bindValue(2, $offset, PDO::PARAM_INT);
         $stmt->execute();
+        
+        return $stmt->fetchAll();
+    }
+
+    // Thực thi câu query tùy chỉnh
+    public function query($sql, $params = [])
+    {
+        $stmt = $this->db->prepare($sql);
+        
+        try {
+            $stmt->execute($params);
+        } catch (PDOException $e) {
+            // Nếu lỗi "server has gone away", thử reconnect và execute lại
+            if (strpos($e->getMessage(), 'server has gone away') !== false || 
+                strpos($e->getMessage(), 'MySQL server has gone away') !== false) {
+                $this->db = Database::getInstance()->refreshConnection();
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute($params);
+            } else {
+                throw $e;
+            }
+        }
         
         return $stmt->fetchAll();
     }

@@ -145,9 +145,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="admin-content">
             <div class="page-header">
                 <h2>Danh sách người dùng (<?= $totalUsers ?>)</h2>
-                <button class="btn-primary" onclick="openAddModal()">
-                    <i class="fas fa-user-plus"></i> Thêm người dùng
-                </button>
             </div>
 
             <!-- Stats -->

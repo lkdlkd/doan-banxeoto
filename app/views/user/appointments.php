@@ -4,11 +4,22 @@ if (!defined('BASE_URL')) { require_once __DIR__ . '/../../../config/config.php'
 // Load model
 require_once __DIR__ . '/../../models/AppointmentModel.php';
 
+// Kiểm tra đăng nhập
+if (!isset($_SESSION['user_id'])) {
+    header('Location: /login');
+    exit;
+}
+
 $appointmentModel = new AppointmentModel();
 $userId = $_SESSION['user_id'];
 
 // Lấy danh sách lịch hẹn của user
-$appointments = $appointmentModel->getAppointmentsByUser($userId);
+try {
+    $appointments = $appointmentModel->getAppointmentsByUser($userId);
+} catch (Exception $e) {
+    $appointments = [];
+    error_log("Error fetching appointments: " . $e->getMessage());
+}
 
 $pageTitle = 'Lịch hẹn xem xe - AutoCar';
 $currentPage = 'appointments';
@@ -21,8 +32,8 @@ include __DIR__ . '/../layouts/header.php';
 .appointments-banner {
     position: relative;
     height: 350px;
-    background: linear-gradient(135deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.5) 100%), 
-                url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80') center/cover;
+    background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 100%), 
+                url('https://images.unsplash.com/photo-1501139083538-0139583c060f?w=1920&q=80') center/cover;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -74,26 +85,19 @@ include __DIR__ . '/../layouts/header.php';
 }
 
 .appointments-header {
-    text-align: center;
-    margin-bottom: 50px;
+    display: none; /* Now using banner instead */
 }
 
 .appointments-header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 48px;
-    color: #0a0a0a;
-    margin-bottom: 12px;
-    font-weight: 700;
+    display: none;
 }
 
 .appointments-header h1 span {
-    color: #D4AF37;
+    display: none;
 }
 
 .appointments-header p {
-    color: #666;
-    font-size: 16px;
-    font-weight: 500;
+    display: none;
 }
 
 /* Alert Messages */
@@ -618,8 +622,12 @@ include __DIR__ . '/../layouts/header.php';
 }
 
 @media (max-width: 768px) {
-    .appointments-header h1 {
-        font-size: 32px;
+    .appointments-banner h1 {
+        font-size: 36px;
+    }
+    
+    .appointments-banner p {
+        font-size: 16px;
     }
     
     .appointment-header {
@@ -650,13 +658,16 @@ include __DIR__ . '/../layouts/header.php';
 }
 </style>
 
+<!-- Banner -->
+<div class="appointments-banner">
+    <div class="appointments-banner-content">
+        <h1>Lịch hẹn <span>xem xe</span></h1>
+        <p>Quản lý và theo dõi tất cả lịch hẹn của bạn</p>
+    </div>
+</div>
+
 <div class="appointments-page">
     <div class="appointments-container">
-        <div class="appointments-header">
-            <h1>Lịch hẹn <span>xem xe</span></h1>
-            <p>Quản lý và theo dõi tất cả lịch hẹn của bạn</p>
-        </div>
-
         <!-- Alert Messages -->
         <?php if (isset($_SESSION['success'])): ?>
             <div class="alert alert-success">
