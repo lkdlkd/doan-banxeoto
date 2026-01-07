@@ -67,8 +67,10 @@ class OrderController
             exit;
         }
         
-        if ($car['status'] !== 'available') {
-            $_SESSION['error'] = 'Xe này đã được bán';
+        // Kiểm tra xe còn hàng hay không
+        $currentStock = $car['stock'] ?? 0;
+        if ($car['status'] !== 'available' || $currentStock <= 0) {
+            $_SESSION['error'] = 'Xe này đã hết hàng';
             header('Location: /cart');
             exit;
         }
@@ -207,14 +209,42 @@ class OrderController
             exit;
         }
         
-        // Cập nhật trạng thái xe nếu đơn hàng được xác nhận
+        // Cập nhật số lượng tồn kho xe nếu đơn hàng được xác nhận
         if ($status === 'confirmed' && $order['status'] !== 'confirmed') {
-            $this->carModel->update($order['car_id'], ['status' => 'sold']);
+            // Lấy thông tin xe hiện tại
+            $car = $this->carModel->getById($order['car_id']);
+            if ($car) {
+                $currentStock = $car['stock'] ?? 1;
+                $newStock = max(0, $currentStock - 1); // Trừ 1, không cho âm
+                
+                // Cập nhật stock
+                $updateData = ['stock' => $newStock];
+                
+                // Nếu hết hàng thì set status = 'sold'
+                if ($newStock <= 0) {
+                    $updateData['status'] = 'sold';
+                }
+                
+                $this->carModel->update($order['car_id'], $updateData);
+            }
         }
         
-        // Khôi phục trạng thái xe nếu đơn hàng bị hủy
+        // Khôi phục số lượng tồn kho xe nếu đơn hàng bị hủy
         if ($status === 'cancelled' && $order['status'] !== 'cancelled') {
-            $this->carModel->update($order['car_id'], ['status' => 'available']);
+            // Lấy thông tin xe hiện tại
+            $car = $this->carModel->getById($order['car_id']);
+            if ($car) {
+                $currentStock = $car['stock'] ?? 0;
+                $newStock = $currentStock + 1; // Cộng lại 1
+                
+                // Cập nhật stock và đảm bảo status là available nếu có hàng
+                $updateData = ['stock' => $newStock];
+                if ($car['status'] === 'sold') {
+                    $updateData['status'] = 'available';
+                }
+                
+                $this->carModel->update($order['car_id'], $updateData);
+            }
         }
         
         $this->orderModel->updateStatus($orderId, $status);

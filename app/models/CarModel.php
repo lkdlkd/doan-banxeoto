@@ -40,13 +40,18 @@ class CarModel extends BaseModel
     }
 
     // Tìm kiếm xe
-    public function search($keyword, $brandIds = null, $categoryIds = null, $minPrice = null, $maxPrice = null)
+    public function search($keyword, $brandIds = null, $categoryIds = null, $minPrice = null, $maxPrice = null, $includeAll = false)
     {
         $sql = "SELECT c.*, b.name as brand_name, cat.name as category_name 
                 FROM {$this->table} c 
                 LEFT JOIN brands b ON c.brand_id = b.id 
                 LEFT JOIN categories cat ON c.category_id = cat.id 
-                WHERE c.status = 'available'";
+                WHERE 1=1";
+        
+        // Chỉ lọc available nếu không yêu cầu lấy tất cả
+        if (!$includeAll) {
+            $sql .= " AND c.status = 'available'";
+        }
         
         $params = [];
         

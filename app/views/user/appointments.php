@@ -488,9 +488,7 @@ include __DIR__ . '/../layouts/header.php';
 .appointment-items {
     display: none;
 }
-    font-size: 16px;
-    margin: 0 0 8px 0;
-}
+ 
 
 .appointment-item-info p {
     color: rgba(255,255,255,0.5);
@@ -684,7 +682,7 @@ include __DIR__ . '/../layouts/header.php';
         <?php endif; ?>
 
         <?php if (empty($appointments)): ?>
-        <div class="empty-state fade-in-section">
+        <div class="empty-state">
             <i class="fas fa-calendar-times"></i>
             <h2>Chưa có lịch hẹn nào</h2>
             <p>Bạn chưa đặt lịch xem xe nào. Hãy khám phá bộ sưu tập xe của chúng tôi!</p>
@@ -696,7 +694,7 @@ include __DIR__ . '/../layouts/header.php';
         <?php else: ?>
         <div class="appointments-list">
             <?php foreach ($appointments as $appointment): ?>
-            <div class="appointment-card fade-in-section">
+            <div class="appointment-card">
                 <div class="appointment-header">
                     <div class="appointment-info">
                         <h3>Lịch hẹn #<?= str_pad($appointment['id'], 6, '0', STR_PAD_LEFT) ?></h3>

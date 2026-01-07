@@ -524,10 +524,76 @@ unset($_SESSION['success'], $_SESSION['error']);
                             <div class="card-header">
                                 <h3><i class="fas fa-cogs" style="color: #f59e0b;"></i>Thông số kỹ thuật</h3>
                             </div>
+                            
+                            <div class="form-group">
+                                <label>Số lượng tồn kho <span class="required">*</span></label>
+                                <input type="number" name="stock" class="form-control" value="<?= $car['stock'] ?? 1 ?>" required placeholder="Số lượng xe" min="0">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-engine"></i> Loại động cơ</label>
+                                <input type="text" name="engine" class="form-control" value="<?= htmlspecialchars($car['engine'] ?? '') ?>" placeholder="VD: V8 4.0L Twin-Turbo">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label><i class="fas fa-bolt"></i> Công suất (HP)</label>
+                                    <input type="number" name="horsepower" class="form-control" value="<?= $car['horsepower'] ?? '' ?>" placeholder="450" min="0">
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-sync-alt"></i> Mô-men xoắn (Nm)</label>
+                                    <input type="number" name="torque" class="form-control" value="<?= $car['torque'] ?? '' ?>" placeholder="500" min="0">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label><i class="fas fa-tachometer-alt"></i> Tăng tốc 0-100 km/h (s)</label>
+                                    <input type="number" name="acceleration" class="form-control" value="<?= $car['acceleration'] ?? '' ?>" step="0.1" placeholder="3.5" min="0">
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-road"></i> Hệ dẫn động</label>
+                                    <select name="drivetrain" class="form-control">
+                                        <option value="">Chọn hệ dẫn động</option>
+                                        <option value="FWD" <?= ($car['drivetrain'] ?? '') === 'FWD' ? 'selected' : '' ?>>FWD (Cầu trước)</option>
+                                        <option value="RWD" <?= ($car['drivetrain'] ?? '') === 'RWD' ? 'selected' : '' ?>>RWD (Cầu sau)</option>
+                                        <option value="AWD" <?= ($car['drivetrain'] ?? '') === 'AWD' ? 'selected' : '' ?>>AWD (4 bánh toàn thời gian)</option>
+                                        <option value="4WD" <?= ($car['drivetrain'] ?? '') === '4WD' ? 'selected' : '' ?>>4WD (4 bánh bán thời gian)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label><i class="fas fa-user-friends"></i> Số chỗ ngồi</label>
+                                    <select name="seats" class="form-control">
+                                        <option value="">Chọn số chỗ</option>
+                                        <option value="2" <?= ($car['seats'] ?? '') == '2' ? 'selected' : '' ?>>2 chỗ</option>
+                                        <option value="4" <?= ($car['seats'] ?? '') == '4' ? 'selected' : '' ?>>4 chỗ</option>
+                                        <option value="5" <?= ($car['seats'] ?? '') == '5' ? 'selected' : '' ?>>5 chỗ</option>
+                                        <option value="7" <?= ($car['seats'] ?? '') == '7' ? 'selected' : '' ?>>7 chỗ</option>
+                                        <option value="8" <?= ($car['seats'] ?? '') == '8' ? 'selected' : '' ?>>8 chỗ</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fas fa-door-open"></i> Số cửa</label>
+                                    <select name="doors" class="form-control">
+                                        <option value="">Chọn số cửa</option>
+                                        <option value="2" <?= ($car['doors'] ?? '') == '2' ? 'selected' : '' ?>>2 cửa</option>
+                                        <option value="4" <?= ($car['doors'] ?? '') == '4' ? 'selected' : '' ?>>4 cửa</option>
+                                        <option value="5" <?= ($car['doors'] ?? '') == '5' ? 'selected' : '' ?>>5 cửa</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
                             <div class="specs-grid">
                                 <div class="spec-input">
                                     <i class="fas fa-tachometer-alt"></i>
                                     <input type="number" name="mileage" class="form-control" value="<?= $car['mileage'] ?? 0 ?>" placeholder="Số km đã đi">
+                                </div>
+                                <div class="spec-input">
+                                    <i class="fas fa-palette"></i>
+                                    <input type="text" name="color" class="form-control" value="<?= htmlspecialchars($car['color'] ?? '') ?>" placeholder="Màu sắc">
                                 </div>
                                 <div class="spec-input">
                                     <i class="fas fa-gas-pump"></i>
@@ -543,11 +609,8 @@ unset($_SESSION['success'], $_SESSION['error']);
                                     <select name="transmission" class="form-control">
                                         <option value="automatic" <?= ($car['transmission'] ?? '') === 'automatic' ? 'selected' : '' ?>>Tự động</option>
                                         <option value="manual" <?= ($car['transmission'] ?? '') === 'manual' ? 'selected' : '' ?>>Số sàn</option>
+                                        <option value="semi-automatic" <?= ($car['transmission'] ?? '') === 'semi-automatic' ? 'selected' : '' ?>>Bán tự động</option>
                                     </select>
-                                </div>
-                                <div class="spec-input">
-                                    <i class="fas fa-palette"></i>
-                                    <input type="text" name="color" class="form-control" value="<?= htmlspecialchars($car['color'] ?? '') ?>" placeholder="Màu sắc">
                                 </div>
                             </div>
                         </div>

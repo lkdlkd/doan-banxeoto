@@ -49,6 +49,38 @@ function formatPrice($price)
     return number_format($price, 0, '', ',');
 }
 
+// Hàm chuyển đổi loại nhiên liệu sang tiếng Việt
+function getFuelText($fuel) {
+    $fuelMap = [
+        'gasoline' => 'Xăng',
+        'diesel' => 'Dầu Diesel',
+        'electric' => 'Điện',
+        'hybrid' => 'Hybrid'
+    ];
+    return $fuelMap[$fuel] ?? ucfirst($fuel);
+}
+
+// Hàm chuyển đổi hộp số sang tiếng Việt
+function getTransmissionText($transmission) {
+    $transMap = [
+        'automatic' => 'Tự động',
+        'manual' => 'Số sàn',
+        'semi-automatic' => 'Bán tự động'
+    ];
+    return $transMap[$transmission] ?? ucfirst($transmission);
+}
+
+// Hàm chuyển đổi hệ dẫn động sang tiếng Việt
+function getDrivetrainText($drivetrain) {
+    $driveMap = [
+        'FWD' => 'Cầu trước',
+        'RWD' => 'Cầu sau',
+        'AWD' => '4 bánh toàn thời gian',
+        '4WD' => '4 bánh bán thời gian'
+    ];
+    return $driveMap[$drivetrain] ?? $drivetrain;
+}
+
 include __DIR__ . '/../layouts/header.php';
 ?>
 
@@ -648,7 +680,14 @@ include __DIR__ . '/../layouts/header.php';
     <div class="container">
         <div class="banner-badge">
             <i class="fas fa-star"></i>
-            <?= $car['status'] == 'available' ? 'Còn hàng' : 'Đã bán' ?>
+            <?php 
+            $stock = $car['stock'] ?? 0;
+            if ($car['status'] == 'available' && $stock > 0) {
+                echo 'Còn hàng (' . $stock . ' xe)';
+            } else {
+                echo 'Đã hết hàng';
+            }
+            ?>
         </div>
         <h1><?= htmlspecialchars($car['name']) ?></h1>
         <div class="price-banner"><?= formatPrice($car['price']) ?> VND</div>
@@ -759,11 +798,11 @@ include __DIR__ . '/../layouts/header.php';
                     </div>
                     <div class="highlight-item">
                         <i class="fas fa-gas-pump"></i>
-                        <span><?= htmlspecialchars($car['fuel']) ?></span>
+                        <span><?= getFuelText($car['fuel']) ?></span>
                     </div>
                     <div class="highlight-item">
                         <i class="fas fa-cog"></i>
-                        <span><?= htmlspecialchars($car['transmission']) ?></span>
+                        <span><?= getTransmissionText($car['transmission']) ?></span>
                     </div>
                     <div class="highlight-item">
                         <i class="fas fa-palette"></i>
@@ -771,13 +810,16 @@ include __DIR__ . '/../layouts/header.php';
                     </div>
                 </div>
 
-                <?php if ($car['status'] == 'available') : ?>
+                <?php 
+                $stock = $car['stock'] ?? 0;
+                if ($car['status'] == 'available' && $stock > 0) : 
+                ?>
                 <div class="action-buttons">
                     <a href="<?= BASE_URL ?>/user/add_to_cart?car_id=<?= $car['id'] ?>" class="btn btn-cart" onclick="addToCart(<?= $car['id'] ?>); return false;">
                         <i class="fas fa-shopping-cart"></i>
                         Thêm vào giỏ hàng
                     </a>
-                    <a href="<?= BASE_URL ?>/user/book_appointment?car_id=<?= $car['id'] ?>" class="btn btn-primary">
+                    <a href="<?= BASE_URL ?>/appointment/book/<?= $car['id'] ?>" class="btn btn-primary">
                         <i class="fas fa-calendar-check"></i>
                         Đặt lịch xem xe
                     </a>
@@ -790,7 +832,7 @@ include __DIR__ . '/../layouts/header.php';
                 <div class="action-buttons">
                     <button class="btn btn-primary" disabled style="opacity: 0.5;">
                         <i class="fas fa-ban"></i>
-                        Xe đã được bán
+                        Xe đã hết hàng
                     </button>
                 </div>
                 <?php endif; ?>
@@ -873,12 +915,12 @@ include __DIR__ . '/../layouts/header.php';
                     <?php if (!empty($car['drivetrain'])) : ?>
                     <div class="spec-item">
                         <span class="spec-label">Hệ dẫn động</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['drivetrain']) ?></span>
+                        <span class="spec-value"><?= getDrivetrainText($car['drivetrain']) ?></span>
                     </div>
                     <?php endif; ?>
                     <div class="spec-item">
                         <span class="spec-label">Hộp số</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['transmission']) ?></span>
+                        <span class="spec-value"><?= getTransmissionText($car['transmission']) ?></span>
                     </div>
                     <?php if (!empty($car['seats'])) : ?>
                     <div class="spec-item">
@@ -894,7 +936,7 @@ include __DIR__ . '/../layouts/header.php';
                     <?php endif; ?>
                     <div class="spec-item">
                         <span class="spec-label">Nhiên liệu</span>
-                        <span class="spec-value"><?= htmlspecialchars($car['fuel']) ?></span>
+                        <span class="spec-value"><?= getFuelText($car['fuel']) ?></span>
                     </div>
                     <div class="spec-item">
                         <span class="spec-label">Số km đã đi</span>
@@ -905,8 +947,21 @@ include __DIR__ . '/../layouts/header.php';
                         <span class="spec-value"><?= htmlspecialchars($car['color']) ?></span>
                     </div>
                     <div class="spec-item">
+                        <span class="spec-label">Số lượng tồn</span>
+                        <span class="spec-value"><?= $car['stock'] ?? 1 ?> xe</span>
+                    </div>
+                    <div class="spec-item">
                         <span class="spec-label">Trạng thái</span>
-                        <span class="spec-value"><?= $car['status'] == 'available' ? 'Còn hàng' : 'Đã bán' ?></span>
+                        <span class="spec-value">
+                            <?php 
+                            $stock = $car['stock'] ?? 0;
+                            if ($car['status'] == 'available' && $stock > 0) {
+                                echo 'Còn hàng (' . $stock . ' xe)';
+                            } else {
+                                echo 'Đã hết hàng';
+                            }
+                            ?>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -984,7 +1039,7 @@ include __DIR__ . '/../layouts/header.php';
                     $similarImage = !empty($similarCar['image_url']) ? $similarCar['image_url'] : '';
                     $similarImgSrc = $similarImage ? (isFullUrl($similarImage) ? $similarImage : BASE_URL . '/' . $similarImage) : BASE_URL . '/assets/images/no-image.jpg';
                 ?>
-                <a href="<?= BASE_URL ?>/user/car_detail?id=<?= $similarCar['id'] ?>" class="similar-car">
+                <a href="<?= BASE_URL ?>/car/<?= $similarCar['id'] ?>" class="similar-car">
                     <div class="similar-car-image">
                         <img src="<?= htmlspecialchars($similarImgSrc) ?>" alt="<?= htmlspecialchars($similarCar['name']) ?>">
                     </div>
@@ -1063,12 +1118,16 @@ include __DIR__ . '/../layouts/header.php';
             return;
         <?php endif; ?>
 
-        fetch('<?= BASE_URL ?>/user/toggle_favorite', {
+        // Kiểm tra trạng thái yêu thích hiện tại
+        const isFavorite = <?= $isFavorite ? 'true' : 'false' ?>;
+        const url = isFavorite ? '<?= BASE_URL ?>/favorites/remove' : '<?= BASE_URL ?>/favorites/add';
+
+        fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
             },
-            body: 'car_id=' + carId
+            body: JSON.stringify({ car_id: carId })
         })
         .then(response => response.json())
         .then(data => {

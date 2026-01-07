@@ -32,10 +32,10 @@ $filterMaxPrice = isset($_GET['max_price']) ? $_GET['max_price'] : null;
 $filterKeyword = isset($_GET['keyword']) ? $_GET['keyword'] : null;
 $filterYear = isset($_GET['year']) ? $_GET['year'] : null;
 
-// Lấy danh sách xe (có filter nếu có)
+// Lấy danh sách xe (có filter nếu có) - Bao gồm cả xe đã bán
 $brandFilter = !empty($filterBrand) ? implode(',', array_filter($filterBrand)) : null;
 $categoryFilter = !empty($filterCategory) ? implode(',', array_filter($filterCategory)) : null;
-$cars = $carModel->search($filterKeyword, $brandFilter, $categoryFilter, $filterMinPrice, $filterMaxPrice);
+$cars = $carModel->search($filterKeyword, $brandFilter, $categoryFilter, $filterMinPrice, $filterMaxPrice, true); // true = lấy tất cả
 
 // Filter by year if specified
 if ($filterYear && !empty($cars)) {
@@ -331,11 +331,13 @@ include __DIR__ . '/../layouts/header.php';
     cursor: pointer;
     margin-right: 10px;
 }
-
+.checkbox-item input:checked ~ .label-text {
+    color: #D4AF37;
+}
 .checkbox-item .label-text {
     font-family: 'Inter', sans-serif;
     font-size: 14px;
-    color: #0a0a0a;
+    color: #0a0a0a ;
     font-weight: 600;
     flex: 1;
 }
@@ -684,6 +686,12 @@ include __DIR__ . '/../layouts/header.php';
     animation: badgeGold 4s ease-in-out infinite;
 }
 
+.badge.sold {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: #fff;
+    animation: none;
+}
+
 @keyframes badgePulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.05); }
@@ -891,7 +899,7 @@ include __DIR__ . '/../layouts/header.php';
 .car-name {
     font-family: 'Inter', sans-serif;
     font-size: 15px;
-    color: #0a0a0a;
+    color: #0a0a0a !important; 
     margin: 0 0 8px 0;
     font-weight: 700;
     line-height: 1.3;
@@ -1354,7 +1362,12 @@ include __DIR__ . '/../layouts/header.php';
                                 // Xác định badge
                                 $badge = '';
                                 $badgeClass = '';
-                                if ($car['year'] >= 2025) {
+                                
+                                // Ưu tiên badge "Đã bán" nếu xe đã bán
+                                if ($car['status'] === 'sold') {
+                                    $badge = 'Đã bán';
+                                    $badgeClass = 'sold';
+                                } elseif ($car['year'] >= 2025) {
                                     $badge = 'Mới';
                                     $badgeClass = 'new';
                                 } elseif ($car['price'] >= 15000000000) {
@@ -1415,6 +1428,33 @@ include __DIR__ . '/../layouts/header.php';
                                             </svg> 
                                             <?= $car['year'] ?>
                                         </span>
+                                        <?php if (!empty($car['horsepower'])): ?>
+                                        <span>
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                            </svg> 
+                                            <?= $car['horsepower'] ?> HP
+                                        </span>
+                                        <?php endif; ?>
+                                        <?php if (!empty($car['acceleration'])): ?>
+                                        <span>
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M23 12l-2.44-2.79-.34-.34-.35-.4c-.23-.27-.64-.56-.94-.7L16 6H8l-2.93 1.77c-.3.14-.71.43-.94.7l-.35.4-.34.34L1 12v6a1 1 0 0 0 1 1h2c0-.55.45-1 1-1s1 .45 1 1h10c0-.55.45-1 1-1s1 .45 1 1h2a1 1 0 0 0 1-1v-6z"></path>
+                                                <circle cx="7" cy="15" r="2"></circle>
+                                                <circle cx="17" cy="15" r="2"></circle>
+                                            </svg> 
+                                            0-100: <?= $car['acceleration'] ?>s
+                                        </span>
+                                        <?php endif; ?>
+                                        <?php if (!empty($car['seats'])): ?>
+                                        <span>
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="12" cy="7" r="4"></circle>
+                                            </svg> 
+                                            <?= $car['seats'] ?> chỗ
+                                        </span>
+                                        <?php endif; ?>
                                         <span>
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                 <circle cx="12" cy="12" r="10"></circle>
@@ -1422,15 +1462,6 @@ include __DIR__ . '/../layouts/header.php';
                                             </svg> 
                                             <?= $transmission ?>
                                         </span>
-                                        <?php if ($car['mileage'] > 0): ?>
-                                        <span>
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                                <polyline points="14 2 14 8 20 8"></polyline>
-                                            </svg> 
-                                            <?= number_format($car['mileage']) ?> km
-                                        </span>
-                                        <?php endif; ?>
                                     </div>
                                     <div class="car-price">
                                         <div class="price-main">
@@ -1442,6 +1473,16 @@ include __DIR__ . '/../layouts/header.php';
                                         </div>
                                     </div>
                                     <div class="car-actions">
+                                        <?php if ($car['status'] === 'sold'): ?>
+                                        <button class="btn-add-cart" disabled style="opacity: 0.5; cursor: not-allowed; background: #999; border-color: #999;">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                                            </svg>
+                                            Xe đã bán
+                                        </button>
+                                        <?php else: ?>
                                         <button class="btn-add-cart" onclick="addToCart(<?= $car['id'] ?>, this)">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                 <circle cx="9" cy="21" r="1"></circle>
@@ -1450,6 +1491,7 @@ include __DIR__ . '/../layouts/header.php';
                                             </svg>
                                             Thêm vào giỏ hàng
                                         </button>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -1614,6 +1656,14 @@ window.addEventListener('DOMContentLoaded', function() {
         updatePriceInputs(priceSelect);
     }
     
+    // Add sort functionality
+    const sortSelect = document.querySelector('.sort-select');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            sortCars(this.value);
+        });
+    }
+    
     // Add click event to favorite buttons
     document.querySelectorAll('.favorite-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
@@ -1653,6 +1703,51 @@ window.addEventListener('DOMContentLoaded', function() {
         observer.observe(card);
     });
 });
+
+// Sort cars function
+function sortCars(sortBy) {
+    const carGrid = document.querySelector('.cars-grid');
+    const carCards = Array.from(carGrid.querySelectorAll('.car-card'));
+    
+    carCards.sort((a, b) => {
+        switch(sortBy) {
+            case 'newest':
+                // Sort by car ID (data-car-id attribute)
+                const idA = parseInt(a.querySelector('.favorite-btn').getAttribute('data-car-id'));
+                const idB = parseInt(b.querySelector('.favorite-btn').getAttribute('data-car-id'));
+                return idB - idA; // Descending (newest first)
+                
+            case 'price-asc':
+                const priceA = parsePrice(a.querySelector('.car-price').textContent);
+                const priceB = parsePrice(b.querySelector('.car-price').textContent);
+                return priceA - priceB; // Ascending
+                
+            case 'price-desc':
+                const priceADesc = parsePrice(a.querySelector('.car-price').textContent);
+                const priceBDesc = parsePrice(b.querySelector('.car-price').textContent);
+                return priceBDesc - priceADesc; // Descending
+                
+            case 'popular':
+                // Sort by views (if you have view count displayed)
+                // For now, just keep current order
+                return 0;
+                
+            default:
+                return 0;
+        }
+    });
+    
+    // Clear and re-append sorted cards
+    carGrid.innerHTML = '';
+    carCards.forEach(card => carGrid.appendChild(card));
+}
+
+// Helper function to parse price from text
+function parsePrice(priceText) {
+    // Remove "VND", dots, commas and extract number
+    return parseInt(priceText.replace(/[^\d]/g, ''));
+}
+
 </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

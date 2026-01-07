@@ -75,6 +75,16 @@ class CarController
         $color = trim($_POST['color'] ?? '');
         $description = trim($_POST['description'] ?? '');
         $status = trim($_POST['status'] ?? 'available');
+        
+        // Thông số kỹ thuật
+        $stock = intval($_POST['stock'] ?? 1);
+        $engine = trim($_POST['engine'] ?? '');
+        $horsepower = !empty($_POST['horsepower']) ? intval($_POST['horsepower']) : null;
+        $torque = !empty($_POST['torque']) ? intval($_POST['torque']) : null;
+        $acceleration = !empty($_POST['acceleration']) ? floatval($_POST['acceleration']) : null;
+        $drivetrain = trim($_POST['drivetrain'] ?? '');
+        $seats = !empty($_POST['seats']) ? intval($_POST['seats']) : null;
+        $doors = !empty($_POST['doors']) ? intval($_POST['doors']) : null;
 
         // Validate
         if (empty($name) || $brandId === 0 || $categoryId === 0 || $price <= 0) {
@@ -105,7 +115,15 @@ class CarController
             'transmission' => $transmission,
             'color' => $color,
             'description' => $description,
-            'status' => $status
+            'status' => $status,
+            'stock' => $stock,
+            'engine' => $engine,
+            'horsepower' => $horsepower,
+            'torque' => $torque,
+            'acceleration' => $acceleration,
+            'drivetrain' => $drivetrain,
+            'seats' => $seats,
+            'doors' => $doors
         ];
 
         $carId = $this->carModel->create($carData);
@@ -205,6 +223,19 @@ class CarController
         $color = trim($_POST['color'] ?? '');
         $description = trim($_POST['description'] ?? '');
         $status = trim($_POST['status'] ?? 'available');
+        
+        // Thông số kỹ thuật
+        $stock = intval($_POST['stock'] ?? 1);
+        $engine = trim($_POST['engine'] ?? '');
+        // Thông số kỹ thuật
+        $stock = intval($_POST['stock'] ?? 1);
+        $engine = trim($_POST['engine'] ?? '');
+        $horsepower = !empty($_POST['horsepower']) ? intval($_POST['horsepower']) : null;
+        $torque = !empty($_POST['torque']) ? intval($_POST['torque']) : null;
+        $acceleration = !empty($_POST['acceleration']) ? floatval($_POST['acceleration']) : null;
+        $drivetrain = trim($_POST['drivetrain'] ?? '');
+        $seats = !empty($_POST['seats']) ? intval($_POST['seats']) : null;
+        $doors = !empty($_POST['doors']) ? intval($_POST['doors']) : null;
 
         // Validate
         if ($id <= 0) {
@@ -229,7 +260,15 @@ class CarController
             'transmission' => $transmission,
             'color' => $color,
             'description' => $description,
-            'status' => $status
+            'status' => $status,
+            'stock' => $stock,
+            'engine' => $engine,
+            'horsepower' => $horsepower,
+            'torque' => $torque,
+            'acceleration' => $acceleration,
+            'drivetrain' => $drivetrain,
+            'seats' => $seats,
+            'doors' => $doors
         ];
 
         $result = $this->carModel->update($id, $carData);

@@ -167,6 +167,7 @@ $totalRevenue = array_sum(array_map(fn($o) => $o['status'] === 'confirmed' ? $o[
                                         case 'pending': echo 'CHỜ XỬ LÝ'; break;
                                         case 'confirmed': echo 'ĐÃ XÁC NHẬN'; break;
                                         case 'cancelled': echo 'ĐÃ HỦY'; break;
+                                        case 'completed': echo 'HOÀN TẤT'; break;
                                         default: echo strtoupper($order['status']);
                                     }
                                     ?>

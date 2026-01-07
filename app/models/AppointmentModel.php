@@ -55,7 +55,9 @@ class AppointmentModel extends BaseModel
     // Lấy lịch hẹn theo user
     public function getAppointmentsByUser($userId, $limit = null)
     {
-        $sql = "SELECT a.*, c.name as car_name, c.price as car_price, 
+        $sql = "SELECT a.*, 
+                c.name as car_name, 
+                c.price as car_price, 
                 b.name as brand_name,
                 (SELECT image_url FROM car_images WHERE car_id = c.id ORDER BY id ASC LIMIT 1) as car_image
                 FROM {$this->table} a 
