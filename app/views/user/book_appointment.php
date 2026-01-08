@@ -37,8 +37,51 @@ include __DIR__ . '/../layouts/header.php';
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/cart.css">
 
 <style>
+    /* Banner */
+    .appointment-banner {
+        position: relative;
+        height: 350px;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.5) 100%),
+            url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80') center/cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: -80px;
+    }
+
+    .appointment-banner-content {
+        text-align: center;
+        color: #fff;
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        padding: 0 20px;
+    }
+
+    .appointment-banner h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 56px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .appointment-title {
+        color: #000 !important;
+    }
+
+    .appointment-banner h1 span {
+        color: #D4AF37;
+    }
+
+    .appointment-banner p {
+        font-size: 20px;
+        color: rgba(255, 255, 255, 0.9);
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+    }
+
     .appointment-page {
-        padding: 150px 0 80px;
+        padding: 100px 0 80px;
         min-height: 100vh;
         background: linear-gradient(135deg, #f9f7f3 0%, #ffffff 100%);
     }
@@ -277,9 +320,17 @@ include __DIR__ . '/../layouts/header.php';
     }
 </style>
 
+<!-- Banner -->
+<div class="appointment-banner">
+    <div class="appointment-banner-content">
+        <h1>Đặt Lịch <span>Xem Xe</span></h1>
+        <p>Trải nghiệm và cảm nhận chiếc xe mơ ước của bạn</p>
+    </div>
+</div>
+
 <main class="appointment-page">
     <div class="appointment-container">
-        <h1 class="page-title">
+        <h1 class="page-title appointment-title">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
