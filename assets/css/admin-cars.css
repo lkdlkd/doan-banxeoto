@@ -18,19 +18,60 @@
 .stock-badge {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    font-size: 11px;
+    gap: 5px;
+    font-size: 12px;
     font-weight: 600;
     color: #fff;
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    padding: 4px 10px;
-    border-radius: 5px;
-    margin-top: 4px;
-    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    padding: 5px 12px;
+    border-radius: 6px;
+    margin-top: 6px;
 }
 
 .stock-badge i {
-    font-size: 10px;
+    font-size: 11px;
+}
+
+/* Stock Badge Variants */
+.stock-badge.stock-out {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+}
+
+.stock-badge.stock-low {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+}
+
+.stock-badge.stock-instock {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+}
+
+/* Clear Filter Button */
+.btn-clear-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #fff;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    white-space: nowrap;
+}
+
+.btn-clear-filter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.5);
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.btn-clear-filter i {
+    font-size: 16px;
 }
 
 /* Submit Button Enhancement */
@@ -471,4 +512,112 @@
     .table-name {
         font-size: 13px;
     }
+    
+    .pagination-wrapper {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .pagination {
+        order: -1;
+    }
+}
+
+/* ===================================
+   Pagination
+   =================================== */
+.pagination-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 25px;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    margin-top: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--gray-100);
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.pagination-info {
+    font-size: 14px;
+    color: var(--gray-600);
+    font-weight: 500;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-700);
+    background: #fff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.page-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(212, 175, 55, 0.08);
+}
+
+.page-btn.active {
+    background: linear-gradient(135deg, var(--primary), #B8960B);
+    color: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.35);
+}
+
+.page-btn i {
+    font-size: 12px;
+}
+
+.page-dots {
+    color: var(--gray-400);
+    padding: 0 5px;
+    font-weight: 600;
+}
+
+.page-size-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.page-size-selector label {
+    font-size: 14px;
+    color: var(--gray-600);
+    font-weight: 500;
+}
+
+.page-size-selector select {
+    padding: 8px 12px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--gray-700);
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.page-size-selector select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
 }

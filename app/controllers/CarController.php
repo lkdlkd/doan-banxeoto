@@ -29,13 +29,47 @@ class CarController
         // Kiểm tra quyền admin
         $this->checkAdmin();
 
-        $cars = $this->carModel->getAllWithDetails();
+        $allCars = $this->carModel->getAllWithDetails();
         $brands = $this->brandModel->getAll();
         $categories = $this->categoryModel->getAll();
 
-        $totalCars = count($cars);
-        $availableCars = count(array_filter($cars, fn($c) => $c['status'] === 'available'));
-        $soldCars = count(array_filter($cars, fn($c) => $c['status'] === 'sold'));
+        // Lấy filter từ query string
+        $filterBrand = $_GET['brand'] ?? '';
+        $filterCategory = $_GET['category'] ?? '';
+        $filterStatus = $_GET['status'] ?? '';
+        $filterStock = $_GET['stock'] ?? '';
+        $filterSearch = $_GET['search'] ?? '';
+
+        // Áp dụng filter
+        $cars = array_filter($allCars, function($car) use ($filterBrand, $filterCategory, $filterStatus, $filterStock, $filterSearch) {
+            // Filter theo brand
+            if ($filterBrand !== '' && $car['brand_id'] != $filterBrand) return false;
+            
+            // Filter theo category
+            if ($filterCategory !== '' && $car['category_id'] != $filterCategory) return false;
+            
+            // Filter theo status
+            if ($filterStatus !== '' && $car['status'] !== $filterStatus) return false;
+            
+            // Filter theo stock
+            if ($filterStock !== '') {
+                $stock = $car['stock'] ?? 0;
+                if ($filterStock === 'out' && $stock > 0) return false;
+                if ($filterStock === 'low' && ($stock <= 0 || $stock > 5)) return false;
+                if ($filterStock === 'instock' && $stock <= 5) return false;
+            }
+            
+            // Filter theo search
+            if ($filterSearch !== '' && stripos($car['name'], $filterSearch) === false) return false;
+            
+            return true;
+        });
+        $cars = array_values($cars); // Reset array keys
+
+        $totalCars = count($allCars);
+        $filteredCount = count($cars);
+        $availableCars = count(array_filter($allCars, fn($c) => $c['status'] === 'available'));
+        $soldCars = count(array_filter($allCars, fn($c) => $c['status'] === 'sold'));
 
         // Load view
         require_once __DIR__ . '/../views/admin/cars/list.php';

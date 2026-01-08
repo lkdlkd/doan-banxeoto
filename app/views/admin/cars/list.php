@@ -15,7 +15,35 @@ function formatPriceShort($price)
 }
 
 // Dữ liệu được truyền từ controller:
-// $cars, $brands, $categories, $totalCars, $availableCars, $soldCars
+// $cars (đã filter), $brands, $categories, $totalCars, $filteredCount, $availableCars, $soldCars
+
+// Lấy filter hiện tại
+$filterBrand = $_GET['brand'] ?? '';
+$filterCategory = $_GET['category'] ?? '';
+$filterStatus = $_GET['status'] ?? '';
+$filterStock = $_GET['stock'] ?? '';
+$filterSearch = $_GET['search'] ?? '';
+
+// Tính toán số xe theo tồn kho (từ cars đã filter)
+$outOfStockCars = 0;
+$lowStockCars = 0;
+$inStockCars = 0;
+$totalStock = 0;
+foreach ($cars as $c) {
+    $stock = $c['stock'] ?? 0;
+    $totalStock += $stock;
+    if ($stock <= 0) $outOfStockCars++;
+    elseif ($stock <= 5) $lowStockCars++;
+    else $inStockCars++;
+}
+
+// Phân trang dựa trên số xe đã filter
+$carsPerPage = isset($_GET['per_page']) ? intval($_GET['per_page']) : 10;
+if (!in_array($carsPerPage, [10, 20, 50, 100])) $carsPerPage = 10;
+$currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$totalPages = ceil($filteredCount / $carsPerPage);
+$offset = ($currentPage - 1) * $carsPerPage;
+$carsOnPage = array_slice($cars, $offset, $carsPerPage);
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -63,17 +91,31 @@ function formatPriceShort($price)
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #9c27b0, #7b1fa2);"><i class="fas fa-boxes"></i></div>
                     <div class="stat-info">
-                        <h3><?= $availableCars ?></h3>
-                        <p>Còn hàng</p>
+                        <h3><?= $totalStock ?></h3>
+                        <p>Tổng tồn kho</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon red"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
                     <div class="stat-info">
-                        <h3><?= $soldCars ?></h3>
-                        <p>Đã bán</p>
+                        <h3><?= $inStockCars ?></h3>
+                        <p>Còn hàng (>5)</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #ff9800, #f57c00);"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="stat-info">
+                        <h3><?= $lowStockCars ?></h3>
+                        <p>Sắp hết (1-5)</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon red"><i class="fas fa-times-circle"></i></div>
+                    <div class="stat-info">
+                        <h3><?= $outOfStockCars ?></h3>
+                        <p>Hết hàng (0)</p>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -86,40 +128,56 @@ function formatPriceShort($price)
             </div>
 
             <!-- Filters -->
-            <div class="filters-bar">
+            <form method="GET" action="" class="filters-bar" id="filterForm">
+                <input type="hidden" name="per_page" value="<?= $carsPerPage ?>">
                 <div class="filter-group">
                     <label>Thương hiệu:</label>
-                    <select id="filterBrand">
+                    <select name="brand" onchange="this.form.submit()">
                         <option value="">Tất cả</option>
                         <?php foreach ($brands as $brand): ?>
-                            <option value="<?= $brand['id'] ?>"><?= htmlspecialchars($brand['name']) ?></option>
+                            <option value="<?= $brand['id'] ?>" <?= $filterBrand == $brand['id'] ? 'selected' : '' ?>><?= htmlspecialchars($brand['name']) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label>Danh mục:</label>
-                    <select id="filterCategory">
+                    <select name="category" onchange="this.form.submit()">
                         <option value="">Tất cả</option>
                         <?php foreach ($categories as $cat): ?>
-                            <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['name']) ?></option>
+                            <option value="<?= $cat['id'] ?>" <?= $filterCategory == $cat['id'] ? 'selected' : '' ?>><?= htmlspecialchars($cat['name']) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label>Trạng thái:</label>
-                    <select id="filterStatus">
+                    <select name="status" onchange="this.form.submit()">
                         <option value="">Tất cả</option>
-                        <option value="available">Còn hàng</option>
-                        <option value="sold">Đã bán</option>
+                        <option value="available" <?= $filterStatus === 'available' ? 'selected' : '' ?>>Còn hàng</option>
+                        <option value="sold" <?= $filterStatus === 'sold' ? 'selected' : '' ?>>Đã bán</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Tồn kho:</label>
+                    <select name="stock" onchange="this.form.submit()">
+                        <option value="">Tất cả</option>
+                        <option value="out" <?= $filterStock === 'out' ? 'selected' : '' ?>>Hết hàng (0)</option>
+                        <option value="low" <?= $filterStock === 'low' ? 'selected' : '' ?>>Sắp hết (1-5)</option>
+                        <option value="instock" <?= $filterStock === 'instock' ? 'selected' : '' ?>>Còn hàng (>5)</option>
                     </select>
                 </div>
                 <div class="filter-search">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="searchCar" placeholder="Tìm theo tên xe...">
+                    <input type="text" name="search" value="<?= htmlspecialchars($filterSearch) ?>" placeholder="Tìm theo tên xe..." onchange="this.form.submit()">
                 </div>
-            </div>
+                <?php if ($filterBrand || $filterCategory || $filterStatus || $filterStock || $filterSearch): ?>
+                <a href="<?= BASE_URL ?>/admin/cars" class="btn-clear-filter">
+                    <i class="fas fa-times-circle"></i>
+                    <span>Xóa bộ lọc</span>
+                </a>
+                <?php endif; ?>
+            </form>
 
-            <?php if ($totalCars === 0): ?>
+            <?php if ($filteredCount === 0): ?>
                 <!-- Empty State -->
                 <div class="empty-state">
                     <div class="empty-icon">
@@ -147,8 +205,11 @@ function formatPriceShort($price)
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($cars as $car): ?>
-                                <tr data-brand="<?= $car['brand_id'] ?>" data-category="<?= $car['category_id'] ?>" data-status="<?= $car['status'] ?>">
+                            <?php foreach ($carsOnPage as $car): 
+                                $stock = $car['stock'] ?? 0;
+                                $stockLevel = $stock <= 0 ? 'out' : ($stock <= 5 ? 'low' : 'instock');
+                            ?>
+                                <tr data-brand="<?= $car['brand_id'] ?>" data-category="<?= $car['category_id'] ?>" data-status="<?= $car['status'] ?>" data-stock="<?= $stockLevel ?>">
                                     <td>
                                         <span class="table-id">#<?= str_pad($car['id'], 3, '0', STR_PAD_LEFT) ?></span>
                                     </td>
@@ -169,7 +230,13 @@ function formatPriceShort($price)
                                         <?php if (!empty($car['acceleration'])): ?>
                                             <div class="table-price-badge"><i class="fas fa-rocket"></i><?= $car['acceleration'] ?>s</div>
                                         <?php endif; ?>
-                                        <div class="stock-badge"><i class="fas fa-box"></i> Tồn: <?= $car['stock'] ?? 1 ?></div>
+                                        <?php 
+                                            $stockClass = $stock <= 0 ? 'stock-out' : ($stock <= 5 ? 'stock-low' : 'stock-instock');
+                                        ?>
+                                        <div class="stock-badge <?= $stockClass ?>">
+                                            <i class="fas fa-<?= $stock <= 0 ? 'times-circle' : ($stock <= 5 ? 'exclamation-circle' : 'check-circle') ?>"></i> 
+                                            <?= $stock ?> xe
+                                        </div>
                                     </td>
                                     <td>
                                         <div class="table-specs-compact">
@@ -222,6 +289,83 @@ function formatPriceShort($price)
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Pagination -->
+                <?php 
+                // Build query string cho pagination
+                $queryParams = [];
+                if ($filterBrand) $queryParams['brand'] = $filterBrand;
+                if ($filterCategory) $queryParams['category'] = $filterCategory;
+                if ($filterStatus) $queryParams['status'] = $filterStatus;
+                if ($filterStock) $queryParams['stock'] = $filterStock;
+                if ($filterSearch) $queryParams['search'] = $filterSearch;
+                $queryParams['per_page'] = $carsPerPage;
+                
+                function buildPageUrl($page, $params) {
+                    $params['page'] = $page;
+                    return '?' . http_build_query($params);
+                }
+                ?>
+                <?php if ($totalPages > 1): ?>
+                <div class="pagination-wrapper">
+                    <div class="pagination-info">
+                        Hiển thị <?= $offset + 1 ?> - <?= min($offset + $carsPerPage, $filteredCount) ?> trong tổng số <?= $filteredCount ?> xe
+                        <?php if ($filteredCount < $totalCars): ?>
+                            <span style="color: #D4AF37;">(đã lọc từ <?= $totalCars ?> xe)</span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="pagination">
+                        <?php if ($currentPage > 1): ?>
+                            <a href="<?= buildPageUrl(1, $queryParams) ?>" class="page-btn" title="Trang đầu">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                            <a href="<?= buildPageUrl($currentPage - 1, $queryParams) ?>" class="page-btn" title="Trang trước">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        <?php endif; ?>
+                        
+                        <?php
+                        $startPage = max(1, $currentPage - 2);
+                        $endPage = min($totalPages, $currentPage + 2);
+                        
+                        if ($startPage > 1): ?>
+                            <a href="<?= buildPageUrl(1, $queryParams) ?>" class="page-btn">1</a>
+                            <?php if ($startPage > 2): ?>
+                                <span class="page-dots">...</span>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        
+                        <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                            <a href="<?= buildPageUrl($i, $queryParams) ?>" class="page-btn <?= $i === $currentPage ? 'active' : '' ?>"><?= $i ?></a>
+                        <?php endfor; ?>
+                        
+                        <?php if ($endPage < $totalPages): ?>
+                            <?php if ($endPage < $totalPages - 1): ?>
+                                <span class="page-dots">...</span>
+                            <?php endif; ?>
+                            <a href="<?= buildPageUrl($totalPages, $queryParams) ?>" class="page-btn"><?= $totalPages ?></a>
+                        <?php endif; ?>
+                        
+                        <?php if ($currentPage < $totalPages): ?>
+                            <a href="<?= buildPageUrl($currentPage + 1, $queryParams) ?>" class="page-btn" title="Trang sau">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                            <a href="<?= buildPageUrl($totalPages, $queryParams) ?>" class="page-btn" title="Trang cuối">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                    <div class="page-size-selector">
+                        <label>Hiển thị:</label>
+                        <select id="pageSize" onchange="changePageSize(this.value)">
+                            <option value="10" <?= $carsPerPage == 10 ? 'selected' : '' ?>>10</option>
+                            <option value="20" <?= $carsPerPage == 20 ? 'selected' : '' ?>>20</option>
+                            <option value="50" <?= $carsPerPage == 50 ? 'selected' : '' ?>>50</option>
+                            <option value="100" <?= $carsPerPage == 100 ? 'selected' : '' ?>>100</option>
+                        </select>
+                    </div>
+                </div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
     </main>
@@ -233,34 +377,11 @@ function formatPriceShort($price)
             }
         }
 
-        // Filters
-        document.getElementById('filterBrand').addEventListener('change', filterCars);
-        document.getElementById('filterCategory').addEventListener('change', filterCars);
-        document.getElementById('filterStatus').addEventListener('change', filterCars);
-        document.getElementById('searchCar').addEventListener('input', filterCars);
-
-        function filterCars() {
-            const brand = document.getElementById('filterBrand').value;
-            const category = document.getElementById('filterCategory').value;
-            const status = document.getElementById('filterStatus').value;
-            const search = document.getElementById('searchCar').value.toLowerCase();
-
-            const rows = document.querySelectorAll('.data-table tbody tr');
-            let visibleCount = 0;
-
-            rows.forEach(row => {
-                const matchBrand = !brand || row.dataset.brand === brand;
-                const matchCategory = !category || row.dataset.category === category;
-                const matchStatus = !status || row.dataset.status === status;
-                const matchSearch = !search || row.textContent.toLowerCase().includes(search);
-
-                if (matchBrand && matchCategory && matchStatus && matchSearch) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
+        function changePageSize(size) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('per_page', size);
+            url.searchParams.set('page', '1');
+            window.location.href = url.toString();
         }
     </script>
 </body>

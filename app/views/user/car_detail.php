@@ -837,6 +837,10 @@ include __DIR__ . '/../layouts/header.php';
                 $stock = $car['stock'] ?? 0;
                 if ($car['status'] == 'available' && $stock > 0) :
                 ?>
+                    <div class="stock-info" style="margin-bottom: 15px; padding: 10px 15px; background: #e8f5e9; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-check-circle" style="color: #4caf50;"></i>
+                        <span style="color: #2e7d32; font-weight: 600;">Còn <?= $stock ?> xe</span>
+                    </div>
                     <div class="action-buttons">
                         <a href="<?= BASE_URL ?>/user/add_to_cart?car_id=<?= $car['id'] ?>" class="btn btn-cart" onclick="addToCart(<?= $car['id'] ?>); return false;">
                             <i class="fas fa-shopping-cart"></i>
@@ -852,11 +856,19 @@ include __DIR__ . '/../layouts/header.php';
                         </a>
                     </div>
                 <?php else : ?>
+                    <div class="stock-info" style="margin-bottom: 15px; padding: 10px 15px; background: #ffebee; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-times-circle" style="color: #f44336;"></i>
+                        <span style="color: #c62828; font-weight: 600;">Xe đã hết hàng</span>
+                    </div>
                     <div class="action-buttons">
-                        <button class="btn btn-primary" disabled style="opacity: 0.5;">
+                        <button class="btn btn-primary" disabled style="opacity: 0.5; background: #999; border-color: #999;">
                             <i class="fas fa-ban"></i>
                             Xe đã hết hàng
                         </button>
+                        <a href="<?= BASE_URL ?>/contact" class="btn btn-outline">
+                            <i class="fas fa-phone"></i>
+                            Liên hệ đặt hàng trước
+                        </a>
                     </div>
                 <?php endif; ?>
 

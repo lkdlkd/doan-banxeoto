@@ -1429,10 +1429,11 @@ include __DIR__ . '/../layouts/header.php';
                         // Xác định badge
                         $badge = '';
                         $badgeClass = '';
+                        $stock = $car['stock'] ?? 0;
 
-                        // Ưu tiên badge "Đã bán" nếu xe đã bán
-                        if ($car['status'] === 'sold') {
-                            $badge = 'Đã bán';
+                        // Ưu tiên badge "Hết hàng" nếu xe đã bán hoặc hết stock
+                        if ($car['status'] === 'sold' || $stock <= 0) {
+                            $badge = 'Hết hàng';
                             $badgeClass = 'sold';
                         } elseif ($car['year'] >= 2025) {
                             $badge = 'Mới';
@@ -1540,14 +1541,14 @@ include __DIR__ . '/../layouts/header.php';
                                     </div>
                                 </div>
                                 <div class="car-actions">
-                                    <?php if ($car['status'] === 'sold'): ?>
+                                    <?php if ($car['status'] === 'sold' || $stock <= 0): ?>
                                         <button class="btn-add-cart" disabled style="opacity: 0.5; cursor: not-allowed; background: #999; border-color: #999;">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                 <circle cx="12" cy="12" r="10"></circle>
                                                 <line x1="15" y1="9" x2="9" y2="15"></line>
                                                 <line x1="9" y1="9" x2="15" y2="15"></line>
                                             </svg>
-                                            Xe đã bán
+                                            Hết hàng
                                         </button>
                                     <?php else: ?>
                                         <button class="btn-add-cart" onclick="addToCart(<?= $car['id'] ?>, this)">

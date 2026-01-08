@@ -101,6 +101,17 @@ class OrderController
         $orderId = $this->orderModel->create($orderData);
 
         if ($orderId) {
+            // Trừ số lượng tồn kho
+            $newStock = max(0, $currentStock - 1);
+            $updateData = ['stock' => $newStock];
+            
+            // Nếu hết hàng thì set status = 'sold'
+            if ($newStock <= 0) {
+                $updateData['status'] = 'sold';
+            }
+            
+            $this->carModel->update($carId, $updateData);
+
             // Xóa xe khỏi giỏ hàng
             $this->cartModel->removeFromCart($carId);
 
@@ -174,6 +185,21 @@ class OrderController
             exit;
         }
 
+        // Khôi phục số lượng tồn kho khi hủy đơn
+        $car = $this->carModel->getById($order['car_id']);
+        if ($car) {
+            $currentStock = $car['stock'] ?? 0;
+            $newStock = $currentStock + 1;
+            
+            $updateData = ['stock' => $newStock];
+            // Nếu xe đang hết hàng thì set lại available
+            if ($car['status'] === 'sold') {
+                $updateData['status'] = 'available';
+            }
+            
+            $this->carModel->update($order['car_id'], $updateData);
+        }
+
         $this->orderModel->updateStatus($orderId, 'cancelled');
 
         $_SESSION['success'] = 'Đã hủy đơn hàng thành công';
@@ -209,27 +235,8 @@ class OrderController
             exit;
         }
 
-        // Cập nhật số lượng tồn kho xe nếu đơn hàng được xác nhận
-        if ($status === 'confirmed' && $order['status'] !== 'confirmed') {
-            // Lấy thông tin xe hiện tại
-            $car = $this->carModel->getById($order['car_id']);
-            if ($car) {
-                $currentStock = $car['stock'] ?? 1;
-                $newStock = max(0, $currentStock - 1); // Trừ 1, không cho âm
-
-                // Cập nhật stock
-                $updateData = ['stock' => $newStock];
-
-                // Nếu hết hàng thì set status = 'sold'
-                if ($newStock <= 0) {
-                    $updateData['status'] = 'sold';
-                }
-
-                $this->carModel->update($order['car_id'], $updateData);
-            }
-        }
-
-        // Khôi phục số lượng tồn kho xe nếu đơn hàng bị hủy
+        // Khôi phục số lượng tồn kho xe nếu đơn hàng bị hủy (admin)
+        // Lưu ý: Stock đã được trừ khi user đặt hàng, nên chỉ cần khôi phục khi hủy
         if ($status === 'cancelled' && $order['status'] !== 'cancelled') {
             // Lấy thông tin xe hiện tại
             $car = $this->carModel->getById($order['car_id']);
@@ -266,9 +273,20 @@ class OrderController
             exit;
         }
 
-        // Khôi phục trạng thái xe nếu đơn hàng đang confirmed
-        if ($order['status'] === 'confirmed') {
-            $this->carModel->update($order['car_id'], ['status' => 'available']);
+        // Khôi phục số lượng tồn kho xe nếu xóa đơn hàng pending (chưa bị hủy)
+        if ($order['status'] !== 'cancelled') {
+            $car = $this->carModel->getById($order['car_id']);
+            if ($car) {
+                $currentStock = $car['stock'] ?? 0;
+                $newStock = $currentStock + 1;
+                
+                $updateData = ['stock' => $newStock];
+                if ($car['status'] === 'sold') {
+                    $updateData['status'] = 'available';
+                }
+                
+                $this->carModel->update($order['car_id'], $updateData);
+            }
         }
 
         $this->orderModel->delete($orderId);
