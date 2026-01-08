@@ -30,8 +30,67 @@ include __DIR__ . '/../layouts/header.php';
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/cart.css">
 
 <style>
+    /* Banner */
+    .checkout-banner {
+        position: relative;
+        height: 350px;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.5) 100%),
+            url('https://images.unsplash.com/photo-1461988625982-7e46a099bf4f?w=1920&q=80') center/cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: -80px;
+    }
+
+    .checkout-banner-content {
+        text-align: center;
+        color: #fff;
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        padding: 0 20px;
+    }
+
+    .checkout-banner h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 56px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .checkout-banner h1 span {
+        color: #D4AF37;
+    }
+
+    .checkout-banner p {
+        font-size: 20px;
+        color: rgba(255, 255, 255, 0.9);
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .checkout-banner .step-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 24px;
+        background: rgba(212, 175, 55, 0.2);
+        border: 2px solid #D4AF37;
+        border-radius: 25px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #D4AF37;
+        backdrop-filter: blur(10px);
+        margin-top: 12px;
+    }
+
+    .checkout-banner .step-badge svg {
+        width: 20px;
+        height: 20px;
+    }
+
     .checkout-page {
-        padding: 150px 0 80px;
+        padding: 100px 0 80px;
         min-height: 100vh;
         background: linear-gradient(135deg, #f9f7f3 0%, #ffffff 100%);
     }
@@ -40,6 +99,10 @@ include __DIR__ . '/../layouts/header.php';
         max-width: 1200px;
         margin: 0 auto;
         padding: 0 20px;
+    }
+
+    .checkout-page .page-title {
+        color: #000;
     }
 
     .checkout-content {
@@ -240,6 +303,21 @@ include __DIR__ . '/../layouts/header.php';
         }
     }
 </style>
+
+<!-- Banner -->
+<div class="checkout-banner">
+    <div class="checkout-banner-content">
+        <h1>Thanh Toán <span>Đơn Hàng</span></h1>
+        <p>Hoàn tất đơn hàng của bạn chỉ với vài bước đơn giản</p>
+        <div class="step-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+            </svg>
+            Bước cuối cùng
+        </div>
+    </div>
+</div>
 
 <main class="checkout-page">
     <div class="checkout-container">
