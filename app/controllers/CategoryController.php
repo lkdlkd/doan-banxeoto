@@ -26,13 +26,8 @@ class CategoryController
         // Kiểm tra quyền admin
         $this->checkAdmin();
 
-        $categories = $this->categoryModel->getAll();
+        $categories = $this->categoryModel->getCategoriesWithCarCount();
         $totalCategories = count($categories);
-
-        // Đếm số xe theo category
-        foreach ($categories as &$cat) {
-            $cat['car_count'] = $this->carModel->countByCategory($cat['id']);
-        }
 
         // Load view
         require_once __DIR__ . '/../views/admin/categories/list.php';

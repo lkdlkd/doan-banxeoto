@@ -26,13 +26,8 @@ class BrandController
         // Kiểm tra quyền admin
         $this->checkAdmin();
 
-        $brands = $this->brandModel->getAll();
+        $brands = $this->brandModel->getBrandsWithCarCount();
         $totalBrands = count($brands);
-
-        // Đếm số xe theo brand
-        foreach ($brands as &$brand) {
-            $brand['car_count'] = $this->carModel->countByBrand($brand['id']);
-        }
 
         // Load view
         require_once __DIR__ . '/../views/admin/brands/list.php';
