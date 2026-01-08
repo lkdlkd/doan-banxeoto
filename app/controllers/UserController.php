@@ -20,7 +20,6 @@ class UserController
         $userId = $_SESSION['user_id'];
         $fullName = trim($_POST['full_name'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
-        $birthDate = $_POST['birth_date'] ?? null;
         $address = trim($_POST['address'] ?? '');
 
         // Validate
@@ -41,7 +40,6 @@ class UserController
         $result = $this->userModel->updateUser($userId, [
             'full_name' => $fullName,
             'phone' => $phone,
-            'birth_date' => $birthDate,
             'address' => $address
         ]);
 
