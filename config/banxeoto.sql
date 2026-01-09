@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3307
--- Generation Time: Jan 08, 2026 at 04:18 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- Máy chủ: 127.0.0.1
+-- Thời gian đã tạo: Th1 09, 2026 lúc 02:05 AM
+-- Phiên bản máy phục vụ: 10.4.32-MariaDB
+-- Phiên bản PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `banxeoto`
+-- Cơ sở dữ liệu: `banxeoto`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `appointments`
+-- Cấu trúc bảng cho bảng `appointments`
 --
 
 CREATE TABLE `appointments` (
@@ -41,10 +41,18 @@ CREATE TABLE `appointments` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `appointments`
+--
+
+INSERT INTO `appointments` (`id`, `user_id`, `car_id`, `appointment_date`, `appointment_time`, `full_name`, `phone`, `email`, `notes`, `status`, `created_at`) VALUES
+(0, 3, 107, '2026-01-10', '09:00:00', 'Nguyễn Tấn Lợi', '0868065672', 'ngtanloi1709@gmail.com', '', 'completed', '2026-01-09 00:36:42'),
+(0, 3, 107, '2026-01-10', '17:00:00', 'Lê Khánh Đăng', '0868065672', '', '', 'pending', '2026-01-09 00:48:36');
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `brands`
+-- Cấu trúc bảng cho bảng `brands`
 --
 
 CREATE TABLE `brands` (
@@ -56,7 +64,7 @@ CREATE TABLE `brands` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `brands`
+-- Đang đổ dữ liệu cho bảng `brands`
 --
 
 INSERT INTO `brands` (`id`, `name`, `logo`, `description`, `created_at`) VALUES
@@ -78,7 +86,7 @@ INSERT INTO `brands` (`id`, `name`, `logo`, `description`, `created_at`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cars`
+-- Cấu trúc bảng cho bảng `cars`
 --
 
 CREATE TABLE `cars` (
@@ -106,7 +114,7 @@ CREATE TABLE `cars` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `cars`
+-- Đang đổ dữ liệu cho bảng `cars`
 --
 
 INSERT INTO `cars` (`id`, `name`, `brand_id`, `category_id`, `price`, `year`, `mileage`, `fuel`, `transmission`, `color`, `description`, `status`, `stock`, `engine`, `horsepower`, `torque`, `acceleration`, `drivetrain`, `seats`, `doors`, `created_at`) VALUES
@@ -178,18 +186,18 @@ INSERT INTO `cars` (`id`, `name`, `brand_id`, `category_id`, `price`, `year`, `m
 (99, 'Audi e-tron GT', 3, 16, 7800000000.00, 2024, 0, 'electric', 'automatic', 'Xám, Đen, Xanh', 'Audi e-tron GT là sedan thể thao điện với thiết kế tuyệt đẹp, hiệu năng mạnh mẽ và công nghệ Audi tiên tiến.', 'available', 10, 'Electric Dual Motor', 469, 640, 4.1, 'AWD', 4, 4, '2026-01-09 12:10:00'),
 (100, 'Mercedes-Benz GLS', 1, 10, 6800000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen, Trắng, Xám', 'Mercedes-Benz GLS là SUV hạng sang cỡ lớn nhất với không gian 7 chỗ sang trọng, công nghệ đỉnh cao và sự thoải mái tuyệt vời.', 'available', 10, '3.0L Inline-6 Turbo', 362, 500, 6.2, 'AWD', 7, 5, '2026-01-09 12:15:00'),
 (101, 'Toyota Hilux', 12, 14, 850000000.00, 2024, 0, 'diesel', 'manual', 'Trắng, Đen, Xám', 'Toyota Hilux là bán tải huyền thoại với độ bền bỉ cao nhất, mạnh mẽ, tiết kiệm và đa năng cho mọi công việc.', 'available', 10, '2.8L Turbo Diesel', 201, 500, 10.5, 'RWD', 5, 4, '2026-01-09 12:20:00'),
-(102, 'Hyundai Venue', 13, 11, 550000000.00, 2024, 0, 'gasoline', 'automatic', 'Đỏ, Trắng, Xanh', 'Hyundai Venue là crossover cỡ nhỏ với thiết kế trẻ trung, tiết kiệm nhiên liệu và giá cả phải chăng.', 'available', 10, '1.0L Turbo', 118, 172, 10.8, 'FWD', 5, 5, '2026-01-09 12:25:00'),
-(103, 'Porsche 718 Cayman', 4, 16, 4500000000.00, 2024, 0, 'gasoline', 'manual', 'Vàng, Đỏ, Xanh', 'Porsche 718 Cayman là coupe thể thao 2 chỗ với động cơ đặt giữa, vận hành hoàn hảo và thiết kế Porsche đặc trưng.', 'available', 10, '2.0L Turbo Boxer 4', 296, 380, 5.1, 'RWD', 2, 2, '2026-01-09 12:30:00'),
+(102, 'Hyundai Venue', 13, 11, 550000000.00, 2024, 0, 'gasoline', 'automatic', 'Đỏ, Trắng, Xanh', 'Hyundai Venue là crossover cỡ nhỏ với thiết kế trẻ trung, tiết kiệm nhiên liệu và giá cả phải chăng.', 'available', 9, '1.0L Turbo', 118, 172, 10.8, 'FWD', 5, 5, '2026-01-09 12:25:00'),
+(103, 'Porsche 718 Cayman', 4, 16, 4500000000.00, 2024, 0, 'gasoline', 'manual', 'Vàng, Đỏ, Xanh', 'Porsche 718 Cayman là coupe thể thao 2 chỗ với động cơ đặt giữa, vận hành hoàn hảo và thiết kế Porsche đặc trưng.', 'available', 9, '2.0L Turbo Boxer 4', 296, 380, 5.1, 'RWD', 2, 2, '2026-01-09 12:30:00'),
 (104, 'McLaren GT', 7, 13, 18000000000.00, 2024, 0, 'gasoline', 'automatic', 'Cam, Xanh, Trắng', 'McLaren GT là grand tourer với hiệu năng siêu xe, không gian hành lý lớn và sự thoải mái cho chuyến đi dài.', 'available', 10, '4.0L V8 Twin-Turbo', 612, 630, 3.2, 'RWD', 2, 2, '2026-01-09 12:35:00'),
-(105, 'Bentley Flying Spur', 8, 8, 18000000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen, Trắng, Xanh', 'Bentley Flying Spur là sedan siêu sang 4 cửa với nội thất thủ công cao cấp, động cơ mạnh mẽ và sự thoải mái tuyệt đối.', 'available', 10, '6.0L W12 Twin-Turbo', 626, 900, 3.8, 'AWD', 5, 4, '2026-01-09 12:40:00'),
-(106, 'Maserati Levante', 10, 10, 5800000000.00, 2024, 0, 'gasoline', 'automatic', 'Xanh, Đen, Trắng', 'Maserati Levante là SUV hạng sang của Ý với âm thanh động cơ đặc trưng, thiết kế quyến rũ và vận hành thể thao.', 'available', 10, '3.0L V6 Twin-Turbo', 345, 500, 6.0, 'AWD', 5, 5, '2026-01-09 12:45:00'),
-(107, 'Rolls-Royce Cullinan', 9, 10, 38000000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen, Trắng, Bạc', 'Rolls-Royce Cullinan là SUV siêu sang đỉnh cao với nội thất xa hoa tuyệt đối, vận hành êm ái và khả năng off-road bất ngờ.', 'available', 10, '6.75L V12 Twin-Turbo', 563, 850, 5.0, 'AWD', 5, 5, '2026-01-09 12:50:00'),
+(105, 'Bentley Flying Spur', 8, 8, 18000000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen, Trắng, Xanh', 'Bentley Flying Spur là sedan siêu sang 4 cửa với nội thất thủ công cao cấp, động cơ mạnh mẽ và sự thoải mái tuyệt đối.', 'available', 9, '6.0L W12 Twin-Turbo', 626, 900, 3.8, 'AWD', 5, 4, '2026-01-09 12:40:00'),
+(106, 'Maserati Levante', 10, 10, 5800000000.00, 2024, 0, 'gasoline', 'automatic', 'Xanh, Đen, Trắng', 'Maserati Levante là SUV hạng sang của Ý với âm thanh động cơ đặc trưng, thiết kế quyến rũ và vận hành thể thao.', 'available', 9, '3.0L V6 Twin-Turbo', 345, 500, 6.0, 'AWD', 5, 5, '2026-01-09 12:45:00'),
+(107, 'Rolls-Royce Cullinan', 9, 10, 38000000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen, Trắng, Bạc', 'Rolls-Royce Cullinan là SUV siêu sang đỉnh cao với nội thất xa hoa tuyệt đối, vận hành êm ái và khả năng off-road bất ngờ.', 'available', 9, '6.75L V12 Twin-Turbo', 563, 850, 5.0, 'AWD', 5, 5, '2026-01-09 12:50:00'),
 (108, 'Audi Q8', 3, 10, 4800000000.00, 2024, 0, 'gasoline', 'automatic', 'Đen, Xám, Trắng', 'Audi Q8 là SUV coupe hạng sang với thiết kế thể thao, công nghệ Quattro và nội thất cao cấp, phù hợp người yêu thích phong cách.', 'available', 10, '3.0L V6 TFSI', 335, 500, 5.9, 'AWD', 5, 5, '2026-01-09 12:55:00');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `car_images`
+-- Cấu trúc bảng cho bảng `car_images`
 --
 
 CREATE TABLE `car_images` (
@@ -199,7 +207,7 @@ CREATE TABLE `car_images` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `car_images`
+-- Đang đổ dữ liệu cho bảng `car_images`
 --
 
 INSERT INTO `car_images` (`id`, `car_id`, `image_url`) VALUES
@@ -270,7 +278,6 @@ INSERT INTO `car_images` (`id`, `car_id`, `image_url`) VALUES
 (128, 52, 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800'),
 (129, 52, 'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?w=800'),
 (130, 52, 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=800'),
-(131, 53, 'https://images.unsplash.com/photo-1625231334168-30dc0d7f2607?w=800'),
 (132, 53, 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800'),
 (133, 53, 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800'),
 (134, 54, 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800'),
@@ -279,9 +286,6 @@ INSERT INTO `car_images` (`id`, `car_id`, `image_url`) VALUES
 (137, 55, 'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=800'),
 (138, 55, 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800'),
 (139, 55, 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800'),
-(140, 56, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Ferrari/488-GTB/5768/1558955093064/front-left-side-47.jpg'),
-(141, 56, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Ferrari/488-GTB/5768/1558955094109/rear-left-view-116.jpg'),
-(142, 56, 'https://stimg.cardekho.com/images/carinteriorimages/630x420/Ferrari/488-GTB/5768/dashboard-117.jpg'),
 (143, 57, 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800'),
 (144, 57, 'https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?w=800'),
 (145, 57, 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800'),
@@ -300,7 +304,6 @@ INSERT INTO `car_images` (`id`, `car_id`, `image_url`) VALUES
 (158, 62, 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800'),
 (159, 62, 'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800'),
 (160, 62, 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=800'),
-(161, 63, 'https://images.unsplash.com/photo-1625231334168-30dc0d7f2607?w=800'),
 (162, 63, 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800'),
 (163, 63, 'https://images.unsplash.com/photo-1493238792000-8113da705763?w=800'),
 (164, 64, 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800'),
@@ -321,25 +324,9 @@ INSERT INTO `car_images` (`id`, `car_id`, `image_url`) VALUES
 (179, 69, 'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=800'),
 (180, 69, 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800'),
 (181, 69, 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800'),
-(182, 70, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Ferrari/Roma/8520/1614588054041/front-left-side-47.jpg'),
-(183, 70, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Ferrari/Roma/8520/1614588054893/rear-left-view-116.jpg'),
-(184, 70, 'https://stimg.cardekho.com/images/carinteriorimages/630x420/Ferrari/Roma/8520/dashboard-117.jpg'),
-(185, 71, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/McLaren/720S/7895/1614587746241/front-left-side-47.jpg'),
-(186, 71, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/McLaren/720S/7895/1614587747042/rear-left-view-116.jpg'),
-(187, 71, 'https://stimg.cardekho.com/images/carinteriorimages/630x420/McLaren/720S/7895/dashboard-117.jpg'),
-(188, 72, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Rolls-Royce/Ghost/8628/1614588234267/front-left-side-47.jpg'),
-(189, 72, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Rolls-Royce/Ghost/8628/1614588235093/rear-left-view-116.jpg'),
-(190, 72, 'https://stimg.cardekho.com/images/carinteriorimages/630x420/Rolls-Royce/Ghost/8628/dashboard-117.jpg'),
-(191, 73, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Bentley/Bentayga/8627/1614588164850/front-left-side-47.jpg'),
-(192, 73, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Bentley/Bentayga/8627/1614588165721/rear-left-view-116.jpg'),
-(193, 73, 'https://stimg.cardekho.com/images/carinteriorimages/630x420/Bentley/Bentayga/8627/dashboard-117.jpg'),
-(194, 74, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maserati/Ghibli/8626/1614588087362/front-left-side-47.jpg'),
-(195, 74, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maserati/Ghibli/8626/1614588088206/rear-left-view-116.jpg'),
-(196, 74, 'https://stimg.cardekho.com/images/carinteriorimages/630x420/Maserati/Ghibli/8626/dashboard-117.jpg'),
 (197, 75, 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800'),
 (198, 75, 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800'),
 (199, 75, 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'),
-(200, 76, 'https://images.unsplash.com/photo-1625231334168-30dc0d7f2607?w=800'),
 (201, 76, 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800'),
 (202, 76, 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800'),
 (203, 77, 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800'),
@@ -363,8 +350,6 @@ INSERT INTO `car_images` (`id`, `car_id`, `image_url`) VALUES
 (221, 83, 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'),
 (222, 83, 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=800'),
 (223, 83, 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=800'),
-(224, 84, 'https://images.unsplash.com/photo-1625231334168-30dc0d7f2607?w=800'),
-(225, 84, 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800'),
 (226, 84, 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800'),
 (227, 85, 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800'),
 (228, 85, 'https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?w=800'),
@@ -378,9 +363,6 @@ INSERT INTO `car_images` (`id`, `car_id`, `image_url`) VALUES
 (236, 88, 'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=800'),
 (237, 88, 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800'),
 (238, 88, 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800'),
-(239, 89, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Ferrari/F8-Tributo/8519/1614587976632/front-left-side-47.jpg'),
-(240, 89, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Ferrari/F8-Tributo/8519/1614587977487/rear-left-view-116.jpg'),
-(241, 89, 'https://stimg.cardekho.com/images/carinteriorimages/630x420/Ferrari/F8-Tributo/8519/dashboard-117.jpg'),
 (242, 90, 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800'),
 (243, 90, 'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?w=800'),
 (244, 90, 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=800'),
@@ -418,31 +400,31 @@ INSERT INTO `car_images` (`id`, `car_id`, `image_url`) VALUES
 (276, 101, 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800'),
 (277, 101, 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=800'),
 (278, 102, 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800'),
-(279, 102, 'https://images.unsplash.com/photo-1625231334168-30dc0d7f2607?w=800'),
 (280, 102, 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800'),
 (281, 103, 'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=800'),
 (282, 103, 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800'),
 (283, 103, 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800'),
-(284, 104, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/McLaren/GT/8039/1614587852714/front-left-side-47.jpg'),
-(285, 104, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/McLaren/GT/8039/1614587853502/rear-left-view-116.jpg'),
-(286, 104, 'https://stimg.cardekho.com/images/carinteriorimages/630x420/McLaren/GT/8039/dashboard-117.jpg'),
-(287, 105, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Bentley/Flying-Spur/8625/1614588016517/front-left-side-47.jpg'),
-(288, 105, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Bentley/Flying-Spur/8625/1614588017360/rear-left-view-116.jpg'),
-(289, 105, 'https://stimg.cardekho.com/images/carinteriorimages/630x420/Bentley/Flying-Spur/8625/dashboard-117.jpg'),
-(290, 106, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maserati/Levante/8629/1614588297843/front-left-side-47.jpg'),
-(291, 106, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maserati/Levante/8629/1614588298697/rear-left-view-116.jpg'),
-(292, 106, 'https://stimg.cardekho.com/images/carinteriorimages/630x420/Maserati/Levante/8629/dashboard-117.jpg'),
-(293, 107, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Rolls-Royce/Cullinan/8630/1614588357293/front-left-side-47.jpg'),
-(294, 107, 'https://stimg.cardekho.com/images/carexteriorimages/630x420/Rolls-Royce/Cullinan/8630/1614588358129/rear-left-view-116.jpg'),
-(295, 107, 'https://stimg.cardekho.com/images/carinteriorimages/630x420/Rolls-Royce/Cullinan/8630/dashboard-117.jpg'),
 (296, 108, 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800'),
-(297, 108, 'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?w=800'),
-(298, 108, 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=800');
+(298, 108, 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=800'),
+(299, 107, 'https://media.vov.vn/sites/default/files/styles/large/public/2024-05/rollsroyce%20cullinanII-2.jpg'),
+(300, 106, 'https://giaxeoto.vn/admin/upload/images/maserati-levante-1531451204.jpg'),
+(302, 105, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5iGsNg8OE3CoKCc3y_1Lm68WaZSaXdYM6jQ&s'),
+(303, 105, 'https://www.dubicars.com/images/0590db/r_960x540/generations/generation_64a3f8e16660b_bentley-flying-spur-exterior-front-right-angled.jpg?6'),
+(304, 104, 'https://giaxeoto.vn/admin/upload/images/resize/640-sieu-xe-mclaren-gt-ra-mat.jpg'),
+(305, 104, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSk0P8BbIiUCyMGkyPXHK4ZKQgy8MonePtylw&s'),
+(308, 89, 'https://petrolicious.com/cdn/shop/articles/Ferrari-F8-Spider34.jpg?v=1742057337'),
+(309, 74, 'https://i1-vnexpress.vnecdn.net/2021/09/19/17601-GhibliGranSportV6.jpg?w=2400&h=0&q=100&dpr=1&fit=crop&s=snJyPIcSclwUVLXOmHLK-g&t=image'),
+(310, 74, 'https://giaxeoto.vn/admin/upload/images/resize/640-Maserati-Ghibli-Hybrid.jpg'),
+(311, 73, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5wpvxyf-VR4vW5G5yNBwifF_hzfP3yOdQmA&s'),
+(312, 72, 'https://cdn.tienphong.vn/images/a7a4eb175a75567c9a7ae09768d70948cb277a106057a929e86390352c549fb037cd75cf03922096eef53f1a09a665f1a39aeb7b38c2c0cb9574f71a2657af992149ca6f67ee817c9e3a7f3f3763fe13/2021_Rolls_ROyce_Ghost_3_BFXT.jpg'),
+(313, 71, 'https://di-uploads-pod43.dealerinspire.com/mclarensanfrancisco/uploads/2022/04/720s.jpg'),
+(314, 70, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMqe9Fw9U_EA2_UFSm0508QPONanagi5uRqA&s'),
+(315, 56, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkyOtvfEL4KXXDM1hw7gKiF_nGlokWuL5Ggg&s');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `categories`
+-- Cấu trúc bảng cho bảng `categories`
 --
 
 CREATE TABLE `categories` (
@@ -452,7 +434,7 @@ CREATE TABLE `categories` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `categories`
+-- Đang đổ dữ liệu cho bảng `categories`
 --
 
 INSERT INTO `categories` (`id`, `name`, `description`) VALUES
@@ -470,7 +452,7 @@ INSERT INTO `categories` (`id`, `name`, `description`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `contacts`
+-- Cấu trúc bảng cho bảng `contacts`
 --
 
 CREATE TABLE `contacts` (
@@ -484,10 +466,17 @@ CREATE TABLE `contacts` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `contacts`
+--
+
+INSERT INTO `contacts` (`id`, `name`, `email`, `phone`, `subject`, `message`, `status`, `created_at`) VALUES
+(5, 'Nguyễn Tấn Lợi', 'ngtanloi1709@gmail.com', '0368920249', 'laixethu', 'cho lay thu coi', 'new', '2026-01-08 18:06:11');
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `favorites`
+-- Cấu trúc bảng cho bảng `favorites`
 --
 
 CREATE TABLE `favorites` (
@@ -497,10 +486,18 @@ CREATE TABLE `favorites` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `favorites`
+--
+
+INSERT INTO `favorites` (`id`, `user_id`, `car_id`, `created_at`) VALUES
+(15, 3, 103, '2026-01-08 18:02:09'),
+(16, 3, 106, '2026-01-09 00:11:17');
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `orders`
+-- Cấu trúc bảng cho bảng `orders`
 --
 
 CREATE TABLE `orders` (
@@ -516,10 +513,23 @@ CREATE TABLE `orders` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `orders`
+--
+
+INSERT INTO `orders` (`id`, `user_id`, `car_id`, `price`, `deposit_percentage`, `deposit_amount`, `payment_method`, `status`, `notes`, `created_at`) VALUES
+(7, 1, 107, 38000000000.00, 0, NULL, 'cash', 'cancelled', '', '2026-01-08 17:53:58'),
+(8, 1, 106, 5800000000.00, 0, NULL, 'cash', 'completed', '', '2026-01-08 17:54:42'),
+(9, 3, 103, 4500000000.00, 0, NULL, 'bank_transfer', 'completed', 'giau ma', '2026-01-08 18:02:42'),
+(10, 3, 105, 18000000000.00, 0, NULL, 'bank_transfer', 'completed', '', '2026-01-08 18:18:14'),
+(11, 3, 107, 38000000000.00, 0, NULL, 'cash', 'confirmed', '', '2026-01-08 18:19:27'),
+(12, 3, 102, 550000000.00, 0, NULL, 'cash', 'completed', '', '2026-01-08 18:19:51'),
+(13, 3, 106, 5800000000.00, 0, NULL, 'cash', 'cancelled', '', '2026-01-09 00:33:40');
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `reviews`
+-- Cấu trúc bảng cho bảng `reviews`
 --
 
 CREATE TABLE `reviews` (
@@ -533,10 +543,17 @@ CREATE TABLE `reviews` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `reviews`
+--
+
+INSERT INTO `reviews` (`id`, `user_id`, `car_id`, `rating`, `comment`, `admin_reply`, `replied_at`, `created_at`) VALUES
+(4, 3, 103, 5, 'xe dep qua troi, chac mua them 3-4 chiec nua', 'ok thanks bro', '2026-01-08 18:04:16', '2026-01-08 18:03:45');
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Cấu trúc bảng cho bảng `users`
 --
 
 CREATE TABLE `users` (
@@ -555,33 +572,26 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `users`
+-- Đang đổ dữ liệu cho bảng `users`
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `full_name`, `phone`, `address`, `avatar`, `remember_token`, `role`, `status`, `created_at`) VALUES
-(1, 'khanhdang', 'khanhdang2440@gmail.com', '$2y$10$SzFXIlqlISyBJEq.ReXYs.zp3DgTjSlcDh1hvCotF.IHbmra9DXE.', 'Lê Khánh Đăng', '0868065672', NULL, NULL, NULL, 'admin', 1, '2025-12-30 07:21:32');
+(1, 'khanhdang', 'khanhdang2440@gmail.com', '$2y$10$SzFXIlqlISyBJEq.ReXYs.zp3DgTjSlcDh1hvCotF.IHbmra9DXE.', 'Lê Khánh Đăng', '0868065672', NULL, NULL, '9587e6c188c3f0f2a6029ba6868fe7c68a0b99183dc4f84b9ab8c38b0845f088', 'admin', 1, '2025-12-30 07:21:32'),
+(3, 'ngtanloi1709', 'ngtanloi1709@gmail.com', '$2y$10$oUgnF.Z7dh9/IySuq.KDzOMQ5ostOmljv4YzS5.hnqWb1kbtpIWGq', 'Nguyễn Tấn Lợi', '0368920249', NULL, NULL, NULL, 'user', 1, '2026-01-08 12:01:55');
 
 --
--- Indexes for dumped tables
+-- Chỉ mục cho các bảng đã đổ
 --
 
 --
--- Indexes for table `appointments`
---
-ALTER TABLE `appointments`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `car_id` (`car_id`);
-
---
--- Indexes for table `brands`
+-- Chỉ mục cho bảng `brands`
 --
 ALTER TABLE `brands`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `name` (`name`);
 
 --
--- Indexes for table `cars`
+-- Chỉ mục cho bảng `cars`
 --
 ALTER TABLE `cars`
   ADD PRIMARY KEY (`id`),
@@ -589,27 +599,27 @@ ALTER TABLE `cars`
   ADD KEY `category_id` (`category_id`);
 
 --
--- Indexes for table `car_images`
+-- Chỉ mục cho bảng `car_images`
 --
 ALTER TABLE `car_images`
   ADD PRIMARY KEY (`id`),
   ADD KEY `car_id` (`car_id`);
 
 --
--- Indexes for table `categories`
+-- Chỉ mục cho bảng `categories`
 --
 ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `name` (`name`);
 
 --
--- Indexes for table `contacts`
+-- Chỉ mục cho bảng `contacts`
 --
 ALTER TABLE `contacts`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `favorites`
+-- Chỉ mục cho bảng `favorites`
 --
 ALTER TABLE `favorites`
   ADD PRIMARY KEY (`id`),
@@ -617,7 +627,7 @@ ALTER TABLE `favorites`
   ADD KEY `car_id` (`car_id`);
 
 --
--- Indexes for table `orders`
+-- Chỉ mục cho bảng `orders`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`),
@@ -625,7 +635,7 @@ ALTER TABLE `orders`
   ADD KEY `car_id` (`car_id`);
 
 --
--- Indexes for table `reviews`
+-- Chỉ mục cho bảng `reviews`
 --
 ALTER TABLE `reviews`
   ADD PRIMARY KEY (`id`),
@@ -633,7 +643,7 @@ ALTER TABLE `reviews`
   ADD KEY `car_id` (`car_id`);
 
 --
--- Indexes for table `users`
+-- Chỉ mục cho bảng `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
@@ -641,109 +651,96 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT cho các bảng đã đổ
 --
 
 --
--- AUTO_INCREMENT for table `appointments`
---
-ALTER TABLE `appointments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT for table `brands`
+-- AUTO_INCREMENT cho bảng `brands`
 --
 ALTER TABLE `brands`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
--- AUTO_INCREMENT for table `cars`
+-- AUTO_INCREMENT cho bảng `cars`
 --
 ALTER TABLE `cars`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
 
 --
--- AUTO_INCREMENT for table `car_images`
+-- AUTO_INCREMENT cho bảng `car_images`
 --
 ALTER TABLE `car_images`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=299;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=316;
 
 --
--- AUTO_INCREMENT for table `categories`
+-- AUTO_INCREMENT cho bảng `categories`
 --
 ALTER TABLE `categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- AUTO_INCREMENT for table `contacts`
+-- AUTO_INCREMENT cho bảng `contacts`
 --
 ALTER TABLE `contacts`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT cho bảng `favorites`
+--
+ALTER TABLE `favorites`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- AUTO_INCREMENT cho bảng `orders`
+--
+ALTER TABLE `orders`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT cho bảng `reviews`
+--
+ALTER TABLE `reviews`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `favorites`
+-- AUTO_INCREMENT cho bảng `users`
 --
-ALTER TABLE `favorites`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
-
---
--- AUTO_INCREMENT for table `orders`
---
-ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT for table `reviews`
---
-ALTER TABLE `reviews`
+ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- Constraints for dumped tables
+-- Các ràng buộc cho các bảng đã đổ
 --
 
 --
--- Constraints for table `appointments`
---
-ALTER TABLE `appointments`
-  ADD CONSTRAINT `appointments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `appointments_ibfk_2` FOREIGN KEY (`car_id`) REFERENCES `cars` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `cars`
+-- Các ràng buộc cho bảng `cars`
 --
 ALTER TABLE `cars`
   ADD CONSTRAINT `cars_ibfk_1` FOREIGN KEY (`brand_id`) REFERENCES `brands` (`id`),
   ADD CONSTRAINT `cars_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`);
 
 --
--- Constraints for table `car_images`
+-- Các ràng buộc cho bảng `car_images`
 --
 ALTER TABLE `car_images`
   ADD CONSTRAINT `car_images_ibfk_1` FOREIGN KEY (`car_id`) REFERENCES `cars` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `favorites`
+-- Các ràng buộc cho bảng `favorites`
 --
 ALTER TABLE `favorites`
   ADD CONSTRAINT `favorites_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `favorites_ibfk_2` FOREIGN KEY (`car_id`) REFERENCES `cars` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `orders`
+-- Các ràng buộc cho bảng `orders`
 --
 ALTER TABLE `orders`
   ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`car_id`) REFERENCES `cars` (`id`);
 
 --
--- Constraints for table `reviews`
+-- Các ràng buộc cho bảng `reviews`
 --
 ALTER TABLE `reviews`
   ADD CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
